@@ -1,0 +1,8 @@
+# HyperFrames temporary output
+google-reviews-demo/out/work-*/
+google-reviews-demo/out/.*
+google-reviews-demo/renders/
+google-reviews-demo/snapshots/
+google-reviews-demo/.hyperframes/
+node_modules/
+.DS_Store

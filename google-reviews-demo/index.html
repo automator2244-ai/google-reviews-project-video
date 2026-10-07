@@ -1,0 +1,1955 @@
+<!doctype html>
+<html
+  lang="he"
+  data-resolution="portrait"
+  data-composition-variables='[
+    {"id":"businessName","type":"string","label":"שם העסק בסיום","default":"[שם העסק של בניה]"},
+    {"id":"contact","type":"string","label":"טלפון או וואטסאפ בסיום","default":"[טלפון או וואטסאפ ליצירת קשר]"}
+  ]'
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>ביקורות בגוגל למרפאות שיניים</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      /* Heebo, local copy (SIL OFL 1.1). Two subsets of the same variable font. */
+      @font-face {
+        font-family: "Heebo";
+        src: url("assets/fonts/heebo-hebrew.woff2") format("woff2");
+        font-weight: 100 900;
+        font-style: normal;
+        font-display: block;
+        unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+      }
+      @font-face {
+        font-family: "Heebo";
+        src: url("assets/fonts/heebo-latin.woff2") format("woff2");
+        font-weight: 100 900;
+        font-style: normal;
+        font-display: block;
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+          U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+          U+FEFF, U+FFFD;
+      }
+
+      :root {
+        --navy: #0b2a4a;
+        --navy-deep: #071f38;
+        --navy-soft: #123a63;
+        --teal: #12b5a6;
+        --teal-dark: #0b7f75;
+        --teal-pale: #d8f3ef;
+        --white: #ffffff;
+        --gray: #f2f5f8;
+        --gray-line: #d7dee6;
+        --muted: #5b6878;
+        --ink: #14202b;
+        --star: #ffb400;
+        --red: #e5484d;
+        --link: #0b62c4;
+        --chat-bg: #ece5dd;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--navy);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--navy);
+        font-family: "Heebo", sans-serif;
+        color: var(--white);
+        -webkit-font-smoothing: antialiased;
+      }
+      bdi {
+        unicode-bidi: isolate;
+      }
+      svg {
+        display: block;
+      }
+      .emo {
+        display: inline-block;
+        width: 1.18em;
+        height: 1.18em;
+        vertical-align: -0.24em;
+        margin: 0 0.06em;
+      }
+
+      /* ---------- Background ---------- */
+      #bg {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+      .glow {
+        position: absolute;
+        border-radius: 50%;
+      }
+      #glow-a {
+        width: 1500px;
+        height: 1500px;
+        left: -520px;
+        top: -640px;
+        background: radial-gradient(circle, rgba(18, 181, 166, 0.26) 0%, rgba(18, 181, 166, 0) 62%);
+      }
+      #glow-b {
+        width: 1400px;
+        height: 1400px;
+        left: 260px;
+        top: 1050px;
+        background: radial-gradient(circle, rgba(42, 104, 168, 0.34) 0%, rgba(42, 104, 168, 0) 64%);
+      }
+
+      .scene {
+        position: absolute;
+        inset: 0;
+        direction: rtl;
+      }
+
+      /* ---------- Captions ---------- */
+      .cap {
+        position: absolute;
+        left: 70px;
+        right: 70px;
+        top: 1496px;
+        height: 300px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        direction: rtl;
+      }
+      .cap-inner {
+        display: block;
+        width: 100%;
+        font-size: 70px;
+        font-weight: 800;
+        line-height: 1.22;
+        text-align: center;
+        letter-spacing: -0.5px;
+        text-wrap: balance;
+        opacity: 0;
+      }
+      .t-teal {
+        color: var(--teal);
+      }
+      .t-red {
+        display: inline-block;
+        color: var(--red);
+      }
+      .num-fixed {
+        display: inline-block;
+        min-width: 3.1ch;
+        text-align: left;
+        font-variant-numeric: tabular-nums;
+      }
+
+      /* ---------- Profile card (scenes 1 and 6) ---------- */
+      .dots-wrap {
+        position: absolute;
+        left: 90px;
+        top: 150px;
+        width: 900px;
+        height: 720px;
+      }
+      .dots-grid {
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(circle, rgba(255, 255, 255, 0.34) 3.3px, rgba(255, 255, 255, 0) 3.9px);
+        background-size: 18px 18px;
+        opacity: 0;
+      }
+      .dots-lit {
+        position: absolute;
+        inset: 0;
+      }
+      .ldot {
+        position: absolute;
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        background: var(--star);
+        box-shadow: 0 0 14px 3px rgba(255, 180, 0, 0.55);
+        opacity: 0;
+      }
+
+      .pcard {
+        position: absolute;
+        left: 90px;
+        top: 930px;
+        width: 900px;
+        padding: 46px 52px 50px;
+        border-radius: 40px;
+        background: var(--white);
+        color: var(--ink);
+        box-shadow: 0 30px 80px rgba(2, 14, 28, 0.45);
+        opacity: 0;
+      }
+      .pc-head {
+        display: flex;
+        align-items: center;
+        gap: 30px;
+      }
+      .clinic-av {
+        width: 118px;
+        height: 118px;
+        flex: none;
+      }
+      .pc-name {
+        font-size: 48px;
+        font-weight: 800;
+        line-height: 1.12;
+        color: var(--navy);
+      }
+      .pc-tag {
+        margin-top: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 6px 18px 6px 20px;
+        border-radius: 30px;
+        background: var(--gray);
+        font-size: 28px;
+        font-weight: 600;
+        color: var(--muted);
+      }
+      .pc-tag svg {
+        width: 28px;
+        height: 28px;
+        fill: var(--star);
+      }
+      .pc-rule {
+        height: 3px;
+        margin: 36px 0 34px;
+        background: var(--gray);
+        border-radius: 2px;
+      }
+      .pc-body {
+        display: flex;
+        align-items: center;
+        gap: 44px;
+      }
+      .pc-score {
+        flex: none;
+        width: 360px;
+      }
+      .pc-num {
+        font-size: 132px;
+        font-weight: 800;
+        line-height: 0.95;
+        color: var(--navy);
+        letter-spacing: -2px;
+      }
+      .pc-stars {
+        position: relative;
+        margin-top: 16px;
+        display: flex;
+        gap: 6px;
+      }
+      .st {
+        position: relative;
+        width: 62px;
+        height: 62px;
+      }
+      .st svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+      .st .st-off {
+        fill: var(--gray-line);
+      }
+      .st .st-on {
+        fill: var(--star);
+      }
+      .st.part .st-on {
+        clip-path: inset(0 0 0 40%);
+      }
+      .pc-count {
+        margin-top: 18px;
+        font-size: 44px;
+        font-weight: 700;
+        color: var(--muted);
+        white-space: nowrap;
+      }
+      .cnt {
+        display: inline-block;
+        color: var(--navy);
+        transform-origin: 70% 60%;
+      }
+      .pc-bars {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .bar-row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .bar-lbl {
+        width: 22px;
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--muted);
+        text-align: center;
+      }
+      .bar-track {
+        flex: 1;
+        height: 18px;
+        border-radius: 9px;
+        background: var(--gray);
+        overflow: hidden;
+      }
+      .bar-fill {
+        height: 100%;
+        border-radius: 9px;
+        background: var(--star);
+      }
+      .sparkle {
+        position: absolute;
+        width: 46px;
+        height: 46px;
+        opacity: 0;
+      }
+      .sparkle svg {
+        width: 100%;
+        height: 100%;
+        fill: var(--star);
+      }
+
+      /* ---------- Scene 2: question ---------- */
+      .q-ghost {
+        position: absolute;
+        left: 50%;
+        top: 330px;
+        width: 900px;
+        margin-left: -450px;
+        text-align: center;
+        font-size: 1100px;
+        font-weight: 900;
+        line-height: 1;
+        color: rgba(18, 181, 166, 0.12);
+        opacity: 0;
+      }
+      .q-wrap {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        top: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .q-text {
+        font-size: 104px;
+        font-weight: 800;
+        line-height: 1.18;
+        text-align: center;
+        letter-spacing: -1px;
+        text-wrap: balance;
+      }
+      .qw {
+        display: inline-block;
+        opacity: 0;
+      }
+      .qw.hl {
+        color: var(--teal);
+      }
+
+      /* ---------- Phone ---------- */
+      #phone {
+        position: absolute;
+        left: 170px;
+        top: 110px;
+        width: 740px;
+        height: 1340px;
+      }
+      .ph-body {
+        position: absolute;
+        inset: 0;
+        border-radius: 100px;
+        background: #0d1520;
+        box-shadow: 0 50px 110px rgba(0, 6, 14, 0.55), inset 0 0 0 4px #2b3747;
+      }
+      .ph-screen {
+        position: absolute;
+        left: 18px;
+        top: 18px;
+        right: 18px;
+        bottom: 18px;
+        border-radius: 84px;
+        overflow: hidden;
+        background: var(--chat-bg);
+      }
+      .ph-island {
+        position: absolute;
+        top: 36px;
+        left: 50%;
+        width: 200px;
+        height: 54px;
+        margin-left: -100px;
+        border-radius: 27px;
+        background: #04070b;
+        z-index: 20;
+      }
+      .scr {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+      .status {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 100px;
+        direction: ltr;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 66px 0 72px;
+        font-size: 30px;
+        font-weight: 700;
+        z-index: 3;
+      }
+      .status .sys {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .sig {
+        display: flex;
+        align-items: flex-end;
+        gap: 4px;
+        height: 22px;
+      }
+      .sig i {
+        display: block;
+        width: 6px;
+        border-radius: 2px;
+        background: currentColor;
+      }
+      .batt {
+        width: 46px;
+        height: 22px;
+        border-radius: 7px;
+        border: 3px solid currentColor;
+        padding: 2px;
+        opacity: 0.95;
+      }
+      .batt i {
+        display: block;
+        width: 72%;
+        height: 100%;
+        border-radius: 3px;
+        background: currentColor;
+      }
+
+      /* chat screen */
+      #scr-chat .status {
+        color: var(--white);
+        background: var(--teal-dark);
+      }
+      .chat-head {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 100px;
+        height: 118px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        padding: 0 28px 10px;
+        background: var(--teal-dark);
+        color: var(--white);
+        z-index: 3;
+      }
+      .chat-head .back {
+        width: 44px;
+        height: 44px;
+        stroke: var(--white);
+        fill: none;
+        stroke-width: 2.4;
+      }
+      .chat-head .clinic-av {
+        width: 78px;
+        height: 78px;
+      }
+      .ch-name {
+        font-size: 33px;
+        font-weight: 700;
+        line-height: 1.15;
+      }
+      .ch-sub {
+        font-size: 23px;
+        opacity: 0.82;
+        margin-top: 2px;
+      }
+      .chat-body {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 218px;
+        bottom: 108px;
+        overflow: hidden;
+        background-color: var(--chat-bg);
+        background-image: radial-gradient(circle, rgba(11, 42, 74, 0.05) 2px, rgba(11, 42, 74, 0) 2.6px);
+        background-size: 34px 34px;
+      }
+      .chat-scroll {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 22px 24px 24px;
+      }
+      .date-chip {
+        align-self: center;
+        padding: 6px 22px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.85);
+        color: var(--muted);
+        font-size: 22px;
+        font-weight: 600;
+      }
+      .msg-in,
+      .msg-out {
+        position: relative;
+        font-size: 30px;
+        line-height: 1.42;
+        color: var(--ink);
+        opacity: 0;
+      }
+      .msg-in {
+        align-self: flex-start;
+        width: 586px;
+        transform-origin: 100% 0%;
+      }
+      .msg-out {
+        align-self: flex-end;
+        max-width: 560px;
+        transform-origin: 0% 0%;
+      }
+      .bubble {
+        position: relative;
+        padding: 16px 22px 12px;
+        border-radius: 22px;
+        background: var(--white);
+        box-shadow: 0 2px 2px rgba(0, 0, 0, 0.08);
+      }
+      .msg-in .bubble {
+        border-top-right-radius: 6px;
+      }
+      .msg-out .bubble {
+        background: var(--teal-pale);
+        border-top-left-radius: 6px;
+      }
+      .bubble p + p {
+        margin-top: 8px;
+      }
+      .meta {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 6px;
+        margin-top: 2px;
+        font-size: 21px;
+        color: #56626e;
+        direction: ltr;
+      }
+      .meta svg {
+        width: 28px;
+        height: 28px;
+        stroke: #3aa6e0;
+        fill: none;
+        stroke-width: 2.2;
+      }
+      .link {
+        position: relative;
+        display: inline-block;
+        color: var(--link);
+        text-decoration: underline;
+        text-underline-offset: 5px;
+        font-weight: 500;
+        padding: 0 4px;
+        border-radius: 8px;
+      }
+      .link-hl {
+        position: absolute;
+        inset: -4px -6px;
+        border-radius: 10px;
+        background: rgba(18, 181, 166, 0.22);
+        opacity: 0;
+      }
+      .qr-list {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin-top: 4px;
+      }
+      .qr {
+        position: relative;
+        height: 74px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        border-radius: 16px;
+        background: var(--white);
+        box-shadow: 0 2px 2px rgba(0, 0, 0, 0.08);
+        color: var(--teal-dark);
+        font-size: 28px;
+        font-weight: 600;
+        opacity: 0;
+      }
+      .qr svg {
+        width: 28px;
+        height: 28px;
+        stroke: var(--teal-dark);
+        fill: none;
+        stroke-width: 2.4;
+      }
+      .slot {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+      .typing {
+        position: absolute;
+        right: 0;
+        top: 0;
+        display: flex;
+        gap: 9px;
+        padding: 22px 26px;
+        border-radius: 22px;
+        border-top-right-radius: 6px;
+        background: var(--white);
+        opacity: 0;
+      }
+      .typing i {
+        display: block;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #9aa6b2;
+      }
+      .chat-input {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 108px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 0 22px 18px;
+        background: var(--chat-bg);
+      }
+      .ci-field {
+        flex: 1;
+        height: 72px;
+        border-radius: 36px;
+        background: var(--white);
+        display: flex;
+        align-items: center;
+        padding: 0 30px;
+        font-size: 28px;
+        color: #6f7b88;
+      }
+      .ci-mic {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: var(--teal-dark);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .ci-mic svg {
+        width: 34px;
+        height: 34px;
+        stroke: var(--white);
+        fill: none;
+        stroke-width: 2.2;
+      }
+      .scr-dim {
+        position: absolute;
+        inset: 0;
+        background: #000;
+        opacity: 0;
+        z-index: 10;
+      }
+
+      /* review screen */
+      #scr-review {
+        background: var(--white);
+        color: var(--ink);
+        opacity: 0;
+        z-index: 12;
+      }
+      #scr-review .status {
+        color: var(--ink);
+      }
+      .rv-top {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 100px;
+        height: 90px;
+        display: flex;
+        align-items: center;
+        padding: 0 34px;
+      }
+      .rv-top svg {
+        width: 44px;
+        height: 44px;
+        stroke: var(--ink);
+        fill: none;
+        stroke-width: 2.2;
+      }
+      .rv-head {
+        position: absolute;
+        left: 40px;
+        right: 40px;
+        top: 200px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .rv-head .clinic-av {
+        width: 120px;
+        height: 120px;
+      }
+      .rv-name {
+        margin-top: 20px;
+        font-size: 40px;
+        font-weight: 800;
+        color: var(--navy);
+      }
+      .rv-sub {
+        margin-top: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 26px;
+        font-weight: 600;
+        color: var(--muted);
+      }
+      .rv-sub svg {
+        width: 26px;
+        height: 26px;
+        fill: var(--star);
+      }
+      .rv-user {
+        position: absolute;
+        left: 50px;
+        right: 50px;
+        top: 520px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+      .rv-av {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: #7a5cc4;
+        color: var(--white);
+        font-size: 36px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .rv-uname {
+        font-size: 30px;
+        font-weight: 700;
+      }
+      .rv-upub {
+        font-size: 22px;
+        color: var(--muted);
+      }
+      .rv-stars {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 650px;
+        display: flex;
+        justify-content: center;
+        gap: 22px;
+      }
+      .rs {
+        position: relative;
+        width: 92px;
+        height: 92px;
+      }
+      .rs svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+      .rs .rs-off {
+        fill: none;
+        stroke: #7d8a97;
+        stroke-width: 1.4;
+      }
+      .rs .rs-on {
+        fill: var(--star);
+        opacity: 0;
+      }
+      .rv-field {
+        position: absolute;
+        left: 50px;
+        right: 50px;
+        top: 800px;
+        height: 250px;
+        border: 3px solid var(--gray-line);
+        border-radius: 22px;
+      }
+      .caret {
+        position: absolute;
+        right: 30px;
+        top: 28px;
+        width: 4px;
+        height: 46px;
+        border-radius: 2px;
+        background: var(--teal-dark);
+      }
+      .rv-post {
+        position: absolute;
+        left: 50px;
+        right: 50px;
+        bottom: 66px;
+        height: 104px;
+        border-radius: 52px;
+        background: #dde3ea;
+        color: #66727f;
+        font-size: 38px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .rv-done {
+        position: absolute;
+        inset: 0;
+        background: var(--white);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 34px;
+        opacity: 0;
+        z-index: 5;
+      }
+      .done-check {
+        width: 190px;
+        height: 190px;
+        border-radius: 50%;
+        background: var(--teal);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .done-check svg {
+        width: 110px;
+        height: 110px;
+        stroke: var(--white);
+        fill: none;
+        stroke-width: 2.6;
+      }
+      .done-txt {
+        font-size: 44px;
+        font-weight: 800;
+        color: var(--navy);
+      }
+      .done-stars {
+        display: flex;
+        gap: 10px;
+      }
+      .done-stars svg {
+        width: 54px;
+        height: 54px;
+        fill: var(--star);
+      }
+
+      /* finger and tap ripples */
+      #finger {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 132px;
+        height: 132px;
+        opacity: 0;
+        z-index: 50;
+        filter: drop-shadow(0 10px 14px rgba(0, 8, 20, 0.45));
+      }
+      #finger svg {
+        width: 100%;
+        height: 100%;
+      }
+      .ripple {
+        position: absolute;
+        width: 110px;
+        height: 110px;
+        margin: -55px 0 0 -55px;
+        border-radius: 50%;
+        border: 6px solid var(--teal);
+        background: rgba(18, 181, 166, 0.22);
+        opacity: 0;
+        z-index: 49;
+      }
+
+      /* ---------- Scene 5: grid ---------- */
+      .stats {
+        position: absolute;
+        left: 70px;
+        right: 70px;
+        top: 150px;
+        height: 250px;
+        display: flex;
+        gap: 22px;
+      }
+      .stat {
+        flex: 1;
+        border-radius: 30px;
+        background: rgba(255, 255, 255, 0.07);
+        border: 2px solid rgba(255, 255, 255, 0.12);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        opacity: 0;
+      }
+      .stat-top {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--teal);
+      }
+      .stat-top svg {
+        width: 38px;
+        height: 38px;
+        stroke: var(--teal);
+        fill: none;
+        stroke-width: 2.2;
+      }
+      .stat-num {
+        font-size: 92px;
+        font-weight: 800;
+        line-height: 1.05;
+        font-variant-numeric: tabular-nums;
+        letter-spacing: -1px;
+      }
+      .grid {
+        position: absolute;
+        left: 85px;
+        top: 440px;
+        width: 910px;
+        display: grid;
+        grid-template-columns: repeat(3, 290px);
+        grid-auto-rows: 228px;
+        gap: 20px;
+      }
+      .mc {
+        position: relative;
+        border-radius: 24px;
+        overflow: hidden;
+        background: var(--chat-bg);
+        box-shadow: 0 16px 34px rgba(0, 6, 14, 0.35);
+        opacity: 0;
+      }
+      .mc-head {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 0 14px;
+        background: var(--teal-dark);
+      }
+      .mc-av {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .mc-av svg {
+        width: 22px;
+        height: 22px;
+        stroke: var(--teal-dark);
+        fill: none;
+        stroke-width: 2.4;
+      }
+      .mc-names {
+        position: relative;
+        flex: 1;
+        height: 34px;
+      }
+      .mc-names span {
+        position: absolute;
+        right: 0;
+        top: 0;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--white);
+        line-height: 34px;
+      }
+      .mc-names .n2 {
+        opacity: 0;
+      }
+      .mc-body {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50px;
+        bottom: 0;
+      }
+      .mc-set {
+        position: absolute;
+        inset: 0;
+      }
+      .mi,
+      .mo,
+      .ml {
+        position: absolute;
+        border-radius: 10px;
+        padding: 9px 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 7px;
+        opacity: 0;
+      }
+      .mi {
+        right: 12px;
+        top: 12px;
+        width: 70%;
+        height: 46px;
+        background: var(--white);
+        transform-origin: 100% 0%;
+      }
+      .mo {
+        left: 12px;
+        top: 66px;
+        width: 48%;
+        height: 32px;
+        background: var(--teal-pale);
+        transform-origin: 0% 0%;
+      }
+      .ml {
+        right: 12px;
+        top: 106px;
+        width: 70%;
+        height: 34px;
+        background: var(--white);
+        flex-direction: row;
+        align-items: center;
+        transform-origin: 100% 0%;
+      }
+      .bar {
+        display: block;
+        height: 7px;
+        border-radius: 4px;
+        background: #c3ccd6;
+      }
+      .mo .bar {
+        background: #8fd3c9;
+      }
+      .ml svg {
+        width: 18px;
+        height: 18px;
+        flex: none;
+        stroke: var(--link);
+        fill: none;
+        stroke-width: 2.6;
+      }
+      .ml .bar {
+        flex: 1;
+        background: #8db6e8;
+      }
+      .mstars {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 148px;
+        display: flex;
+        justify-content: center;
+        gap: 4px;
+      }
+      .mstars svg {
+        width: 25px;
+        height: 25px;
+        fill: var(--star);
+        opacity: 0;
+      }
+
+      /* ---------- Scene 7: chips ---------- */
+      .chips {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        top: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 40px;
+      }
+      .chip {
+        display: flex;
+        align-items: center;
+        gap: 34px;
+        padding: 34px 40px;
+        border-radius: 40px;
+        background: var(--white);
+        color: var(--navy);
+        box-shadow: 0 24px 60px rgba(2, 14, 28, 0.4);
+        opacity: 0;
+      }
+      .chip-ic {
+        width: 112px;
+        height: 112px;
+        flex: none;
+        border-radius: 50%;
+        background: var(--teal);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .chip-ic svg {
+        width: 58px;
+        height: 58px;
+        stroke: var(--white);
+        fill: none;
+        stroke-width: 2;
+      }
+      .chip-txt {
+        font-size: 50px;
+        font-weight: 800;
+        line-height: 1.2;
+      }
+
+      /* ---------- Scene 8: end card ---------- */
+      .end {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        top: 0;
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        gap: 0;
+      }
+      .end-stars {
+        display: flex;
+        gap: 12px;
+        opacity: 0;
+      }
+      .end-stars svg {
+        width: 56px;
+        height: 56px;
+        fill: var(--star);
+      }
+      .brand {
+        margin-top: 44px;
+        padding: 18px 40px;
+        border-radius: 26px;
+        font-size: 74px;
+        font-weight: 900;
+        line-height: 1.15;
+        color: var(--white);
+        opacity: 0;
+      }
+      .brand.is-placeholder,
+      .contact.is-placeholder {
+        border: 4px dashed var(--star);
+        color: var(--star);
+      }
+      .end-rule {
+        width: 160px;
+        height: 6px;
+        margin: 64px 0 60px;
+        border-radius: 3px;
+        background: var(--teal);
+        transform-origin: 50% 50%;
+      }
+      .end-q {
+        font-size: 78px;
+        font-weight: 800;
+        line-height: 1.2;
+        text-wrap: balance;
+        opacity: 0;
+      }
+      .end-call {
+        margin-top: 24px;
+        font-size: 78px;
+        font-weight: 800;
+        color: var(--teal);
+        opacity: 0;
+      }
+      .contact {
+        margin-top: 70px;
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        padding: 26px 46px;
+        border-radius: 60px;
+        background: rgba(255, 255, 255, 0.08);
+        font-size: 46px;
+        font-weight: 700;
+        opacity: 0;
+      }
+      .contact svg {
+        width: 50px;
+        height: 50px;
+        flex: none;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="55"
+      data-width="1080"
+      data-height="1920"
+    >
+      <!-- Persistent background -->
+      <div id="bg" data-layout-allow-overflow>
+        <div class="glow" id="glow-a"></div>
+        <div class="glow" id="glow-b"></div>
+      </div>
+
+      <!-- Scene 1: profile card, 38 reviews (0 to 6.6) -->
+      <section id="s1" class="scene clip" dir="rtl" lang="he" data-start="0" data-duration="6.6" data-track-index="1"></section>
+
+      <!-- Scene 2: the question (6 to 9.2) -->
+      <section id="s2" class="scene clip" dir="rtl" lang="he" data-start="6" data-duration="3.2" data-track-index="2">
+        <div class="q-ghost" id="q-ghost">?</div>
+        <div class="q-wrap">
+          <div class="q-text" dir="rtl" lang="he">
+            <span class="qw">מה</span> <span class="qw">אם</span> <span class="qw hl">כל</span>
+            <span class="qw hl">מטופל</span> <span class="qw hl">מרוצה</span> <span class="qw">היה</span>
+            <span class="qw">כותב</span> <span class="qw">ביקורת?</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scenes 3 and 4: phone, chat, review window (8.9 to 28.8) -->
+      <section id="s34" class="scene clip" dir="rtl" lang="he" data-start="8.9" data-duration="19.9" data-track-index="1">
+        <div id="phone">
+          <div class="ph-body"></div>
+          <div class="ph-screen" id="ph-screen">
+            <div class="ph-island"></div>
+
+            <!-- Chat screen -->
+            <div class="scr" id="scr-chat" data-layout-allow-overlap>
+              <div class="status">
+                <span>10:24</span>
+                <span class="sys"
+                  ><span class="sig"><i style="height: 8px"></i><i style="height: 12px"></i><i style="height: 16px"></i><i style="height: 21px"></i></span
+                  ><span class="batt"><i></i></span
+                ></span>
+              </div>
+              <div class="chat-head">
+                <i class="ic back" data-icon="arrow-right"></i>
+                <div class="clinic-av" data-logo></div>
+                <div>
+                  <div class="ch-name">מרפאת שיניים נקודת חיוך</div>
+                  <div class="ch-sub">חשבון עסקי</div>
+                </div>
+              </div>
+              <div class="chat-body" id="chat-body">
+                <div class="chat-scroll" id="chat-scroll">
+                  <div class="date-chip">היום</div>
+
+                  <div class="msg-in" id="msg1">
+                    <div class="bubble">
+                      <p>
+                        היי נועה, כאן ד״ר כרמי ממרפאת שיניים נקודת חיוך<img class="emo" src="assets/emoji/wave.svg" alt="" />
+                      </p>
+                      <p>
+                        היית אצלנו בטיפול לפני כמה זמן, ורצינו לשאול איך הייתה החוויה שלכם? נשמח מאוד לשמוע<img class="emo" src="assets/emoji/pray.svg" alt="" />
+                      </p>
+                      <div class="meta">10:24</div>
+                    </div>
+                    <div class="qr-list">
+                      <div class="qr" id="qr1"><i class="ic" data-icon="reply"></i><span>היה מעולה, יצאתי מאוד מרוצה!</span></div>
+                      <div class="qr" id="qr2"><i class="ic" data-icon="reply"></i><span>הייתה חוויה טובה</span></div>
+                      <div class="qr" id="qr3"><i class="ic" data-icon="reply"></i><span>האמת קצת פחות טוב..</span></div>
+                    </div>
+                  </div>
+
+                  <div class="msg-out" id="reply1">
+                    <div class="bubble">
+                      <p>היה מעולה, יצאתי מאוד מרוצה!</p>
+                      <div class="meta">10:25<i class="ic" data-icon="check-check"></i></div>
+                    </div>
+                  </div>
+
+                  <div class="slot">
+                  <div class="typing" id="typing"><i></i><i></i><i></i></div>
+                  <div class="msg-in" id="msg2">
+                    <div class="bubble">
+                      <p>תודה רבה נועה! <img class="emo" src="assets/emoji/pray-2.svg" alt="" /> שמחים לשמוע.</p>
+                      <p>אם יש לך דקה, ביקורת קצרה בגוגל עוזרת לנו מאוד, וגם לאנשים שמחפשים מרפאה:</p>
+                      <p>
+                        <span class="link" id="the-link"><span class="link-hl" id="link-hl"></span><bdi dir="ltr">clinic.link/aB3xK9Q</bdi></span>
+                      </p>
+                      <div class="meta">10:25</div>
+                    </div>
+                  </div>
+                  </div>
+                </div>
+              </div>
+              <div class="chat-input">
+                <div class="ci-field">הודעה</div>
+                <div class="ci-mic"><i class="ic" data-icon="mic"></i></div>
+              </div>
+              <div class="scr-dim" id="chat-dim"></div>
+            </div>
+
+            <!-- Review screen -->
+            <div class="scr" id="scr-review" data-layout-allow-overlap data-layout-allow-overflow>
+              <div class="status">
+                <span>10:25</span>
+                <span class="sys"
+                  ><span class="sig"><i style="height: 8px"></i><i style="height: 12px"></i><i style="height: 16px"></i><i style="height: 21px"></i></span
+                  ><span class="batt"><i></i></span
+                ></span>
+              </div>
+              <div class="rv-top"><i class="ic" data-icon="x"></i></div>
+              <div class="rv-head">
+                <div class="clinic-av" data-logo></div>
+                <div class="rv-name">מרפאת שיניים נקודת חיוך</div>
+                <div class="rv-sub"><i class="ic" data-icon="star"></i><span>ביקורות בגוגל</span></div>
+              </div>
+              <div class="rv-user">
+                <div class="rv-av">נ</div>
+                <div>
+                  <div class="rv-uname">נועה</div>
+                  <div class="rv-upub">פרסום באופן ציבורי</div>
+                </div>
+              </div>
+              <div class="rv-stars" id="rv-stars"></div>
+              <div class="rv-field"><div class="caret" id="caret"></div></div>
+              <div class="rv-post" id="rv-post">פרסום</div>
+              <div class="rv-done" id="rv-done" data-layout-allow-overlap>
+                <div class="done-check" id="done-check"><i class="ic" data-icon="check"></i></div>
+                <div class="done-txt" id="done-txt">תודה! הביקורת פורסמה</div>
+                <div class="done-stars" id="done-stars"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scene 5: many chats at once (27.9 to 38.4) -->
+      <section id="s5" class="scene clip" dir="rtl" lang="he" data-start="27.9" data-duration="10.5" data-track-index="2">
+        <div class="stats" id="stats">
+          <div class="stat" id="stat-sent">
+            <div class="stat-top"><i class="ic" data-icon="send"></i><span>נשלחו</span></div>
+            <div class="stat-num"><bdi dir="ltr" id="n-sent">0</bdi></div>
+          </div>
+          <div class="stat" id="stat-ans">
+            <div class="stat-top"><i class="ic" data-icon="message-circle"></i><span>ענו</span></div>
+            <div class="stat-num"><bdi dir="ltr" id="n-ans">0</bdi></div>
+          </div>
+          <div class="stat" id="stat-click">
+            <div class="stat-top"><i class="ic" data-icon="mouse-pointer-click"></i><span>לחצו</span></div>
+            <div class="stat-num"><bdi dir="ltr" id="n-click">0</bdi></div>
+          </div>
+        </div>
+        <div class="grid" id="grid"></div>
+      </section>
+
+      <!-- Scene 6: profile card again, 38 to 112 (37.8 to 45.4) -->
+      <section id="s6" class="scene clip" dir="rtl" lang="he" data-start="37.8" data-duration="7.6" data-track-index="1"></section>
+
+      <!-- Scene 7: why it is easy (45 to 50.3) -->
+      <section id="s7" class="scene clip" dir="rtl" lang="he" data-start="45" data-duration="5.3" data-track-index="2">
+        <div class="chips">
+          <div class="chip" id="chip1">
+            <div class="chip-ic"><i class="ic" data-icon="phone"></i></div>
+            <div class="chip-txt">מהמספר הקיים של המרפאה</div>
+          </div>
+          <div class="chip" id="chip2">
+            <div class="chip-ic"><i class="ic" data-icon="smartphone"></i></div>
+            <div class="chip-txt">האפליקציה בטלפון ממשיכה לעבוד כרגיל</div>
+          </div>
+          <div class="chip" id="chip3">
+            <div class="chip-ic"><i class="ic" data-icon="settings"></i></div>
+            <div class="chip-txt">אנחנו מפעילים ומנהלים הכול</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scene 8: end card with call to action (49.9 to 55) -->
+      <section id="s8" class="scene clip" dir="rtl" lang="he" data-start="49.9" data-duration="5.1" data-track-index="1">
+        <div class="end">
+          <div class="end-stars" id="end-stars"></div>
+          <div class="brand" id="brand" data-var-text="businessName">[שם העסק של בניה]</div>
+          <div class="end-rule" id="end-rule"></div>
+          <div class="end-q" id="end-q">רוצים לראות איך זה יעבוד במרפאה שלכם?</div>
+          <div class="end-call" id="end-call">שיחה של <bdi dir="ltr">15</bdi> דקות.</div>
+          <div class="contact" id="contact"><i class="ic" data-icon="phone"></i><span id="contact-txt" data-var-text="contact">[טלפון או וואטסאפ ליצירת קשר]</span></div>
+        </div>
+      </section>
+
+      <!-- Captions (each one is its own clip) -->
+      <div class="cap clip" id="cap1" data-start="0.9" data-duration="2.45" data-track-index="5">
+        <div class="cap-inner" dir="rtl" lang="he"><bdi dir="ltr" id="cap1-num">0</bdi> מטופלים ותיקים.</div>
+      </div>
+      <div class="cap clip" id="cap2" data-start="3.4" data-duration="2.75" data-track-index="5">
+        <div class="cap-inner" dir="rtl" lang="he"><span class="t-red" id="cap2-num"><bdi dir="ltr">38</bdi></span> ביקורות בלבד.</div>
+      </div>
+      <div class="cap clip" id="cap3" data-start="9.7" data-duration="6.25" data-track-index="5">
+        <div class="cap-inner" dir="rtl" lang="he">שואלים כל מטופל ותיק. <span class="t-teal">בלחיצה אחת.</span></div>
+      </div>
+      <div class="cap clip" id="cap4" data-start="16.1" data-duration="4.95" data-track-index="5">
+        <div class="cap-inner" dir="rtl" lang="he">מי שמרוצה מקבל <span class="t-teal">קישור אישי.</span></div>
+      </div>
+      <div class="cap clip" id="cap5" data-start="21.2" data-duration="6.75" data-track-index="5">
+        <div class="cap-inner" dir="rtl" lang="he">ובלחיצה אחת מגיעים ישר <span class="t-teal">לחלון הביקורת.</span></div>
+      </div>
+      <div class="cap clip" id="cap6" data-start="28.4" data-duration="9.5" data-track-index="5">
+        <div class="cap-inner" dir="rtl" lang="he">וזה קורה לאלפי מטופלים. <span class="t-teal">אוטומטית.</span></div>
+      </div>
+      <div class="cap clip" id="cap7" data-start="38.4" data-duration="6.7" data-track-index="5">
+        <div class="cap-inner" dir="rtl" lang="he">ביקורות חדשות בפרופיל של המרפאה.</div>
+      </div>
+
+      <!-- Finger and tap ripples (persistent overlay) -->
+      <div id="finger"></div>
+      <div class="ripple" id="rp1"></div>
+      <div class="ripple" id="rp2"></div>
+      <div class="ripple" id="rp3"></div>
+      <div class="ripple" id="rp4"></div>
+
+      <!-- Audio. Track 10: music bed. Track 11: UI sounds. Track 12 is kept free for a future voiceover. -->
+      <audio id="music" src="assets/audio/music.mp3" data-start="0" data-duration="55" data-track-index="10" data-volume="1"></audio>
+      <audio id="sfx-pop-1" src="assets/audio/pop.mp3" data-start="10.15" data-duration="0.72" data-track-index="11" data-volume="0.22"></audio>
+      <audio id="sfx-tap-1" src="assets/audio/click-soft.mp3" data-start="13.6" data-duration="0.37" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-pop-2" src="assets/audio/pop.mp3" data-start="14.0" data-duration="0.72" data-track-index="11" data-volume="0.2"></audio>
+      <audio id="sfx-pop-3" src="assets/audio/pop.mp3" data-start="16.0" data-duration="0.72" data-track-index="11" data-volume="0.22"></audio>
+      <audio id="sfx-tap-2" src="assets/audio/click-soft.mp3" data-start="21.3" data-duration="0.37" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-tap-3" src="assets/audio/click-soft.mp3" data-start="23.55" data-duration="0.37" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-tap-4" src="assets/audio/click-soft.mp3" data-start="25.55" data-duration="0.37" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-pop-4" src="assets/audio/pop.mp3" data-start="26.0" data-duration="0.72" data-track-index="11" data-volume="0.2"></audio>
+      <audio id="sfx-pop-5" src="assets/audio/pop.mp3" data-start="45.45" data-duration="0.72" data-track-index="11" data-volume="0.18"></audio>
+      <audio id="sfx-pop-6" src="assets/audio/pop.mp3" data-start="46.4" data-duration="0.72" data-track-index="11" data-volume="0.18"></audio>
+      <audio id="sfx-pop-7" src="assets/audio/pop.mp3" data-start="47.35" data-duration="0.72" data-track-index="11" data-volume="0.18"></audio>
+    </div>
+
+    <script>
+      (function () {
+        // ------------------------------------------------------------------
+        // Static data
+        // ------------------------------------------------------------------
+        const ICONS = {
+          star: '<path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/>',
+          "arrow-right": '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
+          "check-check": '<path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/>',
+          reply: '<path d="M20 18v-2a4 4 0 0 0-4-4H4"/><path d="m9 17-5-5 5-5"/>',
+          mic: '<path d="M12 19v3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/>',
+          link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+          send: '<path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/>',
+          "message-circle": '<path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/>',
+          "mouse-pointer-click": '<path d="M14 4.1 12 6"/><path d="m5.1 8-2.9-.8"/><path d="m6 12-1.9 2"/><path d="M7.2 2.2 8 5.1"/><path d="M9.037 9.69a.498.498 0 0 1 .653-.653l11 4.5a.5.5 0 0 1-.074.949l-4.349 1.041a1 1 0 0 0-.74.739l-1.04 4.35a.5.5 0 0 1-.95.074z"/>',
+          phone: '<path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/>',
+          smartphone: '<rect width="14" height="20" x="5" y="2" rx="2" ry="2"/><path d="M12 18h.01"/>',
+          settings: '<path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/>',
+          check: '<path d="M20 6 9 17l-5-5"/>',
+          user: '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+          x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+          sparkle: '<path d="M11.017 2.814a1 1 0 0 1 1.966 0l1.051 5.558a2 2 0 0 0 1.594 1.594l5.558 1.051a1 1 0 0 1 0 1.966l-5.558 1.051a2 2 0 0 0-1.594 1.594l-1.051 5.558a1 1 0 0 1-1.966 0l-1.051-5.558a2 2 0 0 0-1.594-1.594l-5.558-1.051a1 1 0 0 1 0-1.966l5.558-1.051a2 2 0 0 0 1.594-1.594z"/>',
+        };
+        const svg = (name, cls) =>
+          '<svg viewBox="0 0 24 24"' + (cls ? ' class="' + cls + '"' : "") + ' stroke-linecap="round" stroke-linejoin="round">' + ICONS[name] + "</svg>";
+
+        // Clinic mark: a smile and a dot ("נקודת חיוך"). Invented, not a real logo.
+        const LOGO =
+          '<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="24" fill="#12B5A6"/><path d="M13.5 25.5 Q24 37 34.5 25.5" stroke="#fff" stroke-width="4.2" fill="none" stroke-linecap="round"/><circle cx="24" cy="15.5" r="3.6" fill="#fff"/></svg>';
+
+        // Hand with a pointing index finger. Fingertip sits at (8, 2) in the 24 unit box.
+        const FINGER =
+          '<svg viewBox="0 0 24 24"><path d="M6 14 V4 a2 2 0 0 1 4 0 V9 a2 2 0 0 1 4 0 v1 a2 2 0 0 1 4 0 v1 a2 2 0 0 1 4 0 v3 a8 8 0 0 1 -8 8 h-2 c-2.8 0 -4.5 -0.86 -5.99 -2.34 l-3.6 -3.6 a2 2 0 0 1 2.83 -2.82 L6 14 Z" fill="#ffffff" stroke="#0B2A4A" stroke-width="1.15" stroke-linejoin="round"/><path d="M10 9.4 V12.2 M14 10.4 V12.6 M18 11.4 V13" stroke="#0B2A4A" stroke-width="0.9" stroke-linecap="round" fill="none" opacity="0.55"/></svg>';
+
+        const root = document.getElementById("root");
+        const $ = (id) => document.getElementById(id);
+        const fmt = (n) => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+        // Seeded PRNG so dot placement is identical on every render.
+        function mulberry32(a) {
+          return function () {
+            a |= 0;
+            a = (a + 0x6d2b79f5) | 0;
+            let t = Math.imul(a ^ (a >>> 15), 1 | a);
+            t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+            return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+          };
+        }
+
+        // ------------------------------------------------------------------
+        // Build repeated DOM (synchronous, deterministic)
+        // ------------------------------------------------------------------
+        document.querySelectorAll("i.ic[data-icon]").forEach((el) => {
+          el.outerHTML = svg(el.getAttribute("data-icon"), el.className.replace("ic", "").trim());
+        });
+        document.querySelectorAll("[data-logo]").forEach((el) => (el.innerHTML = LOGO));
+        $("finger").innerHTML = FINGER;
+
+        const COLS = 50,
+          ROWS = 40,
+          CELL = 18;
+        const rand = mulberry32(20261007);
+        const picked = [];
+        const used = new Set();
+        while (picked.length < 112) {
+          const c = Math.floor(rand() * COLS);
+          const r = Math.floor(rand() * ROWS);
+          const k = r * COLS + c;
+          if (used.has(k)) continue;
+          used.add(k);
+          picked.push([c, r]);
+        }
+
+        function starsRow() {
+          let h = "";
+          for (let i = 0; i < 5; i++) {
+            h +=
+              '<div class="st' + (i === 4 ? " part" : "") + '">' + svg("star", "st-off") + svg("star", "st-on") + "</div>";
+          }
+          return h;
+        }
+        function profileHTML(p, litCount) {
+          let dots = "";
+          for (let i = 0; i < litCount; i++) {
+            const [c, r] = picked[i];
+            dots +=
+              '<div class="ldot" id="' + p + "-d" + i + '" style="left:' + (c * CELL + 1.5) + "px;top:" + (r * CELL + 1.5) + 'px"></div>';
+          }
+          const fills = [74, 14, 5, 3, 4];
+          let bars = "";
+          [5, 4, 3, 2, 1].forEach((n, i) => {
+            bars +=
+              '<div class="bar-row"><span class="bar-lbl">' + n + '</span><div class="bar-track"><div class="bar-fill" style="width:' + fills[i] + '%"></div></div></div>';
+          });
+          return (
+            '<div class="dots-wrap" id="' + p + '-dots"><div class="dots-grid" id="' + p + '-grid"></div><div class="dots-lit">' + dots + "</div></div>" +
+            '<div class="pcard" id="' + p + '-card">' +
+            '<div class="pc-head"><div class="clinic-av">' + LOGO + '</div><div><div class="pc-name">מרפאת שיניים נקודת חיוך</div><div class="pc-tag">' + svg("star") + "<span>ביקורות בגוגל</span></div></div></div>" +
+            '<div class="pc-rule"></div>' +
+            '<div class="pc-body"><div class="pc-score"><div class="pc-num"><bdi dir="ltr">4.6</bdi></div>' +
+            '<div class="pc-stars" id="' + p + '-stars">' + starsRow() + "</div>" +
+            '<div class="pc-count"><span class="num-fixed"><bdi dir="ltr" class="cnt" id="' + p + '-cnt">38</bdi></span> ביקורות</div></div>' +
+            '<div class="pc-bars">' + bars + "</div></div></div>"
+          );
+        }
+        $("s1").innerHTML = profileHTML("p1", 38);
+        $("s6").innerHTML = profileHTML("p6", 112);
+
+        // Sparkles around the stars in scene 6
+        const sparkPos = [
+          [-24, -30, 0.9],
+          [150, -42, 0.7],
+          [300, -26, 1],
+          [330, 46, 0.65],
+        ];
+        sparkPos.forEach(([x, y, s], i) => {
+          const d = document.createElement("div");
+          d.className = "sparkle";
+          d.id = "spk" + i;
+          d.style.left = x + "px";
+          d.style.top = y + "px";
+          d.style.width = d.style.height = Math.round(46 * s) + "px";
+          d.innerHTML = svg("sparkle");
+          $("p6-stars").appendChild(d);
+        });
+
+        // Review window stars
+        let rv = "";
+        for (let i = 0; i < 5; i++) rv += '<div class="rs" id="rs' + i + '">' + svg("star", "rs-off") + svg("star", "rs-on") + "</div>";
+        $("rv-stars").innerHTML = rv;
+        $("done-stars").innerHTML = svg("star") + svg("star") + svg("star") + svg("star") + svg("star");
+        $("end-stars").innerHTML = svg("star") + svg("star") + svg("star") + svg("star") + svg("star");
+
+        // Mini chats for scene 5 (first names only, invented)
+        const NAMES_A = ["נועה", "איתי", "מיכל", "יעל", "רון", "דנה", "עומר", "שירה", "אבי", "תמר", "גיל", "ליאת"];
+        const NAMES_B = ["אורי", "נעמה", "יוסי", "הדס", "עידו", "מאיה", "אלון", "רותם", "בן", "שני", "טל", "אסף"];
+        const BAR_W = [
+          [88, 60],
+          [76, 52],
+          [92, 44],
+          [70, 58],
+        ];
+        function setHTML(i, s) {
+          const bw = BAR_W[(i + s) % 4];
+          let stars = "";
+          for (let k = 0; k < 5; k++) stars += svg("star");
+          return (
+            '<div class="mc-set" id="mc' + i + "-" + s + '">' +
+            '<div class="mi"><span class="bar" style="width:' + bw[0] + '%"></span><span class="bar" style="width:' + bw[1] + '%"></span></div>' +
+            '<div class="mo"><span class="bar" style="width:' + (60 + ((i * 7) % 30)) + '%"></span></div>' +
+            '<div class="ml">' + svg("link") + '<span class="bar"></span></div>' +
+            '<div class="mstars">' + stars + "</div></div>"
+          );
+        }
+        let grid = "";
+        for (let i = 0; i < 12; i++) {
+          grid +=
+            '<div class="mc" id="mc' + i + '"><div class="mc-head"><div class="mc-av">' + svg("user") + '</div><div class="mc-names"><span class="n1">' + NAMES_A[i] + '</span><span class="n2">' + NAMES_B[i] + "</span></div></div>" +
+            '<div class="mc-body">' + setHTML(i, 0) + setHTML(i, 1) + "</div></div>";
+        }
+        $("grid").innerHTML = grid;
+
+        // End card variables (placeholder look until real values are provided)
+        let vars = {};
+        try {
+          if (window.__hyperframes && typeof window.__hyperframes.getVariables === "function") vars = window.__hyperframes.getVariables() || {};
+        } catch (e) {
+          vars = {};
+        }
+        const bizName = vars.businessName || $("brand").textContent.trim();
+        const contact = vars.contact || $("contact-txt").textContent.trim();
+        $("brand").textContent = bizName;
+        $("contact-txt").textContent = contact;
+        if (bizName.charAt(0) === "[") $("brand").classList.add("is-placeholder");
+        if (contact.charAt(0) === "[") $("contact").classList.add("is-placeholder");
+
+        // ------------------------------------------------------------------
+        // Layout helpers (offset based, unaffected by transforms or preview scaling)
+        // ------------------------------------------------------------------
+        function pos(el) {
+          let x = 0,
+            y = 0,
+            e = el;
+          while (e && e !== root) {
+            x += e.offsetLeft;
+            y += e.offsetTop;
+            e = e.offsetParent;
+          }
+          return { x: x, y: y, w: el.offsetWidth, h: el.offsetHeight, cx: x + el.offsetWidth / 2, cy: y + el.offsetHeight / 2 };
+        }
+        // Fingertip offset inside the 132px finger box (8/24, 2/24 of the box)
+        const TIP_X = 132 * (8 / 24),
+          TIP_Y = 132 * (2 / 24);
+
+        function build() {
+          const tl = gsap.timeline({ paused: true });
+
+          // Measure everything before any tween touches transforms
+          const chatBody = $("chat-body"),
+            chatScroll = $("chat-scroll");
+          const overflow = Math.max(0, chatScroll.offsetHeight - chatBody.offsetHeight);
+          const scrollBy = overflow > 0 ? overflow + 10 : 0;
+          const P = {
+            qr1: pos($("qr1")),
+            link: pos($("the-link")),
+            star5: pos($("rs4")),
+            post: pos($("rv-post")),
+            cell0: pos($("mc0")),
+          };
+          P.link.cy -= scrollBy;
+
+          const fingerTo = (p, dx, dy) => ({ x: p.cx - TIP_X + (dx || 0), y: p.cy - TIP_Y + (dy || 0) });
+          function tap(t, rippleId, p) {
+            const r = $(rippleId);
+            r.style.left = p.cx + "px";
+            r.style.top = p.cy + "px";
+            tl.to("#finger", { scale: 0.88, duration: 0.11, ease: "power2.in", transformOrigin: "33% 8%" }, t);
+            tl.to("#finger", { scale: 1, duration: 0.2, ease: "power2.out", transformOrigin: "33% 8%" }, t + 0.11);
+            tl.fromTo(r, { opacity: 0, scale: 0.25 }, { opacity: 0.9, scale: 0.55, duration: 0.08, ease: "none" }, t + 0.05);
+            tl.to(r, { opacity: 0, scale: 1.7, duration: 0.5, ease: "power2.out" }, t + 0.13);
+          }
+          function pop(sel, t, opts) {
+            const o = opts || {};
+            tl.fromTo(
+              sel,
+              { opacity: 0, scale: o.from || 0.86, y: o.y === undefined ? 18 : o.y },
+              { opacity: 1, scale: 1, y: 0, duration: o.d || 0.42, ease: o.ease || "back.out(1.6)" },
+              t,
+            );
+          }
+          function capIn(id, t, tOut) {
+            const el = "#" + id + " .cap-inner";
+            tl.fromTo(el, { opacity: 0, y: 34 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, t);
+            tl.to(el, { opacity: 0, y: -14, duration: 0.3, ease: "power2.in" }, tOut);
+          }
+
+          // ---------------- Background ambient drift ----------------
+          tl.fromTo("#glow-a", { x: 0, y: 0 }, { x: 160, y: 120, duration: 27.5, ease: "sine.inOut" }, 0);
+          tl.to("#glow-a", { x: 40, y: 260, duration: 27.5, ease: "sine.inOut" }, 27.5);
+          tl.fromTo("#glow-b", { x: 0, y: 0 }, { x: -220, y: -160, duration: 27.5, ease: "sine.inOut" }, 0);
+          tl.to("#glow-b", { x: -60, y: -380, duration: 27.5, ease: "sine.inOut" }, 27.5);
+
+          // ---------------- Scene 1 (0 to 6.6) ----------------
+          tl.fromTo("#p1-card", { opacity: 0, y: 90, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 1, ease: "power3.out" }, 0.3);
+          tl.fromTo(
+            "#p1-grid",
+            { opacity: 0, clipPath: "circle(0% at 50% 60%)" },
+            { opacity: 1, clipPath: "circle(75% at 50% 60%)", duration: 1.5, ease: "power2.out" },
+            0.9,
+          );
+          capIn("cap1", 0.9, 3.05);
+          const c1 = { v: 0 };
+          tl.to(c1, { v: 2000, duration: 1.1, ease: "expo.out", onUpdate: () => ($("cap1-num").textContent = fmt(c1.v)) }, 0.95);
+          capIn("cap2", 3.4, 5.85);
+          tl.to("#cap2-num", { scale: 1.28, duration: 0.24, ease: "power2.out" }, 3.95);
+          tl.to("#cap2-num", { scale: 1, duration: 0.4, ease: "power2.inOut" }, 4.19);
+          tl.to("#p1-grid", { opacity: 0.42, duration: 0.6, ease: "power1.out" }, 3.5);
+          for (let i = 0; i < 38; i++) {
+            tl.fromTo("#p1-d" + i, { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(2.4)" }, 3.55 + i * 0.022);
+          }
+          tl.to("#p1-cnt", { color: "#E5484D", scale: 1.22, duration: 0.24, ease: "power2.out" }, 3.95);
+          tl.to("#p1-cnt", { scale: 1, duration: 0.4, ease: "power2.inOut" }, 4.19);
+          tl.to("#p1-card", { y: -12, duration: 4.4, ease: "sine.inOut" }, 1.3);
+          // exit (card slides away)
+          tl.to("#p1-card", { y: -260, opacity: 0, duration: 0.6, ease: "power3.in" }, 5.95);
+          tl.to("#p1-dots", { opacity: 0, y: -80, duration: 0.55, ease: "power2.in" }, 5.9);
+
+          // ---------------- Scene 2 (6 to 9.2) ----------------
+          tl.fromTo("#q-ghost", { opacity: 0, scale: 0.8, rotation: -8 }, { opacity: 1, scale: 1, rotation: 0, duration: 1.4, ease: "power3.out" }, 6.3);
+          tl.to("#q-ghost", { rotation: 6, y: -40, duration: 1.6, ease: "sine.inOut" }, 7.7);
+          tl.fromTo(
+            "#s2 .qw",
+            { opacity: 0, y: 50 },
+            { opacity: 1, y: 0, duration: 0.55, ease: "power3.out", stagger: 0.09 },
+            6.45,
+          );
+          tl.to("#s2 .q-text", { opacity: 0, y: -40, duration: 0.35, ease: "power2.in" }, 8.75);
+          tl.to("#q-ghost", { opacity: 0, duration: 0.35, ease: "power2.in" }, 8.75);
+
+          // ---------------- Scene 3 (9 to 21) ----------------
+          tl.fromTo("#phone", { y: 1500, scale: 0.94, opacity: 1 }, { y: 0, scale: 1, duration: 1, ease: "power3.out" }, 8.95);
+          capIn("cap3", 9.7, 15.65);
+
+          pop("#msg1", 10.15, { from: 0.8, d: 0.45 });
+          ["#qr1", "#qr2", "#qr3"].forEach((s, i) => {
+            tl.fromTo(s, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" }, 10.55 + i * 0.12);
+          });
+
+          // finger to the first quick reply
+          tl.fromTo(
+            "#finger",
+            { x: 1120, y: fingerTo(P.qr1).y + 140, opacity: 0, scale: 1 },
+            { x: fingerTo(P.qr1).x, y: fingerTo(P.qr1).y, opacity: 1, duration: 1.05, ease: "power3.out" },
+            12.45,
+          );
+          tap(13.5, "rp1", P.qr1);
+          tl.to("#qr1", { backgroundColor: "#d8f3ef", duration: 0.12, ease: "none" }, 13.58);
+          tl.to("#qr1", { backgroundColor: "#ffffff", duration: 0.45, ease: "power1.out" }, 14.0);
+          pop("#reply1", 14.0, { from: 0.8, d: 0.4 });
+          tl.to("#finger", { x: "+=330", y: "+=90", opacity: 0, duration: 0.6, ease: "power2.in" }, 14.25);
+
+          // typing indicator
+          tl.fromTo("#typing", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.25, ease: "power2.out" }, 14.65);
+          tl.fromTo(
+            "#typing i",
+            { y: 0 },
+            { y: -9, duration: 0.22, ease: "sine.inOut", stagger: { each: 0.12, repeat: 3, yoyo: true } },
+            14.7,
+          );
+          tl.to("#typing", { opacity: 0, duration: 0.12, ease: "none" }, 15.85);
+          if (scrollBy > 0) tl.to("#chat-scroll", { y: -scrollBy, duration: 0.45, ease: "power2.inOut" }, 15.8);
+          pop("#msg2", 15.98, { from: 0.8, d: 0.45 });
+
+          capIn("cap4", 16.1, 20.75);
+          // draw attention to the personal link
+          tl.to("#link-hl", { opacity: 1, duration: 0.35, ease: "power1.out" }, 17.4);
+          tl.to("#the-link", { scale: 1.06, duration: 0.3, ease: "power2.out" }, 17.4);
+          tl.to("#the-link", { scale: 1, duration: 0.45, ease: "power2.inOut" }, 17.7);
+
+          // ---------------- Scene 4 (21 to 28) ----------------
+          tl.to("#finger", { x: 1120, y: fingerTo(P.link).y + 120, opacity: 0, duration: 0.01 }, 20.1);
+          tl.to("#finger", { x: fingerTo(P.link).x, y: fingerTo(P.link).y, opacity: 1, duration: 0.95, ease: "power3.out" }, 20.2);
+          tap(21.25, "rp2", P.link);
+          capIn("cap5", 21.2, 27.65);
+
+          // slide to the review window
+          tl.to("#finger", { opacity: 0, duration: 0.25, ease: "power1.in" }, 21.7);
+          tl.fromTo("#scr-review", { opacity: 1, x: -704 }, { opacity: 1, x: 0, duration: 0.7, ease: "power3.inOut" }, 21.75);
+          tl.to("#scr-chat", { x: 200, duration: 0.7, ease: "power3.inOut" }, 21.75);
+          tl.to("#chat-dim", { opacity: 0.35, duration: 0.7, ease: "power1.inOut" }, 21.75);
+          // chat is fully covered once the review window lands
+          tl.set("#scr-chat", { opacity: 0 }, 22.5);
+
+          // caret blink while the field stays empty
+          for (let t = 22.6, on = false; t < 26.1; t += 0.5, on = !on) {
+            tl.set("#caret", { opacity: on ? 1 : 0 }, t);
+          }
+
+          // finger to the fifth star, stars fill one after another
+          tl.to("#finger", { x: fingerTo(P.star5).x + 420, y: fingerTo(P.star5).y + 260, duration: 0.01 }, 22.5);
+          tl.to("#finger", { x: fingerTo(P.star5).x, y: fingerTo(P.star5).y, opacity: 1, duration: 0.85, ease: "power3.out" }, 22.55);
+          tap(23.5, "rp3", P.star5);
+          for (let i = 0; i < 5; i++) {
+            const t = 23.62 + i * 0.13;
+            tl.fromTo("#rs" + i + " .rs-on", { opacity: 0, scale: 0.4, transformOrigin: "50% 50%" }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(2.6)" }, t);
+          }
+          tl.to("#rv-post", { backgroundColor: "#12B5A6", color: "#ffffff", duration: 0.3, ease: "power1.out" }, 24.45);
+
+          // finger to the post button
+          tl.to("#finger", { x: fingerTo(P.post).x, y: fingerTo(P.post).y, duration: 0.8, ease: "power3.inOut" }, 24.65);
+          tap(25.5, "rp4", P.post);
+          tl.to("#rv-post", { scale: 0.96, duration: 0.1, ease: "power2.in" }, 25.55);
+          tl.to("#rv-post", { scale: 1, duration: 0.2, ease: "power2.out" }, 25.67);
+          tl.to("#finger", { x: "+=300", y: "-=60", opacity: 0, duration: 0.5, ease: "power2.in" }, 25.85);
+          tl.to("#rv-done", { opacity: 1, duration: 0.3, ease: "power1.out" }, 25.9);
+          pop("#done-check", 26.0, { from: 0.3, y: 0, d: 0.5, ease: "back.out(2.2)" });
+          tl.fromTo("#done-txt", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 26.2);
+          tl.fromTo("#done-stars svg", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)", stagger: 0.07 }, 26.3);
+
+          // ---------------- Scene 5 (28 to 38) ----------------
+          // phone shrinks into the first cell of the grid
+          const pc = { x: 170 + 370, y: 110 + 670 };
+          tl.to("#phone", { x: P.cell0.cx - pc.x, y: P.cell0.cy - pc.y, scale: 0.17, duration: 0.75, ease: "power3.inOut" }, 27.85);
+          tl.to("#phone", { opacity: 0, duration: 0.25, ease: "none" }, 28.3);
+          for (let i = 0; i < 12; i++) {
+            const col = i % 3,
+              row = Math.floor(i / 3);
+            const dist = Math.sqrt(col * col + row * row);
+            tl.fromTo("#mc" + i, { opacity: 0, scale: 0.82 }, { opacity: 1, scale: 1, duration: 0.5, ease: "power3.out" }, 28.3 + dist * 0.09);
+          }
+          ["#stat-sent", "#stat-ans", "#stat-click"].forEach((s, i) => {
+            tl.fromTo(s, { opacity: 0, y: -30 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 28.35 + i * 0.1);
+          });
+          capIn("cap6", 28.4, 37.6);
+
+          const cnt = [
+            ["n-sent", 1240, 28.75, 7.9],
+            ["n-ans", 436, 29.35, 7.45],
+            ["n-click", 301, 29.95, 7.05],
+          ];
+          cnt.forEach(([id, to, t, d]) => {
+            const o = { v: 0 };
+            tl.to(o, { v: to, duration: d, ease: "power1.inOut", onUpdate: () => ($(id).textContent = fmt(o.v)) }, t);
+          });
+
+          function runChat(i, s, t, d) {
+            const base = "#mc" + i + "-" + s;
+            pop(base + " .mi", t, { from: 0.7, y: 8, d: 0.3, ease: "back.out(1.8)" });
+            pop(base + " .mo", t + d, { from: 0.7, y: 8, d: 0.3, ease: "back.out(1.8)" });
+            pop(base + " .ml", t + 2 * d, { from: 0.7, y: 8, d: 0.3, ease: "back.out(1.8)" });
+            tl.fromTo(
+              base + " .mstars svg",
+              { opacity: 0, scale: 0.3, transformOrigin: "50% 50%" },
+              { opacity: 1, scale: 1, duration: 0.28, ease: "back.out(2.4)", stagger: 0.045 },
+              t + 3 * d,
+            );
+          }
+          // round 1: accelerating cadence
+          const starts = [28.75, 29.5, 30.15, 30.72, 31.2, 31.62, 32.0, 32.33, 32.62, 32.88, 33.12, 33.34];
+          starts.forEach((t, i) => runChat(i, 0, t, 0.42 - i * 0.02));
+          // round 2: every chat runs again, quickly
+          for (let i = 0; i < 12; i++) {
+            const r = 34.6 + i * 0.075;
+            tl.to("#mc" + i + "-0", { opacity: 0, duration: 0.22, ease: "power1.in" }, r);
+            tl.to("#mc" + i + " .n1", { opacity: 0, duration: 0.22, ease: "power1.in" }, r);
+            tl.fromTo("#mc" + i + " .n2", { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "power1.out" }, r + 0.18);
+            runChat(i, 1, r + 0.24, 0.17);
+          }
+          tl.to("#grid", { scale: 0.97, duration: 3, ease: "sine.inOut", transformOrigin: "50% 40%" }, 34.6);
+          // exit
+          tl.to("#grid", { opacity: 0, y: 40, duration: 0.45, ease: "power2.in" }, 37.6);
+          tl.to("#stats", { opacity: 0, y: -30, duration: 0.45, ease: "power2.in" }, 37.6);
+
+          // ---------------- Scene 6 (38 to 45) ----------------
+          tl.fromTo("#p6-dots", { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power1.out" }, 37.9);
+          tl.fromTo("#p6-grid", { opacity: 0.42 }, { opacity: 0.42, duration: 0.01 }, 37.8);
+          for (let i = 0; i < 38; i++) tl.fromTo("#p6-d" + i, { opacity: 1 }, { opacity: 1, duration: 0.01 }, 37.8);
+          tl.fromTo("#p6-card", { opacity: 0, y: 90, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: "power3.out" }, 38.0);
+          capIn("cap7", 38.4, 44.75);
+
+          const COUNT_T = 39.0,
+            COUNT_D = 3.6;
+          const c6 = { v: 38 };
+          tl.to(c6, { v: 112, duration: COUNT_D, ease: "sine.inOut", onUpdate: () => ($("p6-cnt").textContent = fmt(c6.v)) }, COUNT_T);
+          tl.to("#p6-cnt", { color: "#0B7F75", duration: 0.4, ease: "power1.out" }, COUNT_T);
+          // each new lit dot appears exactly when the counter passes its number (inverse of sine.inOut)
+          for (let k = 1; k <= 74; k++) {
+            const x = Math.acos(1 - 2 * ((k - 0.5) / 74)) / Math.PI;
+            tl.fromTo("#p6-d" + (37 + k), { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2.4)" }, COUNT_T + COUNT_D * x);
+          }
+          tl.to("#p6-cnt", { scale: 1.25, duration: 0.25, ease: "power2.out" }, COUNT_T + COUNT_D);
+          tl.to("#p6-cnt", { scale: 1, duration: 0.45, ease: "power2.inOut" }, COUNT_T + COUNT_D + 0.25);
+          [0, 1, 2, 3].forEach((i) => {
+            const t = 42.75 + i * 0.22;
+            tl.fromTo("#spk" + i, { opacity: 0, scale: 0, rotation: -40 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.4, ease: "back.out(2)" }, t);
+            tl.to("#spk" + i, { opacity: 0, scale: 0.2, rotation: 30, duration: 0.5, ease: "power2.in" }, t + 0.75);
+          });
+          tl.to("#p6-card", { y: -10, duration: 4, ease: "sine.inOut" }, 38.8);
+          tl.to("#p6-card", { opacity: 0, y: -60, duration: 0.45, ease: "power2.in" }, 44.85);
+          tl.to("#p6-dots", { opacity: 0, duration: 0.45, ease: "power2.in" }, 44.85);
+
+          // ---------------- Scene 7 (45 to 50) ----------------
+          ["#chip1", "#chip2", "#chip3"].forEach((s, i) => {
+            const t = 45.35 + i * 0.95;
+            tl.fromTo(s, { opacity: 0, x: 140 }, { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" }, t);
+            tl.fromTo(s + " .chip-ic", { scale: 0.4, rotation: -25 }, { scale: 1, rotation: 0, duration: 0.55, ease: "back.out(2)" }, t + 0.12);
+          });
+          tl.to(".chips", { y: -14, duration: 4.2, ease: "sine.inOut" }, 45.4);
+          tl.to(".chip", { opacity: 0, y: -30, duration: 0.4, ease: "power2.in", stagger: 0.06 }, 49.6);
+
+          // ---------------- Scene 8 (50 to 55) ----------------
+          tl.fromTo("#end-stars svg", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)", stagger: 0.06 }, 50.15);
+          tl.fromTo("#end-stars", { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "none" }, 50.1);
+          tl.fromTo("#brand", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.65, ease: "power3.out" }, 50.3);
+          tl.fromTo("#end-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: "power3.inOut" }, 50.65);
+          tl.fromTo("#end-q", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 50.85);
+          tl.fromTo("#end-call", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" }, 51.45);
+          tl.fromTo("#contact", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.55, ease: "back.out(1.7)" }, 52.0);
+          tl.to(".end", { scale: 1.025, duration: 4.4, ease: "sine.inOut", transformOrigin: "50% 50%" }, 50.6);
+
+          window.__timelines["main"] = tl;
+          if (typeof window.__hfForceTimelineRebind === "function") window.__hfForceTimelineRebind();
+        }
+
+        Promise.all([
+          document.fonts.load('800 70px "Heebo"', "אבגד"),
+          document.fonts.load('800 70px "Heebo"', "0123,."),
+        ])
+          .then(() => document.fonts.ready)
+          .then(build, build);
+      })();
+    </script>
+  </body>
+</html>
