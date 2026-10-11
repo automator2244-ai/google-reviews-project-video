@@ -1,0 +1,26 @@
+name = "ezpath-loom-tracker"
+main = "src/index.ts"
+compatibility_date = "2026-09-01"
+
+# go.ezpath-ai.com as a Custom Domain: Cloudflare creates the DNS record and SSL on deploy.
+# The main site (ezpath-ai.com) and r.ezpath-ai.com are not affected.
+routes = [
+  { pattern = "go.ezpath-ai.com", custom_domain = true }
+]
+
+# Keep the default *.workers.dev address off; only go.ezpath-ai.com serves this worker.
+workers_dev = false
+
+[[d1_databases]]
+binding = "DB"
+database_name = "ezpath-loom-tracker"
+database_id = "ac6d97bd-2f85-4220-9f2f-61f7270c93b6"
+migrations_dir = "migrations"
+
+[observability]
+enabled = true
+
+# Secrets (set with `npx wrangler secret put <NAME>`, never in this file):
+#   LOOM_URL        default redirect target
+#   ADMIN_PASSWORD  password for /admin
+#   IP_SALT         random string for hashing IPs
