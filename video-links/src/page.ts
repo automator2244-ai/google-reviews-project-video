@@ -9,7 +9,7 @@ main{max-width:1000px;margin:0 auto;padding:16px}
 header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
 h1{font-size:20px;margin:0}h2{font-size:17px;margin:0 0 12px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
 .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
 .stat b{display:block;font-size:26px;font-variant-numeric:tabular-nums}.stat span{color:var(--muted);font-size:13px}
 button,.btn{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:8px;padding:7px 12px;cursor:pointer;text-decoration:none;display:inline-block;white-space:nowrap}
@@ -27,9 +27,10 @@ th{color:var(--muted);font-weight:600;white-space:nowrap}th[data-key]{cursor:poi
 td.num{font-variant-numeric:tabular-nums;font-weight:700}
 .mono{font-family:ui-monospace,Menlo,Consolas,monospace;direction:ltr;unicode-bidi:embed;font-size:13px}
 tr.idle td{color:var(--idle)}tr.idle td.num{font-weight:400}
-.tag{display:inline-block;white-space:nowrap;background:var(--tag);color:var(--muted);border-radius:999px;padding:1px 8px;font-size:12px;margin-inline-start:6px}
+.tag{display:inline-block;white-space:nowrap;margin-top:2px;background:var(--tag);color:var(--muted);border-radius:999px;padding:1px 8px;font-size:12px;margin-inline-start:6px}
+.tag.ok{color:var(--ok)}.acts{display:flex;gap:6px;margin-top:6px}.acts button,.acts .btn{padding:3px 10px;font-size:13px}summary{cursor:pointer;font-weight:600}
 .err{color:#dc2626}.empty{color:var(--muted);text-align:center;padding:20px}
-@media (max-width:600px){.stat b{font-size:22px}th,td{padding:7px 4px}.hide-sm{display:none}}
+@media (max-width:600px){th{white-space:normal}.stats{grid-template-columns:repeat(2,1fr)}.stat b{font-size:22px}th,td{padding:7px 4px}.hide-sm{display:none}}
 `;
 
 function shell(title: string, body: string): string {
@@ -51,46 +52,37 @@ ${error ? `<p class="err">${escapeHtml(error)}</p>` : ""}
   );
 }
 
-const DEFAULT_TEMPLATE = "היי {שם}, הנה הסרטון הקצר שהבטחתי (פחות מדקה): {קישור}";
+const DEFAULT_TEMPLATE = "היי {שם}, הכנתי לך סרטון קצר במיוחד בשבילך: {קישור}";
 
 export function dashboardPage(origin: string): string {
   return shell(
     "מעקב צפיות",
     `<main>
-<header><h1>מעקב צפיות בסרטון</h1>
+<header><h1>מעקב צפיות בסרטונים</h1>
 <form method="post" action="/admin/logout"><button type="submit">יציאה</button></form></header>
 
 <div class="stats">
 <div class="stat"><b id="s-total">0</b><span>נמענים</span></div>
-<div class="stat"><b id="s-clicked">0</b><span>לחצו</span></div>
-<div class="stat"><b id="s-rate">0%</b><span>אחוז לחיצה</span></div>
+<div class="stat"><b id="s-clicked">0</b><span>נכנסו לקישור</span></div>
+<div class="stat"><b id="s-played">0</b><span>ניגנו את הסרטון</span></div>
+<div class="stat"><b id="s-rate">0%</b><span>אחוז כניסה</span></div>
 </div>
 
-<section class="card">
-<h2>יצירת קישורים</h2>
-<label for="bulk">רשימת נמענים</label>
-<textarea id="bulk" placeholder="דני כהן, 050-1234567&#10;מרפאת שיניים לוי, 052-7654321"></textarea>
-<p class="hint">שורה לכל נמען: שם, טלפון (מופרדים בפסיק או בטאב). הטלפון אופציונלי.</p>
-<label for="tpl">נוסח הודעה לוואטסאפ</label>
-<textarea id="tpl" style="min-height:70px"></textarea>
-<p class="hint">{שם} ו-{קישור} יוחלפו אוטומטית.</p>
-<div class="row"><button class="primary" id="create">צור קישורים</button><span id="create-msg" class="hint"></span></div>
-<div id="created" hidden>
-<div class="row"><button id="copy-all">העתק הכל</button><button id="created-csv">ייצוא CSV</button></div>
-<div class="scroll"><table><thead><tr><th>שם</th><th>טלפון</th><th class="hide-sm">קישור</th><th></th><th></th></tr></thead>
-<tbody id="created-body"></tbody></table></div>
-</div>
-</section>
+<section class="card"><details>
+<summary>נוסח הודעה לוואטסאפ</summary>
+<textarea id="tpl" style="min-height:70px;margin-top:10px"></textarea>
+<p class="hint">{שם} ו-{קישור} יוחלפו אוטומטית כשלוחצים "וואטסאפ" בטבלה.</p>
+</details></section>
 
 <section class="card">
-<h2>מי לחץ</h2>
+<h2>מי צפה</h2>
 <div class="row" style="margin-top:0">
 <input id="search" type="search" placeholder="חיפוש לפי שם" style="flex:1;min-width:160px">
 <button id="refresh">רענון</button><a class="btn" href="/admin/export.csv">ייצוא CSV</a>
 </div>
 <div class="scroll"><table><thead><tr>
-<th data-key="name">שם</th><th data-key="id">קישור</th><th data-key="clicks">קליקים</th>
-<th data-key="first_click">קליק ראשון</th><th data-key="last_click">קליק אחרון ▼</th><th data-key="country">מדינה</th>
+<th data-key="name">שם</th><th data-key="clicks">כניסות</th><th data-key="watched">צפייה</th>
+<th data-key="last_click">כניסה אחרונה ▼</th><th data-key="first_click" class="hide-sm">כניסה ראשונה</th><th data-key="country" class="hide-sm">מדינה</th>
 </tr></thead><tbody id="stats-body"></tbody></table></div>
 </section>
 </main>
@@ -106,7 +98,7 @@ ${CLIENT_JS}
 const CLIENT_JS = String.raw`
 function $(s){return document.querySelector(s)}
 function el(tag,attrs){var e=document.createElement(tag);attrs=attrs||{};
-  for(var k in attrs){if(k==='class')e.className=attrs[k];else if(k.slice(0,2)==='on')e.addEventListener(k.slice(2),attrs[k]);else e.setAttribute(k,attrs[k])}
+  for(var k in attrs){if(k==='class')e.className=attrs[k];else e.setAttribute(k,attrs[k])}
   for(var i=2;i<arguments.length;i++){if(arguments[i]!=null)e.append(arguments[i])}return e}
 var fmt=new Intl.DateTimeFormat('he-IL',{timeZone:'Asia/Jerusalem',dateStyle:'short',timeStyle:'short'});
 function tf(iso){return iso?fmt.format(new Date(iso)):''}
@@ -116,12 +108,13 @@ function copy(text,btn){
   if(navigator.clipboard){navigator.clipboard.writeText(text).then(done,fallback)}else{fallback()}
   function fallback(){var t=el('textarea');t.value=text;document.body.append(t);t.select();document.execCommand('copy');t.remove();done()}
 }
-function csvCell(v){var s=v==null?'':String(v);if(/^[=+\-@\t\r]/.test(s))s="'"+s;return /[",\r\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s}
-function download(name,rows){
-  var csv='﻿'+rows.map(function(r){return r.map(csvCell).join(',')}).join('\r\n');
-  var a=el('a',{href:URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})),download:name});
-  document.body.append(a);a.click();a.remove();
-}
+function watchedLabel(w){if(w==null)return '';if(w===0)return 'התחיל';return w===100?'עד הסוף ✓':w+'%'}
+
+/* WhatsApp message template, kept in this browser only */
+var tpl=$('#tpl');
+try{tpl.value=localStorage.getItem('wa_template')||DEFAULT_TEMPLATE}catch(e){tpl.value=DEFAULT_TEMPLATE}
+tpl.oninput=function(){try{localStorage.setItem('wa_template',tpl.value)}catch(e){}};
+function waLink(r){return 'https://wa.me/'+r.phone+'?text='+encodeURIComponent(tpl.value.split('{שם}').join(r.name).split('{קישור}').join(linkFor(r.id)))}
 
 /* stats table */
 var rows=[],sortKey='last_click',sortDir=-1;
@@ -131,22 +124,26 @@ function cmp(a,b){var x=a[sortKey],y=b[sortKey];
 function render(){
   var total=rows.length,clicked=rows.filter(function(r){return r.clicks>0}).length;
   $('#s-total').textContent=total;$('#s-clicked').textContent=clicked;
+  $('#s-played').textContent=rows.filter(function(r){return r.watched!=null}).length;
   $('#s-rate').textContent=total?Math.round(clicked*100/total)+'%':'0%';
   var q=$('#search').value.trim().toLowerCase();
   var list=rows.filter(function(r){return !q||r.name.toLowerCase().indexOf(q)>=0}).sort(cmp);
   var body=$('#stats-body');
-  if(!list.length){body.replaceChildren(el('tr',{},el('td',{colspan:'6',class:'empty'},rows.length?'אין תוצאות':'עוד אין נמענים. צור קישורים למעלה.')));return}
+  if(!list.length){body.replaceChildren(el('tr',{},el('td',{colspan:'7',class:'empty'},rows.length?'אין תוצאות':'עוד אין נמענים. נמען נוצר כשמעלים לו סרטון.')));return}
   body.replaceChildren.apply(body,list.map(function(r){
-    var btn=el('button',{title:'העתק קישור'},'העתק');btn.onclick=function(){copy(linkFor(r.id),btn)};
+    var btn=el('button',{title:linkFor(r.id)},'העתק');btn.onclick=function(){copy(linkFor(r.id),btn)};
+    var wa=r.phone?el('a',{class:'btn wa',href:waLink(r),target:'_blank',rel:'noopener'},'וואטסאפ'):null;
+    if(wa)wa.onclick=function(){wa.href=waLink(r)};
+    var tag=!r.video_at?el('span',{class:'tag'},'אין סרטון'):r.clicks?null:el('span',{class:'tag'},'עוד לא נכנס');
     return el('tr',{class:r.clicks?'':'idle'},
-      el('td',{},r.name,r.clicks?null:el('span',{class:'tag'},'עוד לא לחץ')),
-      el('td',{},el('span',{class:'mono hide-sm'},r.id+' '),btn),
+      el('td',{},el('div',{},r.name,tag),el('div',{class:'acts'},btn,wa)),
       el('td',{class:'num'},String(r.clicks)),
-      el('td',{},tf(r.first_click)),el('td',{},tf(r.last_click)),el('td',{},r.country||''));
+      el('td',{},r.watched==null?'':el('span',{class:'tag ok'},watchedLabel(r.watched))),
+      el('td',{},tf(r.last_click)),el('td',{class:'hide-sm'},tf(r.first_click)),el('td',{class:'hide-sm'},r.country||''));
   }));
 }
 document.querySelectorAll('th[data-key]').forEach(function(th){th.onclick=function(){
-  var k=th.dataset.key;if(sortKey===k){sortDir=-sortDir}else{sortKey=k;sortDir=(k==='name'||k==='id'||k==='country')?1:-1}
+  var k=th.dataset.key;if(sortKey===k){sortDir=-sortDir}else{sortKey=k;sortDir=(k==='name'||k==='country')?1:-1}
   document.querySelectorAll('th[data-key]').forEach(function(h){h.textContent=h.textContent.replace(/ [▲▼]$/,'')});
   th.textContent+=sortDir>0?' ▲':' ▼';render()}});
 function load(){fetch('/admin/api/stats').then(function(r){if(r.status===401){location.reload();throw 0}return r.json()})
@@ -154,33 +151,47 @@ function load(){fetch('/admin/api/stats').then(function(r){if(r.status===401){lo
 $('#search').oninput=render;$('#refresh').onclick=load;
 document.addEventListener('visibilitychange',function(){if(!document.hidden)load()});
 load();
-
-/* bulk create */
-var tpl=$('#tpl'),created=[];
-try{tpl.value=localStorage.getItem('wa_template')||DEFAULT_TEMPLATE}catch(e){tpl.value=DEFAULT_TEMPLATE}
-tpl.oninput=function(){try{localStorage.setItem('wa_template',tpl.value)}catch(e){}renderCreated()};
-function message(r){return tpl.value.split('{שם}').join(r.name).split('{קישור}').join(r.link)}
-function waLink(r){return r.phone?'https://wa.me/'+r.phone+'?text='+encodeURIComponent(message(r)):''}
-function renderCreated(){
-  $('#created').hidden=!created.length;
-  var body=$('#created-body');
-  body.replaceChildren.apply(body,created.map(function(r){
-    var btn=el('button',{},'העתק');btn.onclick=function(){copy(r.link,btn)};
-    var wa=r.phone?el('a',{class:'btn wa',href:waLink(r),target:'_blank',rel:'noopener'},'וואטסאפ'):el('span',{class:'btn wa off'},'אין טלפון');
-    return el('tr',{},el('td',{},r.name),el('td',{class:'mono'},r.phone||''),el('td',{class:'mono hide-sm'},r.link),el('td',{},btn),el('td',{},wa));
-  }));
-}
-$('#create').onclick=function(){
-  var text=$('#bulk').value,btn=$('#create'),msg=$('#create-msg');
-  if(!text.trim())return;btn.disabled=true;msg.textContent='';
-  fetch('/admin/api/recipients',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({text:text})})
-    .then(function(r){if(!r.ok)throw r;return r.json()})
-    .then(function(d){created=d.rows;renderCreated();$('#bulk').value='';msg.textContent='נוצרו '+created.length+' קישורים';load()})
-    .catch(function(){msg.textContent='שגיאה ביצירה. נסה שוב.'})
-    .finally(function(){btn.disabled=false});
-};
-$('#copy-all').onclick=function(){copy(created.map(function(r){return r.name+'\t'+r.link}).join('\n'),$('#copy-all'))};
-$('#created-csv').onclick=function(){
-  download('links.csv',[['שם','טלפון','קישור','קישור וואטסאפ']].concat(created.map(function(r){return [r.name,r.phone,r.link,waLink(r)]})));
-};
 `;
+
+const VIDEO_STYLE = `
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#0b0c0f;color:#e8eaed;font:15px/1.5 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+main{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px}
+h1{font-size:17px;font-weight:600;margin:0;text-align:center}
+video{display:block;max-width:100%;max-height:calc(100svh - 80px);aspect-ratio:9/16;background:#000;border-radius:14px}
+`;
+
+export function videoPage(id: string, name: string, origin: string): string {
+  const title = escapeHtml(`סרטון אישי עבור ${name}`);
+  const thumb = `${origin}/m/${id}.jpg`;
+  return `<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>${title}</title>
+<meta property="og:type" content="video.other"><meta property="og:title" content="${title}">
+<meta property="og:description" content="סרטון קצר שהוכן במיוחד בשבילך">
+<meta property="og:url" content="${origin}/v/${id}">
+<meta property="og:image" content="${thumb}"><meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="540"><meta property="og:image:height" content="960">
+<meta name="twitter:card" content="summary_large_image">
+<style>${VIDEO_STYLE}</style></head><body><main>
+<h1>${title}</h1>
+<video id="v" src="/m/${id}.mp4" poster="/m/${id}.jpg" controls playsinline preload="metadata"></video>
+</main>
+<script>
+(function(){var v=document.getElementById('v'),sent={},url='/e/${id}';
+function send(p){if(sent[p])return;sent[p]=1;
+  if(!(navigator.sendBeacon&&navigator.sendBeacon(url,String(p))))fetch(url,{method:'POST',body:String(p),keepalive:true}).catch(function(){})}
+v.addEventListener('play',function(){send(0)});
+v.addEventListener('timeupdate',function(){if(!v.duration)return;var p=v.currentTime/v.duration*100;
+  if(p>=25)send(25);if(p>=50)send(50);if(p>=75)send(75)});
+v.addEventListener('ended',function(){send(100)});
+})();
+</script></body></html>`;
+}
+
+export function unavailablePage(): string {
+  return `<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>הסרטון לא זמין</title><style>${VIDEO_STYLE}</style></head>
+<body><main><h1>הסרטון לא זמין</h1></main></body></html>`;
+}

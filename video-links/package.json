@@ -1,10 +1,11 @@
 {
-  "name": "ezpath-loom-tracker",
+  "name": "ezpath-video-links",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "wrangler deploy",
+    "deploy": "scripts/deploy.sh",
+    "publish": "scripts/publish.sh",
     "typecheck": "tsc --noEmit",
     "db:migrate:local": "wrangler d1 migrations apply ezpath-loom-tracker --local",
     "db:migrate:remote": "wrangler d1 migrations apply ezpath-loom-tracker --remote"

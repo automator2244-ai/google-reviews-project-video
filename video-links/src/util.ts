@@ -1,6 +1,6 @@
 export interface Env {
   DB: D1Database;
-  LOOM_URL: string;
+  VIDEOS: R2Bucket;
   ADMIN_PASSWORD: string;
   IP_SALT: string;
 }
@@ -28,14 +28,6 @@ export async function safeEqual(a: string, b: string): Promise<boolean> {
   return diff === 0 && a.length === b.length;
 }
 
-// 32 unambiguous characters (no 0/o/1/l), so `byte & 31` is unbiased.
-const ID_ALPHABET = "abcdefghijkmnpqrstuvwxyz23456789";
-
-export function randomId(len = 8): string {
-  const bytes = crypto.getRandomValues(new Uint8Array(len));
-  return [...bytes].map((b) => ID_ALPHABET[b & 31]).join("");
-}
-
 export async function ipHash(req: Request, env: Env): Promise<string | null> {
   const ip = req.headers.get("cf-connecting-ip");
   if (!ip || !env.IP_SALT) return null;
@@ -48,13 +40,6 @@ export function notFound(): Response {
   return new Response("Not found", { status: 404, headers: { ...NO_INDEX, "Content-Type": "text/plain" } });
 }
 
-export function redirect(location: string): Response {
-  return new Response(null, {
-    status: 302,
-    headers: { ...NO_INDEX, Location: location, "Referrer-Policy": "no-referrer" },
-  });
-}
-
 export function json(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), {
     status,
@@ -62,9 +47,9 @@ export function json(data: unknown, status = 200): Response {
   });
 }
 
-const ADMIN_CSP =
+const CSP =
   "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; " +
-  "img-src 'self' data:; form-action 'self'; frame-ancestors 'none'; base-uri 'none'";
+  "img-src 'self' data:; media-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'";
 
 export function html(body: string, status = 200, extra: Record<string, string> = {}): Response {
   return new Response(body, {
@@ -72,7 +57,7 @@ export function html(body: string, status = 200, extra: Record<string, string> =
     headers: {
       ...NO_INDEX,
       "Content-Type": "text/html; charset=utf-8",
-      "Content-Security-Policy": ADMIN_CSP,
+      "Content-Security-Policy": CSP,
       "X-Content-Type-Options": "nosniff",
       "Referrer-Policy": "no-referrer",
       ...extra,

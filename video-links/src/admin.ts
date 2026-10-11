@@ -1,6 +1,6 @@
 import { isAuthed, login, logoutCookie, sameOrigin } from "./auth";
 import { dashboardPage, loginPage } from "./page";
-import { type Env, html, json, notFound, randomId } from "./util";
+import { type Env, html, json, notFound } from "./util";
 
 interface StatRow {
   id: string;
@@ -8,13 +8,13 @@ interface StatRow {
   phone: string | null;
   note: string | null;
   created_at: string;
+  video_at: string | null;
   clicks: number;
   first_click: string | null;
   last_click: string | null;
   country: string | null;
+  watched: number | null; // null = never pressed play, else highest progress (0/25/50/75/100)
 }
-
-const MAX_LINES = 500;
 
 export async function handleAdmin(req: Request, env: Env, url: URL): Promise<Response> {
   const path = url.pathname.replace(/\/+$/, "") || "/admin";
@@ -41,8 +41,6 @@ export async function handleAdmin(req: Request, env: Env, url: URL): Promise<Res
       return new Response(null, { status: 303, headers: { Location: "/admin", "Set-Cookie": logoutCookie } });
     case "GET /admin/api/stats":
       return json({ rows: await stats(env) });
-    case "POST /admin/api/recipients":
-      return createRecipients(req, env, url.origin);
     case "GET /admin/export.csv":
       return exportCsv(env, url.origin);
   }
@@ -51,59 +49,17 @@ export async function handleAdmin(req: Request, env: Env, url: URL): Promise<Res
 
 async function stats(env: Env): Promise<StatRow[]> {
   const { results } = await env.DB.prepare(
-    `SELECT r.id, r.name, r.phone, r.note, r.created_at,
+    `SELECT r.id, r.name, r.phone, r.note, r.created_at, r.video_at,
             COUNT(c.id) AS clicks, MIN(c.clicked_at) AS first_click, MAX(c.clicked_at) AS last_click,
             (SELECT c2.country FROM clicks c2 WHERE c2.recipient_id = r.id AND c2.is_bot = 0
-              ORDER BY c2.clicked_at DESC LIMIT 1) AS country
+              ORDER BY c2.clicked_at DESC LIMIT 1) AS country,
+            (SELECT MAX(w.progress) FROM watch_events w WHERE w.recipient_id = r.id) AS watched
      FROM recipients r
      LEFT JOIN clicks c ON c.recipient_id = r.id AND c.is_bot = 0
      GROUP BY r.id
      ORDER BY last_click IS NULL, last_click DESC, r.created_at DESC`,
   ).all<StatRow>();
   return results;
-}
-
-// "05x..." -> "9725x...", "+972 5x..." -> "9725x...", "00972..." -> "972...".
-export function normalizePhone(raw: string): string | null {
-  let d = raw.replace(/\D/g, "");
-  if (d.startsWith("00")) d = d.slice(2);
-  else if (d.startsWith("0")) d = "972" + d.slice(1);
-  return d.length >= 9 && d.length <= 15 ? d : null;
-}
-
-const looksLikePhone = (s: string) => /^[+\d][\d\s()-]{6,}$/.test(s.trim());
-
-export function parseLines(text: string): { name: string; phone: string | null; note: string | null }[] {
-  return text
-    .split(/\r?\n/)
-    .map((line) => line.trim())
-    .filter(Boolean)
-    .slice(0, MAX_LINES)
-    .map((line) => {
-      let parts = line.split(line.includes("\t") ? "\t" : ",").map((p) => p.trim());
-      // Accept "phone, name" too.
-      if (parts.length >= 2 && looksLikePhone(parts[0]) && !looksLikePhone(parts[1])) parts = [parts[1], parts[0], ...parts.slice(2)];
-      const [name, phone = "", ...rest] = parts;
-      return {
-        name: name.slice(0, 120),
-        phone: phone ? normalizePhone(phone) : null,
-        note: rest.join(", ").slice(0, 500) || null,
-      };
-    })
-    .filter((r) => r.name);
-}
-
-async function createRecipients(req: Request, env: Env, origin: string): Promise<Response> {
-  const body = await req.json<{ text?: string }>().catch(() => ({}) as { text?: string });
-  const rows = parseLines(String(body.text ?? ""));
-  if (rows.length === 0) return json({ error: "empty" }, 400);
-
-  const now = new Date().toISOString();
-  const created = rows.map((r) => ({ ...r, id: randomId() }));
-  const insert = env.DB.prepare("INSERT INTO recipients (id, name, phone, note, created_at) VALUES (?, ?, ?, ?, ?)");
-  await env.DB.batch(created.map((r) => insert.bind(r.id, r.name, r.phone, r.note, now)));
-
-  return json({ rows: created.map((r) => ({ ...r, link: `${origin}/v/${r.id}` })) });
 }
 
 const ilTime = new Intl.DateTimeFormat("he-IL", {
@@ -118,13 +74,20 @@ function csvCell(v: unknown): string {
   return /[",\r\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 
+function watchedLabel(w: number | null): string {
+  if (w === null) return "לא ניגן";
+  if (w === 0) return "התחיל";
+  return w === 100 ? "עד הסוף" : `${w}%`;
+}
+
 async function exportCsv(env: Env, origin: string): Promise<Response> {
   const rows = await stats(env);
   const fmt = (iso: string | null) => (iso ? ilTime.format(new Date(iso)) : "");
   const lines = [
-    ["שם", "מזהה", "טלפון", "הערה", "קישור", "קליקים", "קליק ראשון", "קליק אחרון", "מדינה"],
+    ["שם", "מזהה", "טלפון", "הערה", "קישור", "כניסות", "צפייה", "כניסה ראשונה", "כניסה אחרונה", "מדינה"],
     ...rows.map((r) => [
-      r.name, r.id, r.phone, r.note, `${origin}/v/${r.id}`, r.clicks, fmt(r.first_click), fmt(r.last_click), r.country,
+      r.name, r.id, r.phone, r.note, `${origin}/v/${r.id}`, r.clicks, watchedLabel(r.watched),
+      fmt(r.first_click), fmt(r.last_click), r.country,
     ]),
   ];
   const csv = "﻿" + lines.map((l) => l.map(csvCell).join(",")).join("\r\n");
