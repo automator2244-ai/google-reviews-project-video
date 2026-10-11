@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "wrangler dev",
-    "deploy": "scripts/deploy.sh",
+    "deploy": "wrangler deploy",
     "publish": "scripts/publish.sh",
     "typecheck": "tsc --noEmit",
     "db:migrate:local": "wrangler d1 migrations apply ezpath-loom-tracker --local",

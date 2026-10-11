@@ -25,6 +25,6 @@ bucket_name = "ezpath-videos"
 [observability]
 enabled = true
 
-# Secrets (set with `npx wrangler secret put <NAME>`, never in this file):
+# Secrets (set in the Cloudflare dashboard: Worker > Settings > Variables and Secrets, never in this file):
 #   ADMIN_PASSWORD  password for /admin
 #   IP_SALT         random string for hashing IPs

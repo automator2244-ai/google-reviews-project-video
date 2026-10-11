@@ -21,17 +21,21 @@
 ## איך זה עובד ביום-יום
 
 1. בניה מקליט את החלק האישי ושולח ל-Claude Code עם שם העסק והטלפון.
-2. Claude Code מריץ את `scripts/publish.sh`, שמבצע את השלבים הבאים:
+2. Claude Code מריץ את `scripts/publish.sh`, שבונה את הסרטון:
    - מאחד את ההקלטה עם סרטון התבנית. אם ההקלטה אופקית, היא מוצבת על רקע מטושטש.
    - מאזן את עוצמת הקול.
    - מכווץ את הסרטון ל-720x1280 לצפייה מהירה בנייד.
    - יוצר תמונה מקדימה לוואטסאפ מתוך החלק האישי.
-   - מעלה הכל ל-Cloudflare ויוצר את הנמען.
-   - מדפיס קישור אישי וקישור וואטסאפ עם הודעה מוכנה.
-3. בניה לוחץ "וואטסאפ" (בהודעה מ-Claude Code או בדשבורד) ושולח.
+3. Claude Code רושם את הנמען ב-D1 דרך חיבור Cloudflare, יחד עם אישור העלאה לשעה אחת.
+4. `scripts/upload.sh` מעלה את הסרטון עם האישור ומדפיס קישור אישי וקישור וואטסאפ עם הודעה מוכנה.
+5. בניה לוחץ "וואטסאפ" (בהודעה מ-Claude Code או בדשבורד) ושולח.
+
+אין צורך בשום מפתח או סיסמה אצל Claude Code. אישור ההעלאה נוצר לכל סרטון בנפרד, תקף לשעה, ונשמר רק כ-hash.
 
 ```bash
 scripts/publish.sh --name "מרפאת שיניים כהן" --phone 050-1234567 --personal recording.mp4
+# מריצים את out/<id>/register.sql על D1 דרך חיבור Cloudflare, ואז:
+scripts/upload.sh <id>
 ```
 | אפשרות | מה עושה |
 |---|---|
@@ -39,7 +43,7 @@ scripts/publish.sh --name "מרפאת שיניים כהן" --phone 050-1234567 -
 | `--video file.mp4` | סרטון מוכן, בלי איחוד עם התבנית |
 | `--id k7m2qa8x` | מחליף את הסרטון של נמען קיים (הקישור נשאר אותו קישור) |
 | `--note "טקסט"` | הערה שמופיעה בייצוא ה-CSV |
-| `--local` | מעלה לסביבת הבדיקה המקומית במקום ל-Cloudflare |
+| `--local` | רושם ומעלה מיד לסביבת הבדיקה המקומית (`npm run dev`) |
 
 ## הדשבורד
 
@@ -64,29 +68,24 @@ scripts/publish.sh --name "מרפאת שיניים כהן" --phone 050-1234567 -
 
 - `/admin` דורש סיסמה (`ADMIN_PASSWORD`). אחרי כניסה נשמרת עוגייה חתומה ל-30 יום, והחלפת הסיסמה מנתקת את כולם.
 - 5 סיסמאות שגויות מאותו IP חוסמות ל-15 דקות.
+- העלאת סרטון דורשת אישור העלאה של אותו נמען, שתקף לשעה אחת.
 - `robots.txt` חוסם את `/admin` ואת `/v/`.
 
 ---
 
 ## פריסה
 
-הכל מתבצע מ-Claude Code, בתנאי שבהגדרות הסביבה מוגדרים:
-- `CLOUDFLARE_API_TOKEN`: טוקן של Cloudflare. ההוראות ליצירה מופיעות למטה.
-- `ADMIN_PASSWORD`: הסיסמה לדשבורד.
+Cloudflare מעלה את ה-Worker לבד מ-GitHub (Workers Builds) בכל פעם שהקוד משתנה. ההגדרה נעשית פעם אחת בדשבורד של Cloudflare:
+1. Workers & Pages, ואז Create, ואז Import a repository. מחברים את GitHub ובוחרים את `google-reviews-project-video`.
+2. Project name: `ezpath-video-links` (חייב להיות בדיוק השם הזה).
+3. Root directory: `video-links`. Deploy command: `npx wrangler deploy`.
+4. אחרי שה-Worker נוצר: Settings, ואז Variables and Secrets. מוסיפים שני סודות (Type: Secret):
+   - `ADMIN_PASSWORD`: הסיסמה לדשבורד.
+   - `IP_SALT`: רצף אקראי ארוך של אותיות ומספרים.
+5. Settings, ואז Build: מוודאים שהענף הוא הענף שעליו נמצא הקוד.
 
-```bash
-npm install
-scripts/deploy.sh
-```
-`deploy.sh` בודק את הקוד, מעדכן את טבלאות מאגר הנתונים, מעלה את ה-Worker ומגדיר את הסיסמה. `IP_SALT` נוצר אוטומטית בפעם הראשונה.
 ב-`wrangler.toml` מוגדר `go.ezpath-ai.com` כ-Custom Domain, ולכן Cloudflare יוצר את רשומת ה-DNS ואת תעודת ה-SSL לבד.
-
-### יצירת הטוקן (פעם אחת)
-1. ב-Cloudflare: My Profile, אחר כך API Tokens, אחר כך Create Token.
-2. בוחרים את התבנית **Edit Cloudflare Workers**.
-3. מוסיפים שורת הרשאה: Account, D1, Edit.
-4. ב-Zone Resources בוחרים את `ezpath-ai.com`.
-5. Continue to summary, אחר כך Create Token, ומעתיקים את הטוקן.
+טבלאות מסד הנתונים מתעדכנות דרך חיבור Cloudflare (ראו `migrations/`), לא בזמן הפריסה.
 
 ---
 
@@ -97,7 +96,7 @@ cp .dev.vars.example .dev.vars        # וממלאים ערכי בדיקה
 npm run db:migrate:local
 npm run dev                            # http://127.0.0.1:8787/admin
 scripts/publish.sh --local --name "בדיקה" --phone 0501234567 --personal clip.mp4
-ADMIN_PASSWORD=... scripts/smoke.sh <id שהודפס>
+ADMIN_PASSWORD=... scripts/smoke.sh <id שהודפס>   # בודק גם שההעלאה נעולה
 ```
 
 ## רשימת בדיקה אחרי הפריסה (מהטלפון)

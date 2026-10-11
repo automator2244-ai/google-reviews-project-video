@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # Smoke test against `npx wrangler dev` (local D1 + R2).
 # Usage: ADMIN_PASSWORD=... scripts/smoke.sh <id of a recipient published with publish.sh --local> [base_url]
+# Note: expires the local upload passes.
 set -u
 ID1="${1:?pass a recipient id published with: scripts/publish.sh --local ...}"
 BASE="${2:-http://127.0.0.1:8787}"
@@ -44,6 +45,16 @@ check "video range (iPhone)" "206 100" "$(curl -s -o /dev/null -w '%{http_code} 
 check "video range has Content-Range" 1 "$(curl -s -o /dev/null -D - -H 'Range: bytes=100-199' "$BASE/m/$ID1.mp4" | grep -ci '^content-range: bytes 100-199/')"
 check "video suffix range" "206 50" "$(curl -s -o /dev/null -w '%{http_code} %{size_download}' -H 'Range: bytes=-50' "$BASE/m/$ID1.mp4")"
 check "missing media -> 404" 404 "$(status "$BASE/m/nothere.mp4")"
+
+echo "upload is locked"
+TOK=$(cat "out/$ID1/token" 2>/dev/null || echo none)
+up() { status -X PUT -H 'Content-Type: image/jpeg' --data-binary 'x' "$@"; }
+check "no pass -> 401" 401 "$(up "$BASE/upload/$ID1.jpg")"
+check "wrong pass -> 401" 401 "$(up -H 'Authorization: Bearer wrong' "$BASE/upload/$ID1.jpg")"
+check "pass of another id -> 401" 401 "$(up -H "Authorization: Bearer $TOK" "$BASE/upload/someoneelse.jpg")"
+check "GET /upload -> 404" 404 "$(status "$BASE/upload/$ID1.jpg")"
+npx wrangler d1 execute ezpath-loom-tracker --local --command "UPDATE upload_tokens SET expires_at = 1" >/dev/null 2>&1
+check "expired pass -> 401" 401 "$(up -H "Authorization: Bearer $TOK" "$BASE/upload/$ID1.jpg")"
 
 echo "not found"
 check "unknown id -> 404 page" 404 "$(status -A "$CHROME" "$BASE/v/doesnotexist")"

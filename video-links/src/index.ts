@@ -1,9 +1,10 @@
 import { handleAdmin } from "./admin";
 import { type Env, notFound } from "./util";
-import { handleEvent, handleMedia, handleView, ID_RE } from "./video";
+import { handleEvent, handleMedia, handleUpload, handleView, ID_RE } from "./video";
 
 const ROBOTS = "User-agent: *\nDisallow: /admin\nDisallow: /v/\n";
 const MEDIA_RE = /^\/m\/([A-Za-z0-9_-]{1,64})\.(mp4|jpg)$/;
+const UPLOAD_RE = /^\/upload\/([A-Za-z0-9_-]{1,64})\.(mp4|jpg)$/;
 
 export default {
   async fetch(req: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
@@ -20,6 +21,9 @@ export default {
 
     const media = path.match(MEDIA_RE);
     if (media) return read ? handleMedia(req, env, media[1], media[2] as "mp4" | "jpg") : notFound();
+
+    const upload = path.match(UPLOAD_RE);
+    if (upload) return req.method === "PUT" ? handleUpload(req, env, upload[1], upload[2] as "mp4" | "jpg") : notFound();
 
     if (path.startsWith("/e/")) {
       const id = path.slice(3);

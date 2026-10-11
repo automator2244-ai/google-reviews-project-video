@@ -1,6 +1,6 @@
 import { isBot } from "./bots";
 import { unavailablePage, videoPage } from "./page";
-import { type Env, html, ipHash, notFound } from "./util";
+import { type Env, html, ipHash, notFound, sha256Hex } from "./util";
 
 export const ID_RE = /^[A-Za-z0-9_-]{1,64}$/;
 const PROGRESS = new Set([0, 25, 50, 75, 100]);
@@ -84,4 +84,27 @@ export async function handleMedia(req: Request, env: Env, id: string, ext: keyof
   headers.set("Content-Length", String(length));
 
   return new Response("body" in obj ? (obj as R2ObjectBody).body : null, { status, headers });
+}
+
+const MAX_UPLOAD = 100 * 1024 * 1024;
+
+// PUT /upload/{id}.mp4|jpg with "Authorization: Bearer <pass>". The pass is created with the recipient
+// (publish.sh -> register.sql) and is valid for an hour. Uploading the mp4 makes the page live.
+export async function handleUpload(req: Request, env: Env, id: string, ext: keyof typeof TYPES): Promise<Response> {
+  const pass = (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
+  const size = Number(req.headers.get("content-length"));
+  if (!pass || !req.body) return new Response("Unauthorized", { status: 401 });
+  if (!(size > 0 && size <= MAX_UPLOAD)) return new Response("Bad size", { status: 413 });
+
+  const now = Date.now();
+  const ok = await env.DB.prepare("SELECT 1 FROM upload_tokens WHERE token_hash = ? AND recipient_id = ? AND expires_at > ?")
+    .bind(await sha256Hex(pass), id, now)
+    .first();
+  if (!ok) return new Response("Unauthorized", { status: 401 });
+
+  await env.VIDEOS.put(`videos/${id}.${ext}`, req.body, { httpMetadata: { contentType: TYPES[ext] } });
+  const done = [env.DB.prepare("DELETE FROM upload_tokens WHERE expires_at <= ?").bind(now)];
+  if (ext === "mp4") done.push(env.DB.prepare("UPDATE recipients SET video_at = ? WHERE id = ?").bind(new Date().toISOString(), id));
+  await env.DB.batch(done);
+  return new Response(null, { status: 204 });
 }

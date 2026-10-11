@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
-# Builds a personal video, uploads it to R2 and creates the recipient. Prints the personal link.
+# Builds a personal video (merge, normalize, compress, thumbnail) and the SQL that registers the recipient
+# with a one-hour upload pass. Upload afterwards with scripts/upload.sh.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-BASE_URL="https://go.ezpath-ai.com"
-BUCKET="ezpath-videos"
 DB="ezpath-loom-tracker"
 TEMPLATE="../google-reviews-demo/out/google-reviews-demo-full.mp4"
 W=720 H=1280
@@ -18,12 +17,12 @@ Usage: scripts/publish.sh --name "שם העסק" [--phone 050...] (--personal cl
   --personal-last   put the personal part after the template (default: before it)
   --note TEXT       free-text note (shows up in the CSV export)
   --id ID           replace the video of an existing recipient
-  --local           upload to the local `wrangler dev` storage instead of Cloudflare
+  --local           register and upload to the local `wrangler dev` right away
 EOF
   exit 1
 }
 
-NAME="" PHONE="" NOTE="" PERSONAL="" VIDEO="" ID="" PERSONAL_LAST=0 WHERE="--remote"
+NAME="" PHONE="" NOTE="" PERSONAL="" VIDEO="" ID="" PERSONAL_LAST=0 LOCAL=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --name) NAME="$2"; shift 2 ;;
@@ -34,7 +33,7 @@ while [ $# -gt 0 ]; do
     --template) TEMPLATE="$2"; shift 2 ;;
     --id) ID="$2"; shift 2 ;;
     --personal-last) PERSONAL_LAST=1; shift ;;
-    --local) WHERE="--local"; BASE_URL="http://127.0.0.1:8787"; shift ;;
+    --local) LOCAL=1; shift ;;
     *) usage ;;
   esac
 done
@@ -101,27 +100,27 @@ ffmpeg -hide_banner -loglevel error -y "${INPUTS[@]}" -filter_complex "$FILTER" 
 ffmpeg -hide_banner -loglevel error -y -ss "$THUMB_AT" -i "$OUT/video.mp4" -frames:v 1 -vf scale=540:960 -q:v 4 "$OUT/thumb.jpg"
 echo "  $(du -h "$OUT/video.mp4" | cut -f1), $(printf '%.0f' "$(duration "$OUT/video.mp4")") seconds"
 
-# Quiet on success, full output on failure.
-wrangler() { local log; log=$(npx wrangler "$@" 2>&1) || { echo "$log" >&2; exit 1; }; }
-
-echo "Uploading..."
-wrangler r2 object put "$BUCKET/videos/$ID.mp4" --file "$OUT/video.mp4" --content-type video/mp4 "$WHERE"
-wrangler r2 object put "$BUCKET/videos/$ID.jpg" --file "$OUT/thumb.jpg" --content-type image/jpeg "$WHERE"
+# One-hour upload pass for this recipient. Only its SHA-256 goes into the database.
+TOKEN=$(openssl rand -hex 32)
+printf '%s' "$TOKEN" > "$OUT/token"
+EXPIRES=$(( ($(date +%s) + 3600) * 1000 ))
 
 q() { if [ -n "$1" ]; then printf "'%s'" "${1//\'/\'\'}"; else printf 'NULL'; fi; }
-NOW=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
-cat > "$OUT/recipient.sql" <<SQL
-INSERT INTO recipients (id, name, phone, note, created_at, video_at)
-VALUES ($(q "$ID"), $(q "$NAME"), $(q "$PHONE"), $(q "$NOTE"), '$NOW', '$NOW')
-ON CONFLICT(id) DO UPDATE SET video_at = excluded.video_at;
+cat > "$OUT/register.sql" <<SQL
+INSERT INTO recipients (id, name, phone, note, created_at)
+VALUES ($(q "$ID"), $(q "$NAME"), $(q "$PHONE"), $(q "$NOTE"), '$(date -u +%Y-%m-%dT%H:%M:%S.000Z)')
+ON CONFLICT(id) DO NOTHING;
+INSERT INTO upload_tokens (token_hash, recipient_id, expires_at)
+VALUES ('$(printf '%s' "$TOKEN" | sha256sum | cut -d' ' -f1)', $(q "$ID"), $EXPIRES);
 SQL
-wrangler d1 execute "$DB" "$WHERE" --yes --file "$OUT/recipient.sql"
+printf '%s' "$NAME" > "$OUT/name"
+printf '%s' "$PHONE" > "$OUT/phone"
 
-LINK="$BASE_URL/v/$ID"
-echo
-echo "Done: $NAME"
-echo "  Link:      $LINK"
-if [ -n "$PHONE" ]; then
-  MSG=$(node -e 'console.log(encodeURIComponent(process.argv[1]))' "היי $NAME, הכנתי לך סרטון קצר במיוחד בשבילך: $LINK")
-  echo "  WhatsApp:  https://wa.me/$PHONE?text=$MSG"
+if [ "$LOCAL" = 1 ]; then
+  log=$(npx wrangler d1 execute "$DB" --local --yes --file "$OUT/register.sql" 2>&1) || { echo "$log" >&2; exit 1; }
+  exec scripts/upload.sh "$ID" "http://127.0.0.1:8787"
 fi
+
+echo
+echo "Built: $OUT"
+echo "Next: run $OUT/register.sql on D1 database $DB (Cloudflare connector), then: scripts/upload.sh $ID"
