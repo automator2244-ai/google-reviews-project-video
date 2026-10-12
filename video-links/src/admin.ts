@@ -22,10 +22,9 @@ export async function handleAdmin(req: Request, env: Env, url: URL): Promise<Res
   if (path === "/admin/login" && req.method === "POST") {
     if (!sameOrigin(req, url)) return new Response("Forbidden", { status: 403 });
     const form = await req.formData();
-    const result = await login(req, env, String(form.get("password") ?? ""));
+    const result = await login(env, String(form.get("password") ?? ""));
     if (result.ok) return new Response(null, { status: 303, headers: { Location: "/admin", "Set-Cookie": result.cookie } });
-    const msg = result.status === 429 ? "יותר מדי ניסיונות. נסה שוב בעוד 15 דקות." : "סיסמה שגויה.";
-    return html(loginPage(result.status === 503 ? "הסיסמה לא הוגדרה בשרת." : msg), result.status);
+    return html(loginPage(result.status === 503 ? "הסיסמה לא הוגדרה בשרת." : "סיסמה שגויה."), result.status);
   }
 
   if (!(await isAuthed(req, env))) {
