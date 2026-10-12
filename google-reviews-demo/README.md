@@ -38,11 +38,11 @@ npx hyperframes@0.8.140 render -q delivery -o out/google-reviews-demo-full.mp4
 
 ### שם העסק ופרטי הקשר בסיום
 
-הסיום משתמש בשני משתנים. עד שיש ערכים אמיתיים מוצג מציין מקום עם מסגרת מקווקוות צהובה:
+הסיום מציג את EZ.Path.AI ואת 055-271-6456 (ברירת המחדל ב-`index.html`). אפשר להחליף אותם בהפקה:
 
 ```bash
 npx hyperframes@0.8.140 render -q delivery -o out/google-reviews-demo-full.mp4 \
-  --variables '{"businessName":"שם העסק","contact":"050-0000000"}'
+  --variables '{"businessName":"EZ.Path.AI","contact":"055-271-6456"}'
 ```
 
 ### גרסה דחוסה לוואטסאפ
