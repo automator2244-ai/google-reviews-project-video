@@ -7,6 +7,7 @@ cd "$(dirname "$0")/.."
 DB="ezpath-loom-tracker"
 TEMPLATE="../google-reviews-demo/out/google-reviews-demo-full.mp4"
 W=720 H=1280
+SPEED=1.2 # whole video plays faster; pitch stays natural
 
 usage() {
   cat <<'EOF'
@@ -15,6 +16,7 @@ Usage: scripts/publish.sh --name "שם העסק" [--phone 050...] (--personal cl
   --video FILE      a finished video, uploaded as-is (only re-encoded for the web)
   --template FILE   template video (default: ../google-reviews-demo/out/google-reviews-demo-full.mp4)
   --personal-last   put the personal part after the template (default: before it)
+  --speed N         playback speed of the whole video (default: 1.2, 1 = original)
   --note TEXT       free-text note (shows up in the CSV export)
   --id ID           replace the video of an existing recipient
   --local           register and upload to the local `wrangler dev` right away
@@ -33,11 +35,13 @@ while [ $# -gt 0 ]; do
     --template) TEMPLATE="$2"; shift 2 ;;
     --id) ID="$2"; shift 2 ;;
     --personal-last) PERSONAL_LAST=1; shift ;;
+    --speed) SPEED="$2"; shift 2 ;;
     --local) LOCAL=1; shift ;;
     *) usage ;;
   esac
 done
 [ -n "$NAME" ] || usage
+awk "BEGIN{exit !($SPEED >= 0.5 && $SPEED <= 2)}" 2>/dev/null || { echo "--speed must be between 0.5 and 2" >&2; exit 1; }
 [ -n "$PERSONAL" ] || [ -n "$VIDEO" ] || usage
 for f in "$PERSONAL" "$VIDEO"; do [ -z "$f" ] || [ -f "$f" ] || { echo "File not found: $f" >&2; exit 1; }; done
 [ -n "$VIDEO" ] || [ -f "$TEMPLATE" ] || { echo "Template not found: $TEMPLATE" >&2; exit 1; }
@@ -86,12 +90,12 @@ if [ -n "$VIDEO" ]; then
 elif [ "$PERSONAL_LAST" = 1 ]; then
   add_segment "$TEMPLATE" -20
   add_segment "$PERSONAL" -16
-  THUMB_AT=$(awk "BEGIN{print $(duration "$TEMPLATE") + 1}")
+  THUMB_AT=$(awk "BEGIN{print $(duration "$TEMPLATE") / $SPEED + 1}")
 else
   add_segment "$PERSONAL" -16
   add_segment "$TEMPLATE" -20
 fi
-FILTER+="${CONCAT}concat=n=$N:v=1:a=1[v][a]"
+FILTER+="${CONCAT}concat=n=$N:v=1:a=1[cv][ca];[cv]setpts=PTS/$SPEED,fps=30[v];[ca]atempo=$SPEED[a]"
 
 echo "Encoding video..."
 ffmpeg -hide_banner -loglevel error -y "${INPUTS[@]}" -filter_complex "$FILTER" -map "[v]" -map "[a]" \
