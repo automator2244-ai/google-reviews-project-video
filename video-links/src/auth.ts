@@ -44,7 +44,8 @@ export async function login(req: Request, env: Env, password: string): Promise<L
     .first<{ n: number }>();
   if ((row?.n ?? 0) >= MAX_FAILS) return { ok: false, status: 429 };
 
-  if (!(await safeEqual(password, env.ADMIN_PASSWORD))) {
+  // Trimmed on both sides: a secret pasted into the dashboard often picks up a trailing newline or space.
+  if (!(await safeEqual(password.trim(), env.ADMIN_PASSWORD.trim()))) {
     await env.DB.prepare("INSERT INTO login_attempts (ip_hash, ts) VALUES (?, ?)").bind(who, now).run();
     return { ok: false, status: 401 };
   }
