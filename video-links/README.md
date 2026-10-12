@@ -66,8 +66,7 @@ scripts/upload.sh <id>
 
 ## אבטחה
 
-- `/admin` דורש סיסמה (`ADMIN_PASSWORD`). אחרי כניסה נשמרת עוגייה חתומה ל-30 יום, והחלפת הסיסמה מנתקת את כולם.
-- אין הגבלה על ניסיונות סיסמה שגויים (לבקשת בניה), ולכן כדאי סיסמה ארוכה, 12 תווים ומעלה.
+- `/admin` פתוח בלי סיסמה (לבקשת בניה). כל מי שיודע את הכתובת רואה את הדשבורד, כולל שמות וטלפונים.
 - העלאת סרטון דורשת אישור העלאה של אותו נמען, שתקף לשעה אחת.
 - `robots.txt` חוסם את `/admin` ואת `/v/`.
 
@@ -79,8 +78,7 @@ Cloudflare מעלה את ה-Worker לבד מ-GitHub (Workers Builds) בכל פע
 1. Workers & Pages, ואז Create, ואז Import a repository. מחברים את GitHub ובוחרים את `google-reviews-project-video`.
 2. Project name: `ezpath-video-links` (חייב להיות בדיוק השם הזה).
 3. Root directory: `video-links`. Deploy command: `npx wrangler deploy`.
-4. אחרי שה-Worker נוצר: Settings, ואז Variables and Secrets. מוסיפים שני סודות (Type: Secret):
-   - `ADMIN_PASSWORD`: הסיסמה לדשבורד.
+4. אחרי שה-Worker נוצר: Settings, ואז Variables and Secrets. מוסיפים סוד אחד (Type: Secret):
    - `IP_SALT`: רצף אקראי ארוך של אותיות ומספרים.
 5. Settings, ואז Build: מוודאים שהענף הוא הענף שעליו נמצא הקוד.
 
@@ -96,7 +94,7 @@ cp .dev.vars.example .dev.vars        # וממלאים ערכי בדיקה
 npm run db:migrate:local
 npm run dev                            # http://127.0.0.1:8787/admin
 scripts/publish.sh --local --name "בדיקה" --phone 0501234567 --personal clip.mp4
-ADMIN_PASSWORD=... scripts/smoke.sh <id שהודפס>   # בודק גם שההעלאה נעולה
+scripts/smoke.sh <id שהודפס>   # בודק גם שההעלאה נעולה
 ```
 
 ## רשימת בדיקה אחרי הפריסה (מהטלפון)
@@ -105,7 +103,6 @@ ADMIN_PASSWORD=... scripts/smoke.sh <id שהודפס>   # בודק גם שההע
 2. בודקים שבתצוגה המקדימה מופיעים "סרטון אישי עבור..." ותמונה מהסרטון.
 3. **בלי ללחוץ**, מרעננים את הדשבורד: 0 כניסות, עם התגית "עוד לא נכנס".
 4. לוחצים על הקישור ומנגנים. אחרי רענון: כניסה אחת, ובעמודת הצפייה מופיע "התחיל" או אחוז.
-5. פותחים את `/admin` בחלון גלישה בסתר: הדף צריך לבקש סיסמה.
 
 ## נוסח פרטיות (אופציונלי, להוספה בסוף ההודעה)
 

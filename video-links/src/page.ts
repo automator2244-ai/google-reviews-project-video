@@ -29,7 +29,7 @@ td.num{font-variant-numeric:tabular-nums;font-weight:700}
 tr.idle td{color:var(--idle)}tr.idle td.num{font-weight:400}
 .tag{display:inline-block;white-space:nowrap;margin-top:2px;background:var(--tag);color:var(--muted);border-radius:999px;padding:1px 8px;font-size:12px;margin-inline-start:6px}
 .tag.ok{color:var(--ok)}.acts{display:flex;gap:6px;margin-top:6px}.acts button,.acts .btn{padding:3px 10px;font-size:13px}summary{cursor:pointer;font-weight:600}
-.err{color:#dc2626}.empty{color:var(--muted);text-align:center;padding:20px}
+.empty{color:var(--muted);text-align:center;padding:20px}
 @media (max-width:600px){th{white-space:normal}.stats{grid-template-columns:repeat(2,1fr)}.stat b{font-size:22px}th,td{padding:7px 4px}.hide-sm{display:none}}
 `;
 
@@ -39,27 +39,13 @@ function shell(title: string, body: string): string {
 <title>${title}</title><style>${STYLE}</style></head><body>${body}</body></html>`;
 }
 
-export function loginPage(error?: string): string {
-  return shell(
-    "כניסה",
-    `<main style="max-width:380px;padding-top:12vh"><div class="card">
-<h1 style="margin-bottom:12px">מעקב צפיות</h1>
-<form method="post" action="/admin/login">
-<label for="pw">סיסמה</label><input id="pw" name="password" type="password" autocomplete="current-password" required autofocus>
-${error ? `<p class="err">${escapeHtml(error)}</p>` : ""}
-<div class="row"><button class="primary" type="submit">כניסה</button></div>
-</form></div></main>`,
-  );
-}
-
 const DEFAULT_TEMPLATE = "היי {שם}, הכנתי לך סרטון קצר במיוחד בשבילך: {קישור}";
 
 export function dashboardPage(origin: string): string {
   return shell(
     "מעקב צפיות",
     `<main>
-<header><h1>מעקב צפיות בסרטונים</h1>
-<form method="post" action="/admin/logout"><button type="submit">יציאה</button></form></header>
+<header><h1>מעקב צפיות בסרטונים</h1></header>
 
 <div class="stats">
 <div class="stat"><b id="s-total">0</b><span>נמענים</span></div>
@@ -146,7 +132,7 @@ document.querySelectorAll('th[data-key]').forEach(function(th){th.onclick=functi
   var k=th.dataset.key;if(sortKey===k){sortDir=-sortDir}else{sortKey=k;sortDir=(k==='name'||k==='country')?1:-1}
   document.querySelectorAll('th[data-key]').forEach(function(h){h.textContent=h.textContent.replace(/ [▲▼]$/,'')});
   th.textContent+=sortDir>0?' ▲':' ▼';render()}});
-function load(){fetch('/admin/api/stats').then(function(r){if(r.status===401){location.reload();throw 0}return r.json()})
+function load(){fetch('/admin/api/stats').then(function(r){return r.json()})
   .then(function(d){rows=d.rows;render()}).catch(function(){})}
 $('#search').oninput=render;$('#refresh').onclick=load;
 document.addEventListener('visibilitychange',function(){if(!document.hidden)load()});

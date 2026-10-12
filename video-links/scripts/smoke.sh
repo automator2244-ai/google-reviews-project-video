@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 # Smoke test against `npx wrangler dev` (local D1 + R2).
-# Usage: ADMIN_PASSWORD=... scripts/smoke.sh <id of a recipient published with publish.sh --local> [base_url]
+# Usage: scripts/smoke.sh <id of a recipient published with publish.sh --local> [base_url]
 # Note: expires the local upload passes.
 set -u
 ID1="${1:?pass a recipient id published with: scripts/publish.sh --local ...}"
 BASE="${2:-http://127.0.0.1:8787}"
-PASS="${ADMIN_PASSWORD:?set ADMIN_PASSWORD}"
 CHROME="Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Mobile Safari/537.36"
 FAILS=0
 
@@ -15,16 +14,12 @@ check() { # name expected actual
 status() { curl -s -o /dev/null -w '%{http_code}' "$@"; }
 js() { node -pe "const d=JSON.parse(require('fs').readFileSync(0));$1"; }
 
-echo "admin is locked without a session"
-check "GET /admin -> login page" 401 "$(status "$BASE/admin")"
-check "GET /admin/api/stats" 401 "$(status "$BASE/admin/api/stats")"
-check "GET /admin/export.csv" 401 "$(status "$BASE/admin/export.csv")"
-check "forged cookie" 401 "$(status -H 'cookie: admin_session=9999999999999.deadbeef' "$BASE/admin/api/stats")"
-
-echo "login"
-COOKIE=$(curl -s -o /dev/null -D - --data-urlencode "password=$PASS" "$BASE/admin/login" | tr -d '\r' | sed -n 's/^[Ss]et-[Cc]ookie: \([^;]*\).*/\1/p')
-[ -n "$COOKIE" ] && echo "  ok   got session cookie" || { echo "  FAIL no session cookie"; exit 1; }
-stats() { curl -s -H "cookie: $COOKIE" "$BASE/admin/api/stats"; }
+echo "dashboard is open (no password, by choice)"
+check "GET /admin" 200 "$(status "$BASE/admin")"
+check "GET /admin/api/stats" 200 "$(status "$BASE/admin/api/stats")"
+check "GET /admin/export.csv" 200 "$(status "$BASE/admin/export.csv")"
+check "no login route" 404 "$(status -X POST "$BASE/admin/login")"
+stats() { curl -s "$BASE/admin/api/stats"; }
 row() { stats | js "JSON.stringify(d.rows.find(r=>r.id==='$ID1')||null)"; }
 BEFORE=$(row | js 'd.clicks')
 
@@ -74,14 +69,9 @@ check "two real visits counted (page + no-cookie check)" $((BEFORE + 2)) "$(row 
 check "watched = 50%" 50 "$(row | js 'd.watched')"
 curl -s -o /dev/null -A "$CHROME" "$BASE/v/$ID1"; sleep 1
 check "one more visit counts once" $((BEFORE + 3)) "$(row | js 'd.clicks')"
-check "CSV export" 200 "$(status -H "cookie: $COOKIE" "$BASE/admin/export.csv")"
 
 echo "robots.txt"
 check "blocks /admin and /v/" 2 "$(curl -s "$BASE/robots.txt" | grep -cE '^Disallow: /(admin|v/)$')"
-
-echo "no lockout after wrong passwords"
-for i in 1 2 3 4 5 6; do check "wrong password $i" 401 "$(status --data-urlencode 'password=wrong' "$BASE/admin/login")"; done
-check "right password still works" 303 "$(status --data-urlencode "password=$PASS" "$BASE/admin/login")"
 
 echo
 [ "$FAILS" -eq 0 ] && echo "ALL PASSED" || { echo "$FAILS FAILED"; exit 1; }

@@ -22,6 +22,6 @@
 
 ## פריסה ומסד נתונים
 - אין צורך במפתחות בסביבה. Cloudflare מעלה את ה-Worker לבד מ-GitHub (Workers Builds) בכל push לענף שהוגדר שם.
-- סיסמת הדשבורד (`ADMIN_PASSWORD`) ו-`IP_SALT` מוגדרים כסודות ב-Cloudflare, לא בקוד.
+- הדשבורד פתוח בלי סיסמה, לבקשת בניה. `IP_SALT` מוגדר כסוד ב-Cloudflare, לא בקוד.
 - מיגרציה חדשה ב-`video-links/migrations/`: מריצים אותה על D1 דרך חיבור Cloudflare ומוסיפים שורה ל-`d1_migrations` עם שם הקובץ.
 - שינוי קוד ב-`video-links/`: בודקים מקומית (`npm run dev`, `publish.sh --local`, `scripts/smoke.sh`), ואז commit ו-push.
