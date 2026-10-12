@@ -32,7 +32,7 @@ const CELL_LNG = 0.013;
 const STATUS_NEW = 'עוד לא נשלחה הודעה';
 const NCOLS = 13; // A..M are written; N holds the phone-key formula and is never touched
 // A date | B name | C phone | D WhatsApp | E status | F rating | G reviews | H website
-// I city | J address | K Google Maps | L notes | M place id
+// I city | J address | K Google Business | L notes | M place id
 
 const FIELDS = [
   'places.id', 'places.displayName', 'places.nationalPhoneNumber', 'places.internationalPhoneNumber',
@@ -296,7 +296,7 @@ function text_(s) {
 function leadRow_(l, day) {
   return [
     day, text_(l.name), l.phone, waFormula_(l.key), STATUS_NEW, l.rating, l.reviews, l.website,
-    text_(l.area), text_(l.address), l.maps ? `=HYPERLINK("${l.maps}","פתח במפות")` : '', '', l.id,
+    text_(l.area), text_(l.address), l.maps ? `=HYPERLINK("${l.maps}","פתח בגוגל ביזנס")` : '', '', l.id,
   ];
 }
 
