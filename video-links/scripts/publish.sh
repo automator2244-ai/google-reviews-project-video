@@ -6,7 +6,7 @@ cd "$(dirname "$0")/.."
 
 DB="ezpath-loom-tracker"
 TEMPLATE="../google-reviews-demo/out/google-reviews-demo-full.mp4"
-W=720 H=1280
+W=1080 H=1920
 SPEED=1.2 # whole video plays faster; pitch stays natural
 
 usage() {
@@ -16,6 +16,8 @@ Usage: scripts/publish.sh --name "שם העסק" [--phone 050...] (--personal cl
   --video FILE      a finished video, uploaded as-is (only re-encoded for the web)
   --template FILE   template video (default: ../google-reviews-demo/out/google-reviews-demo-full.mp4)
   --personal-last   put the personal part after the template (default: before it)
+  --sync SEC        fix voice/picture sync in the personal recording: 0.3 = voice was 0.3s late, -0.3 = early
+  --brighten        brighten a dark personal recording a little
   --speed N         playback speed of the whole video (default: 1.2, 1 = original)
   --note TEXT       free-text note (shows up in the CSV export)
   --id ID           replace the video of an existing recipient
@@ -24,7 +26,7 @@ EOF
   exit 1
 }
 
-NAME="" PHONE="" NOTE="" PERSONAL="" VIDEO="" ID="" PERSONAL_LAST=0 LOCAL=0
+NAME="" PHONE="" NOTE="" PERSONAL="" VIDEO="" ID="" PERSONAL_LAST=0 LOCAL=0 SYNC=0 BRIGHTEN=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --name) NAME="$2"; shift 2 ;;
@@ -36,12 +38,15 @@ while [ $# -gt 0 ]; do
     --id) ID="$2"; shift 2 ;;
     --personal-last) PERSONAL_LAST=1; shift ;;
     --speed) SPEED="$2"; shift 2 ;;
+    --sync) SYNC="$2"; shift 2 ;;
+    --brighten) BRIGHTEN=1; shift ;;
     --local) LOCAL=1; shift ;;
     *) usage ;;
   esac
 done
 [ -n "$NAME" ] || usage
 awk "BEGIN{exit !($SPEED >= 0.5 && $SPEED <= 2)}" 2>/dev/null || { echo "--speed must be between 0.5 and 2" >&2; exit 1; }
+awk "BEGIN{exit !($SYNC >= -2 && $SYNC <= 2)}" 2>/dev/null || { echo "--sync must be between -2 and 2 seconds" >&2; exit 1; }
 [ -n "$PERSONAL" ] || [ -n "$VIDEO" ] || usage
 for f in "$PERSONAL" "$VIDEO"; do [ -z "$f" ] || [ -f "$f" ] || { echo "File not found: $f" >&2; exit 1; }; done
 [ -n "$VIDEO" ] || [ -f "$TEMPLATE" ] || { echo "Template not found: $TEMPLATE" >&2; exit 1; }
@@ -64,20 +69,33 @@ mkdir -p "$OUT"
 duration() { ffprobe -v error -show_entries format=duration -of csv=p=0 "$1"; }
 has_audio() { [ -n "$(ffprobe -v error -select_streams a -show_entries stream=index -of csv=p=0 "$1")" ]; }
 
-# Each segment: fit into 720x1280 over a blurred fill (works for vertical or horizontal recordings),
+# Each segment: fit into 1080x1920 over a blurred fill (works for vertical or horizontal recordings),
 # loudness-normalized audio (voice at -16 LUFS, template music a bit lower), silence if there is no audio.
+# The personal recording also gets a gentle cleanup: low rumble cut and light noise reduction,
+# plus the optional --sync and --brighten fixes.
 INPUTS=() NI=0 FILTER="" CONCAT="" N=0
-add_segment() { # file lufs
-  local i=$NI
+add_segment() { # file lufs [personal]
+  local i=$NI vpre="" apre="" dur
+  dur=$(duration "$1")
+  if [ "${3:-}" = personal ]; then
+    [ "$BRIGHTEN" = 1 ] && vpre="eq=brightness=0.06:contrast=1.06:saturation=1.05,"
+    apre="highpass=f=80,afftdn=nf=-25,"
+    if awk "BEGIN{exit !($SYNC > 0)}"; then
+      apre+="atrim=start=$SYNC,asetpts=PTS-STARTPTS,"
+    elif awk "BEGIN{exit !($SYNC < 0)}"; then
+      apre+="adelay=$(awk "BEGIN{print int(-$SYNC * 1000)}"):all=1,"
+    fi
+  fi
   INPUTS+=(-i "$1"); NI=$((NI + 1))
-  FILTER+="[$i:v]split[bg$N][fg$N];"
+  FILTER+="[$i:v]${vpre}split[bg$N][fg$N];"
   FILTER+="[bg$N]scale=$W:$H:force_original_aspect_ratio=increase,crop=$W:$H,gblur=sigma=30,eq=brightness=-0.15[b$N];"
   FILTER+="[fg$N]scale=$W:$H:force_original_aspect_ratio=decrease[f$N];"
   FILTER+="[b$N][f$N]overlay=(W-w)/2:(H-h)/2,setsar=1,fps=30,format=yuv420p[v$N];"
   if has_audio "$1"; then
-    FILTER+="[$i:a]aformat=sample_fmts=fltp:channel_layouts=stereo,loudnorm=I=$2:TP=-1.5:LRA=11,aresample=48000[a$N];"
+    # apad + atrim keep the audio exactly as long as the picture after a --sync shift
+    FILTER+="[$i:a]aformat=sample_fmts=fltp:channel_layouts=stereo,${apre}loudnorm=I=$2:TP=-1.5:LRA=11,aresample=48000,apad,atrim=0:$dur[a$N];"
   else
-    INPUTS+=(-f lavfi -t "$(duration "$1")" -i anullsrc=r=48000:cl=stereo); NI=$((NI + 1))
+    INPUTS+=(-f lavfi -t "$dur" -i anullsrc=r=48000:cl=stereo); NI=$((NI + 1))
     FILTER+="[$((NI - 1)):a]anull[a$N];"
   fi
   CONCAT+="[v$N][a$N]"
@@ -89,10 +107,10 @@ if [ -n "$VIDEO" ]; then
   add_segment "$VIDEO" -16
 elif [ "$PERSONAL_LAST" = 1 ]; then
   add_segment "$TEMPLATE" -20
-  add_segment "$PERSONAL" -16
+  add_segment "$PERSONAL" -16 personal
   THUMB_AT=$(awk "BEGIN{print $(duration "$TEMPLATE") / $SPEED + 1}")
 else
-  add_segment "$PERSONAL" -16
+  add_segment "$PERSONAL" -16 personal
   add_segment "$TEMPLATE" -20
 fi
 FILTER+="${CONCAT}concat=n=$N:v=1:a=1[cv][ca];[cv]setpts=PTS/$SPEED,fps=30[v];[ca]atempo=$SPEED[a]"
