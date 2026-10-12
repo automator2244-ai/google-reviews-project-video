@@ -4,7 +4,7 @@
 בניה רוצה שכל מה שאפשר לעשות מכאן ייעשה מכאן, ושהוא יעשה רק את מה שאי אפשר אחרת.
 
 ## חלקים בריפו
-- `leads/`: גיליון הלידים [לידים רופאי שיניים](https://docs.google.com/spreadsheets/d/13bRjc6ezK3SAYv4YQFW8SEUj3FYZdTM-Frg3Hlb_xS8/edit) (מזהה `13bRjc6ezK3SAYv4YQFW8SEUj3FYZdTM-Frg3Hlb_xS8`). Apps Script (`leads/leads.gs`) ממלא אותו כל א' עד ה' ב-07:00 מ-Google Places. לשוניות "עסקי" ו"מאובטח", טלפון בעמודה C, סטטוס בעמודה E. פרטים ב-`leads/README.md`.
+- `leads/`: גיליון הלידים [לידים רופאי שיניים](https://docs.google.com/spreadsheets/d/13bRjc6ezK3SAYv4YQFW8SEUj3FYZdTM-Frg3Hlb_xS8/edit) (מזהה `13bRjc6ezK3SAYv4YQFW8SEUj3FYZdTM-Frg3Hlb_xS8`). Apps Script (`leads/leads.gs`) ממלא אותו כל א' עד ה' ב-07:00 מ-Google Places: רק נייד, רק 15 עד 70 ביקורות, בלי תקרת חיפושים (לבקשת בניה). לשוניות "עסקי" ו"מאובטח", טלפון בעמודה C, סטטוס בעמודה E. פרטים ב-`leads/README.md`.
 - `google-reviews-demo/`: סרטון התבנית (55 שניות, HyperFrames). הקובץ המוכן: `google-reviews-demo/out/google-reviews-demo-full.mp4`. יש לו CLAUDE.md משלו.
 - `video-links/`: השירות על `go.ezpath-ai.com`. כל עסק מקבל קישור אישי לדף עם הסרטון שלו, ובדשבורד (`/admin`) רואים מי נכנס, מי ניגן ועד איפה צפה. פרטים ב-`video-links/README.md`.
 
