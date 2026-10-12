@@ -3,6 +3,8 @@ const BOT_UA = new RegExp(
   [
     "whatsapp", "facebookexternalhit", "facebot", "meta-externalagent", "twitterbot", "slackbot", "telegrambot",
     "linkedinbot", "discordbot", "skypeuripreview", "googlebot", "google-inspectiontool", "adsbot-google",
+    "google-pagerenderer", "googleother", "feedfetcher-google", "google-read-aloud", "storebot-google",
+    "mediapartners-google", "apis-google", "google favicon", "google-site-verification",
     "bingbot", "bingpreview", "applebot", "yandex", "baiduspider", "duckduckbot", "embedly", "pinterest", "redditbot",
     "headlesschrome", "phantomjs", "puppeteer", "playwright", "lighthouse",
     "curl/", "wget", "python-requests", "python-urllib", "aiohttp", "httpx", "go-http-client", "okhttp", "axios",
