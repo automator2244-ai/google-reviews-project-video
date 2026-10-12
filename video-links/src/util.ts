@@ -1,7 +1,6 @@
 export interface Env {
   DB: D1Database;
   VIDEOS: R2Bucket;
-  ADMIN_PASSWORD: string;
   IP_SALT: string;
 }
 
@@ -13,19 +12,6 @@ function toHex(buf: ArrayBuffer): string {
 
 export async function sha256Hex(input: string): Promise<string> {
   return toHex(await crypto.subtle.digest("SHA-256", enc.encode(input)));
-}
-
-export async function hmacHex(key: string, data: string): Promise<string> {
-  const k = await crypto.subtle.importKey("raw", enc.encode(key), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
-  return toHex(await crypto.subtle.sign("HMAC", k, enc.encode(data)));
-}
-
-// Compares two strings without leaking where they differ. Both are hashed first so lengths match.
-export async function safeEqual(a: string, b: string): Promise<boolean> {
-  const [ha, hb] = await Promise.all([sha256Hex(a), sha256Hex(b)]);
-  let diff = 0;
-  for (let i = 0; i < ha.length; i++) diff |= ha.charCodeAt(i) ^ hb.charCodeAt(i);
-  return diff === 0 && a.length === b.length;
 }
 
 export async function ipHash(req: Request, env: Env): Promise<string | null> {

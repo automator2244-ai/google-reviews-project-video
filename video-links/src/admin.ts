@@ -1,5 +1,4 @@
-import { isAuthed, login, logoutCookie, sameOrigin } from "./auth";
-import { dashboardPage, loginPage } from "./page";
+import { dashboardPage } from "./page";
 import { type Env, html, json, notFound } from "./util";
 
 interface StatRow {
@@ -16,28 +15,13 @@ interface StatRow {
   watched: number | null; // null = never pressed play, else highest progress (0/25/50/75/100)
 }
 
+// Open on purpose: the owner chose no password. Anyone with the address can read the dashboard.
 export async function handleAdmin(req: Request, env: Env, url: URL): Promise<Response> {
   const path = url.pathname.replace(/\/+$/, "") || "/admin";
-
-  if (path === "/admin/login" && req.method === "POST") {
-    if (!sameOrigin(req, url)) return new Response("Forbidden", { status: 403 });
-    const form = await req.formData();
-    const result = await login(env, String(form.get("password") ?? ""));
-    if (result.ok) return new Response(null, { status: 303, headers: { Location: "/admin", "Set-Cookie": result.cookie } });
-    return html(loginPage(result.status === 503 ? "הסיסמה לא הוגדרה בשרת." : "סיסמה שגויה."), result.status);
-  }
-
-  if (!(await isAuthed(req, env))) {
-    return path === "/admin" && req.method === "GET" ? html(loginPage(), 401) : json({ error: "unauthorized" }, 401);
-  }
-
-  if (req.method === "POST" && !sameOrigin(req, url)) return new Response("Forbidden", { status: 403 });
 
   switch (`${req.method} ${path}`) {
     case "GET /admin":
       return html(dashboardPage(url.origin));
-    case "POST /admin/logout":
-      return new Response(null, { status: 303, headers: { Location: "/admin", "Set-Cookie": logoutCookie } });
     case "GET /admin/api/stats":
       return json({ rows: await stats(env) });
     case "GET /admin/export.csv":
