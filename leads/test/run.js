@@ -123,12 +123,17 @@ const filled = (rows) => rows.filter((r) => r[1] !== '');
 {
   const special = [
     place({ name: 'מרפאה עם הכל', phone: '050-111-2222', site: 'https://dent.example.co.il/', rating: 4.6, reviews: 38 }),
-    place({ name: 'בלי אתר ודירוג', phone: '052-333-4444' }),
+    place({ name: 'בלי אתר ודירוג', phone: '052-333-4444', reviews: 20 }),
+    place({ name: 'מעט ביקורות', phone: '052-100-0010', reviews: 14 }),
+    place({ name: 'הרבה ביקורות', phone: '052-100-0071', reviews: 71 }),
+    place({ name: 'גבול תחתון', phone: '052-100-0015', reviews: 15 }),
+    place({ name: 'גבול עליון', phone: '052-100-0070', reviews: 70 }),
+    place({ name: 'בלי ביקורות', phone: '052-100-0000' }),
     place({ name: 'קווי', phone: '03-555-6666', rating: 4.9, reviews: 200 }),
     place({ name: 'סגורה', phone: '054-777-8888', status: 'CLOSED_PERMANENTLY' }),
     place({ name: 'בלי טלפון' }),
     place({ name: 'אותו טלפון בפורמט אחר', phone: '+972 50-111-2222' }),
-    place({ name: '=HACK()', phone: '058-000-1111' }),
+    place({ name: '=HACK()', phone: '058-000-1111', reviews: 30 }),
   ];
   const ss = makeSpreadsheet(['תל אביב צפון']);
   const g = makePlaces({ 'תל אביב צפון': [special] });
@@ -136,27 +141,29 @@ const filled = (rows) => rows.filter((r) => r[1] !== '');
   ctx.dailyRun();
   const a = filled(dataRows(ss.sheets['עסקי'])), b = filled(dataRows(ss.sheets['מאובטח']));
   const all = [...a, ...b];
-  assert.strictEqual(all.length, 3, 'only 3 valid mobile clinics');
+  assert.strictEqual(all.length, 5, 'only mobile clinics with 15 to 70 reviews');
   const byName = Object.fromEntries(all.map((r) => [r[1], r]));
   const full = byName['מרפאה עם הכל'];
   assert.deepStrictEqual([full[2], full[4], full[5], full[6], full[7]], ['050-111-2222', 'עוד לא נשלחה הודעה', 4.6, 38, 'https://dent.example.co.il/']);
   assert.strictEqual(full[3], `=HYPERLINK("https://wa.me/972501112222","פתח צ'אט")`);
   const bare = byName['בלי אתר ודירוג'];
-  assert.deepStrictEqual([bare[5], bare[6], bare[7]], ['', '', ''], 'missing fields stay empty');
+  assert.deepStrictEqual([bare[5], bare[7]], ['', ''], 'missing fields stay empty');
+  assert(byName['גבול תחתון'] && byName['גבול עליון'], '15 and 70 are included');
+  assert(!byName['מעט ביקורות'] && !byName['הרבה ביקורות'] && !byName['בלי ביקורות'], 'outside 15 to 70 excluded');
   assert(byName["'=HACK()"], 'formula-like name stored as text');
   assert(!byName['קווי'] && !byName['סגורה'] && !byName['בלי טלפון'] && !byName['אותו טלפון בפורמט אחר']);
   const seen = dataRows(ss.sheets['_נסרקו']);
-  assert.strictEqual(seen.length, 7, 'every place recorded as seen');
+  assert.strictEqual(seen.length, 12, 'every place recorded as seen');
   assert.strictEqual(seen.find((r) => r[1] === 'קווי')[3], 'קווי', 'landline kept aside');
   assert.strictEqual(ss.sheets['הגדרות'].cell(2, 2), 'נסרק');
-  console.log('ok  content, empty fields, landline/closed/no-phone filtered, same phone in two formats deduped');
+  console.log('ok  content, empty fields, 15 to 70 reviews only, landline/closed/no-phone filtered, same phone in two formats deduped');
 }
 
 // ---------- test 2: 40 + 40, alternate, queue, blank row between days, no cross-tab dupes ----------
 {
   n = 0;
   const pagesFor = (from, count) => {
-    const ps = Array.from({ length: count }, (_, i) => place({ phone: mobile(from + i), rating: 4.0, reviews: i }));
+    const ps = Array.from({ length: count }, (_, i) => place({ phone: mobile(from + i), rating: 4.0, reviews: 15 + (i % 50) }));
     return [ps.slice(0, 20), ps.slice(20, 40), ps.slice(40, 60)].filter((p) => p.length);
   };
   const areas = { 'א': pagesFor(0, 60), 'ב': pagesFor(100, 60), 'ג': pagesFor(200, 60) };
@@ -198,12 +205,11 @@ const filled = (rows) => rows.filter((r) => r[1] !== '');
   const fri = load(ss, g, new Date('2026-10-16T04:05:00Z')); // Friday
   fri.dailyRun();
   assert.strictEqual(g.calls.length, 0, 'no run on Friday');
-  const capped = load(ss, g, new Date('2026-10-18T04:05:00Z')); // Sunday
-  capped.props.set('searches:2026-10', '1318');
-  capped.dailyRun();
-  assert.strictEqual(g.calls.length, 0, 'monthly cap respected');
-  assert.match(String(ss.sheets['הגדרות'].cell(3, 7)), /החודשית/);
-  console.log('ok  Friday/Saturday skipped, monthly cap respected');
+  const sun = load(ss, g, new Date('2026-10-18T04:05:00Z')); // Sunday
+  sun.props.set('searches:2026-10', '5000');
+  sun.dailyRun();
+  assert.strictEqual(g.calls.length, 1, 'no monthly cap: still searches after 5,000');
+  console.log('ok  Friday/Saturday skipped, no search cap');
 }
 
 // ---------- test 4: manual entry ----------
@@ -229,7 +235,7 @@ const filled = (rows) => rows.filter((r) => r[1] !== '');
 {
   n = 0;
   const full = Array.from({ length: 60 }, (_, i) => place({ phone: mobile(500 + i) }));
-  full.forEach((p, i) => { p.addressComponents = [{ longText: 'רמת גן', types: ['locality', 'political'] }]; });
+  full.forEach((p, i) => { p.addressComponents = [{ longText: 'רמת גן', types: ['locality', 'political'] }]; p.userRatingCount = 20; });
   const ss = makeSpreadsheet(['32.0765,34.7845', 'נתניה']);
   const g = makePlaces({ '32.0710..32.0820': [full.slice(0, 20), full.slice(20, 40), full.slice(40, 60)] });
   const ctx = load(ss, g, new Date('2026-10-13T04:05:00Z'));

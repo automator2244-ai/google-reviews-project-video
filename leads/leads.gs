@@ -1,7 +1,7 @@
 /**
  * Dentist leads: fills the "עסקי" and "מאובטח" tabs with dentists from Google Places,
- * every Sunday to Thursday around 07:00 (Israel time). Only clinics with a mobile number (05x)
- * are added, and a phone number never appears twice across both tabs.
+ * every Sunday to Thursday around 07:00 (Israel time). Only clinics with a mobile number (05x) and
+ * 15 to 70 Google reviews are added, and a phone number never appears twice across both tabs.
  *
  * Every value comes straight from the Google Places response. A field Google does not return
  * (website, rating, review count) stays empty; nothing is guessed or filled in.
@@ -19,8 +19,11 @@ const SEEN = '_נסרקו';   // every place already looked at, including landli
 const QUEUE = '_תור';    // mobile clinics found beyond today's quota, used first next time
 
 const PER_TAB = 40;             // new clinics per tab per run
-const MAX_SEARCHES_RUN = 60;      // Text Search requests per run (owner's choice)
-const MAX_SEARCHES_MONTH = 1320;  // 22 workdays x 60. The first 1,000 a month are free; the rest cost about $35 per 1,000
+const MIN_REVIEWS = 15;         // only clinics with 15 to 70 Google reviews (inclusive)
+const MAX_REVIEWS = 70;
+// No cap on searches (owner's choice): a run searches until both tabs have 40 or the areas run out.
+// Google bills about $35 per 1,000 searches beyond the first 1,000 free each month.
+const MAX_RUN_MS = 5 * 60 * 1000; // Apps Script kills a run at 6 minutes; stop before that and save
 const PAGES_PER_AREA = 3;       // Google returns at most 60 results (3 x 20) per query
 const TZ = 'Asia/Jerusalem';
 const CELL_LAT = 0.011; // map square of about 1.2 x 1.2 km
@@ -128,7 +131,7 @@ function fillLocked_() {
   // 1. Yesterday's surplus first (re-checked, a phone may have been typed in by hand since).
   const queued = readQueue_(queueSheet);
   queued.forEach((lead) => {
-    if (knownPhones.has(lead.key)) return;
+    if (!inReviewRange_(lead.reviews) || knownPhones.has(lead.key)) return;
     knownPhones.add(lead.key);
     if (room()) take(lead); else leftover.push(lead);
   });
@@ -137,13 +140,12 @@ function fillLocked_() {
   const month = Utilities.formatDate(new Date(), TZ, 'yyyy-MM');
   const props = PropertiesService.getScriptProperties();
   let usedMonth = Number(props.getProperty('searches:' + month) || 0);
-  let usedRun = 0;
+  const started = Date.now();
   let message = '';
   const seenRows = [];
 
   while (room()) {
-    if (usedRun >= MAX_SEARCHES_RUN) { message = 'הגענו לתקרת החיפושים היומית'; break; }
-    if (usedMonth + PAGES_PER_AREA > MAX_SEARCHES_MONTH) { message = `הגענו לתקרת החיפושים החודשית (${MAX_SEARCHES_MONTH})`; break; }
+    if (Date.now() - started > MAX_RUN_MS) { message = 'נעצר אחרי 5 דקות (המגבלה של גוגל לריצה). ממשיך בריצה הבאה'; break; }
     const area = nextArea_(settings);
     if (!area) { message = 'נגמרו האזורים ברשימה. הוסף אזורים בלשונית "הגדרות"'; break; }
 
@@ -153,7 +155,6 @@ function fillLocked_() {
     let failed = false;
     for (let page = 0; page < PAGES_PER_AREA; page++) {
       const res = searchText_(key, area.name, token);
-      usedRun++;
       usedMonth++;
       if (res.error) { message = 'שגיאה מגוגל: ' + res.error; failed = true; break; }
       total += (res.places || []).length;
@@ -162,7 +163,7 @@ function fillLocked_() {
         seenIds.add(p.id);
         const lead = toLead_(p);
         seenRows.push([p.id, lead.name, lead.phone, lead.kind, area.name, new Date()]);
-        if (lead.kind !== 'נייד' || knownPhones.has(lead.key)) return;
+        if (lead.kind !== 'נייד' || !inReviewRange_(lead.reviews) || knownPhones.has(lead.key)) return;
         knownPhones.add(lead.key);
         found++;
         if (room()) take(lead); else leftover.push(lead);
@@ -243,6 +244,12 @@ function city_(p) {
   if (loc && loc.longText) return loc.longText;
   const parts = String(p.formattedAddress || '').split(',').map((x) => x.trim()).filter((x) => x && !/^\d+$/.test(x));
   return parts.length > 1 ? parts[parts.length - 1] : '';
+}
+
+/** A clinic with no review count on Google counts as 0 reviews, so it is outside the range. */
+function inReviewRange_(reviews) {
+  const n = Number(reviews || 0);
+  return n >= MIN_REVIEWS && n <= MAX_REVIEWS;
 }
 
 /** Only fields Google returned; anything missing stays empty. */
@@ -381,7 +388,7 @@ function status_(r) {
   const now = Utilities.formatDate(new Date(), TZ, 'dd/MM/yyyy HH:mm');
   const rows = [['ריצה אחרונה', now], ['הודעה', r.message || '']];
   if (r.added) rows.push(['נוספו', `עסקי ${r.added[0]}, מאובטח ${r.added[1]}`]);
-  if (r.searches !== undefined) rows.push([`חיפושים החודש (מתוך ${MAX_SEARCHES_MONTH})`, r.searches]);
+  if (r.searches !== undefined) rows.push(['חיפושים החודש', r.searches]);
   if (r.waiting !== undefined) rows.push(['ממתינים בתור למחר', r.waiting]);
   s.getRange(2, 6, 5, 2).clearContent();
   s.getRange(2, 6, rows.length, 2).setValues(rows);
