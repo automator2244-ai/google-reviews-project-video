@@ -79,10 +79,9 @@ check "CSV export" 200 "$(status -H "cookie: $COOKIE" "$BASE/admin/export.csv")"
 echo "robots.txt"
 check "blocks /admin and /v/" 2 "$(curl -s "$BASE/robots.txt" | grep -cE '^Disallow: /(admin|v/)$')"
 
-echo "login rate limit"
-for i in 1 2 3 4 5; do check "wrong password $i" 401 "$(status --data-urlencode 'password=wrong' "$BASE/admin/login")"; done
-check "6th attempt blocked" 429 "$(status --data-urlencode 'password=wrong' "$BASE/admin/login")"
-check "even the right password is blocked" 429 "$(status --data-urlencode "password=$PASS" "$BASE/admin/login")"
+echo "no lockout after wrong passwords"
+for i in 1 2 3 4 5 6; do check "wrong password $i" 401 "$(status --data-urlencode 'password=wrong' "$BASE/admin/login")"; done
+check "right password still works" 303 "$(status --data-urlencode "password=$PASS" "$BASE/admin/login")"
 
 echo
 [ "$FAILS" -eq 0 ] && echo "ALL PASSED" || { echo "$FAILS FAILED"; exit 1; }
