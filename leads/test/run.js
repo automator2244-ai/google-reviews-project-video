@@ -34,7 +34,11 @@ class FakeSheet {
   getName() { return this.name; }
   getLastRow() { let m = 0; for (const k of this.data.keys()) m = Math.max(m, Number(k.split(',')[0])); return m; }
   getMaxRows() { return this.maxRows; }
-  insertRowsAfter(after, n) { this.maxRows += n; }
+  insertRowsAfter(after, n) {
+    const moved = new Map();
+    for (const [k, v] of this.data) { const [r, c] = k.split(',').map(Number); moved.set(r > after ? (r + n) + ',' + c : k, v); }
+    this.data = moved; this.maxRows += n;
+  }
   getRange(r, c, nr = 1, nc = 1) { return new FakeRange(this, r, c, nr, nc); }
   row(r) { return Array.from({ length: 14 }, (_, j) => this.cell(r, j + 1)); }
 }
@@ -61,8 +65,9 @@ function makePlaces(byArea) {
       assert.strictEqual(opts.headers['X-Goog-Api-Key'], 'TESTKEY');
       assert(opts.headers['X-Goog-FieldMask'].includes('places.userRatingCount'));
       assert.strictEqual(body.includedType, 'dentist');
-      const area = body.textQuery.replace('רופא שיניים ', '');
-      calls.push({ area, token: body.pageToken || '' });
+      const rect = body.locationRestriction && body.locationRestriction.rectangle;
+      const area = rect ? `${rect.low.latitude.toFixed(4)}..${rect.high.latitude.toFixed(4)}` : body.textQuery.replace('רופא שיניים ', '');
+      calls.push({ area, token: body.pageToken || '', query: body.textQuery, rect });
       const pages = byArea[area] || [[]];
       const idx = body.pageToken ? Number(body.pageToken) : 0;
       const out = { places: pages[idx] || [] };
@@ -194,11 +199,11 @@ const filled = (rows) => rows.filter((r) => r[1] !== '');
   fri.dailyRun();
   assert.strictEqual(g.calls.length, 0, 'no run on Friday');
   const capped = load(ss, g, new Date('2026-10-18T04:05:00Z')); // Sunday
-  capped.props.set('searches:2026-10', '898');
+  capped.props.set('searches:2026-10', '1318');
   capped.dailyRun();
   assert.strictEqual(g.calls.length, 0, 'monthly cap respected');
   assert.match(String(ss.sheets['הגדרות'].cell(3, 7)), /החודשית/);
-  console.log('ok  Friday/Saturday skipped, monthly cap of 900 respected');
+  console.log('ok  Friday/Saturday skipped, monthly cap respected');
 }
 
 // ---------- test 4: manual entry ----------
@@ -218,6 +223,30 @@ const filled = (rows) => rows.filter((r) => r[1] !== '');
   assert.strictEqual(m.cell(3, 4), `=HYPERLINK("https://wa.me/972527654321","פתח צ'אט")`);
   assert.strictEqual(m.cell(3, 5), 'עוד לא נשלחה הודעה');
   console.log('ok  manual entry: duplicate flagged, new row gets WhatsApp button and status');
+}
+
+// ---------- test 5: map squares ----------
+{
+  n = 0;
+  const full = Array.from({ length: 60 }, (_, i) => place({ phone: mobile(500 + i) }));
+  full.forEach((p, i) => { p.addressComponents = [{ longText: 'רמת גן', types: ['locality', 'political'] }]; });
+  const ss = makeSpreadsheet(['32.0765,34.7845', 'נתניה']);
+  const g = makePlaces({ '32.0710..32.0820': [full.slice(0, 20), full.slice(20, 40), full.slice(40, 60)] });
+  const ctx = load(ss, g, new Date('2026-10-13T04:05:00Z'));
+  ctx.dailyRun();
+  const first = g.calls[0];
+  assert.strictEqual(first.query, 'רופא שיניים', 'square search has no place name');
+  assert(Math.abs(first.rect.high.longitude - first.rect.low.longitude - 0.013) < 1e-9, 'square is 0.013 wide');
+  const st = ss.sheets['הגדרות'];
+  const listed = Array.from({ length: 7 }, (_, i) => st.cell(i + 2, 1));
+  assert.strictEqual(listed[0], '32.0765,34.7845');
+  assert.deepStrictEqual(listed.slice(1, 5), ['32.07375,34.78125,0.5', '32.07375,34.78775,0.5', '32.07925,34.78125,0.5', '32.07925,34.78775,0.5'], 'full square split into 4 quarters, right after it');
+  assert.strictEqual(listed[5], 'נתניה', 'named areas keep their place in line');
+  assert.strictEqual(g.calls[3].query, 'רופא שיניים', 'quarters searched next');
+  assert(Math.abs(g.calls[3].rect.high.latitude - g.calls[3].rect.low.latitude - 0.0055) < 1e-9, 'quarter is half the size');
+  const a = filled(dataRows(ss.sheets['עסקי']));
+  assert.strictEqual(a[0][8], 'רמת גן', 'city taken from the address');
+  console.log('ok  map squares: rectangle search, full square split into quarters, city from address');
 }
 
 console.log('\nALL PASSED');

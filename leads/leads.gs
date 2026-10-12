@@ -6,6 +6,10 @@
  * Every value comes straight from the Google Places response. A field Google does not return
  * (website, rating, review count) stays empty; nothing is guessed or filled in.
  *
+ * Areas ("הגדרות" A2:A) are searched in order. A row is either a place name ("נתניה מרכז") or a
+ * map square given by its center ("32.0765,34.7845"), searched with a location restriction so squares
+ * don't overlap. A square that hits Google's 60-result limit is split into four smaller ones.
+ *
  * Setup (once): Project Settings > Script properties > add PLACES_KEY, then run `setup`.
  */
 
@@ -15,20 +19,22 @@ const SEEN = '_נסרקו';   // every place already looked at, including landli
 const QUEUE = '_תור';    // mobile clinics found beyond today's quota, used first next time
 
 const PER_TAB = 40;             // new clinics per tab per run
-const MAX_SEARCHES_RUN = 25;    // Text Search requests per run
-const MAX_SEARCHES_MONTH = 900; // stays under Google's 1,000 free Enterprise requests a month
+const MAX_SEARCHES_RUN = 60;      // Text Search requests per run (owner's choice)
+const MAX_SEARCHES_MONTH = 1320;  // 22 workdays x 60. The first 1,000 a month are free; the rest cost about $35 per 1,000
 const PAGES_PER_AREA = 3;       // Google returns at most 60 results (3 x 20) per query
 const TZ = 'Asia/Jerusalem';
+const CELL_LAT = 0.011; // map square of about 1.2 x 1.2 km
+const CELL_LNG = 0.013;
 
 const STATUS_NEW = 'עוד לא נשלחה הודעה';
 const NCOLS = 13; // A..M are written; N holds the phone-key formula and is never touched
 // A date | B name | C phone | D WhatsApp | E status | F rating | G reviews | H website
-// I area | J address | K Google Maps | L notes | M place id
+// I city | J address | K Google Maps | L notes | M place id
 
 const FIELDS = [
   'places.id', 'places.displayName', 'places.nationalPhoneNumber', 'places.internationalPhoneNumber',
   'places.websiteUri', 'places.rating', 'places.userRatingCount', 'places.formattedAddress',
-  'places.googleMapsUri', 'places.businessStatus', 'places.types', 'nextPageToken',
+  'places.googleMapsUri', 'places.businessStatus', 'places.types', 'places.addressComponents', 'nextPageToken',
 ].join(',');
 
 // ---------- entry points ----------
@@ -137,22 +143,24 @@ function fillLocked_() {
 
   while (room()) {
     if (usedRun >= MAX_SEARCHES_RUN) { message = 'הגענו לתקרת החיפושים היומית'; break; }
-    if (usedMonth + PAGES_PER_AREA > MAX_SEARCHES_MONTH) { message = 'הגענו לתקרת החיפושים החודשית (900)'; break; }
+    if (usedMonth + PAGES_PER_AREA > MAX_SEARCHES_MONTH) { message = `הגענו לתקרת החיפושים החודשית (${MAX_SEARCHES_MONTH})`; break; }
     const area = nextArea_(settings);
     if (!area) { message = 'נגמרו האזורים ברשימה. הוסף אזורים בלשונית "הגדרות"'; break; }
 
     let token = '';
     let found = 0;
+    let total = 0;
     let failed = false;
     for (let page = 0; page < PAGES_PER_AREA; page++) {
       const res = searchText_(key, area.name, token);
       usedRun++;
       usedMonth++;
       if (res.error) { message = 'שגיאה מגוגל: ' + res.error; failed = true; break; }
+      total += (res.places || []).length;
       (res.places || []).forEach((p) => {
         if (!p.id || seenIds.has(p.id)) return;
         seenIds.add(p.id);
-        const lead = toLead_(p, area.name);
+        const lead = toLead_(p);
         seenRows.push([p.id, lead.name, lead.phone, lead.kind, area.name, new Date()]);
         if (lead.kind !== 'נייד' || knownPhones.has(lead.key)) return;
         knownPhones.add(lead.key);
@@ -165,6 +173,9 @@ function fillLocked_() {
     props.setProperty('searches:' + month, String(usedMonth));
     if (failed) break;
     markArea_(settings, area.row, found);
+    // Google stops at 60 results: a full square may hold more, so search its four quarters next.
+    const cell = parseCell_(area.name);
+    if (cell && total >= PAGES_PER_AREA * 20) splitCell_(settings, area.row, cell);
   }
 
   // 3. Write: a blank row between runs, then the new rows.
@@ -181,14 +192,22 @@ function fillLocked_() {
 // ---------- Google Places ----------
 
 function searchText_(key, area, pageToken) {
+  const cell = parseCell_(area);
   const body = {
-    textQuery: 'רופא שיניים ' + area,
+    textQuery: cell ? 'רופא שיניים' : 'רופא שיניים ' + area,
     includedType: 'dentist',
     strictTypeFiltering: true,
     languageCode: 'he',
     regionCode: 'IL',
     pageSize: 20,
   };
+  if (cell) {
+    const h = cell.scale / 2;
+    body.locationRestriction = { rectangle: {
+      low: { latitude: cell.lat - CELL_LAT * h, longitude: cell.lng - CELL_LNG * h },
+      high: { latitude: cell.lat + CELL_LAT * h, longitude: cell.lng + CELL_LNG * h },
+    } };
+  }
   if (pageToken) body.pageToken = pageToken;
   const res = UrlFetchApp.fetch('https://places.googleapis.com/v1/places:searchText', {
     method: 'post',
@@ -202,8 +221,32 @@ function searchText_(key, area, pageToken) {
   return json;
 }
 
+/** "32.0765,34.7845" or "32.0765,34.7845,0.5" (a quarter-size square) -> {lat, lng, scale}. */
+function parseCell_(area) {
+  const m = String(area).trim().match(/^(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)(?:\s*,\s*(\d*\.?\d+))?$/);
+  return m ? { lat: Number(m[1]), lng: Number(m[2]), scale: m[3] ? Number(m[3]) : 1 } : null;
+}
+
+function splitCell_(settings, row, cell) {
+  const s = cell.scale / 2;
+  const dl = (CELL_LAT * s) / 2;
+  const dg = (CELL_LNG * s) / 2;
+  const f = (x) => x.toFixed(5);
+  const rows = [[-1, -1], [-1, 1], [1, -1], [1, 1]].map(([a, b]) => [`${f(cell.lat + a * dl)},${f(cell.lng + b * dg)},${s}`]);
+  settings.insertRowsAfter(row, rows.length);
+  settings.getRange(row + 1, 1, rows.length, 1).setValues(rows);
+}
+
+/** The city as Google gives it: the address's locality, else the last non-numeric part of the address. */
+function city_(p) {
+  const loc = (p.addressComponents || []).find((c) => (c.types || []).indexOf('locality') >= 0);
+  if (loc && loc.longText) return loc.longText;
+  const parts = String(p.formattedAddress || '').split(',').map((x) => x.trim()).filter((x) => x && !/^\d+$/.test(x));
+  return parts.length > 1 ? parts[parts.length - 1] : '';
+}
+
 /** Only fields Google returned; anything missing stays empty. */
-function toLead_(p, area) {
+function toLead_(p) {
   const phone = p.nationalPhoneNumber || '';
   const key = phoneKey_(phone || p.internationalPhoneNumber || '');
   let kind = 'ללא טלפון';
@@ -218,7 +261,7 @@ function toLead_(p, area) {
     rating: typeof p.rating === 'number' ? p.rating : '',
     reviews: typeof p.userRatingCount === 'number' ? p.userRatingCount : '',
     website: p.websiteUri || '',
-    area,
+    area: city_(p),
     address: p.formattedAddress || '',
     maps: p.googleMapsUri || '',
   };
