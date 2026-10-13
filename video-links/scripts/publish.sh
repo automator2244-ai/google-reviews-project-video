@@ -102,16 +102,19 @@ add_segment() { # file lufs [personal]
   N=$((N + 1))
 }
 
+# Thumbnail (the WhatsApp preview) always comes from the template part, never the personal recording.
+TEMPLATE_THUMB=2.5 # seconds into the template: the review card
 THUMB_AT=1
 if [ -n "$VIDEO" ]; then
   add_segment "$VIDEO" -16
 elif [ "$PERSONAL_LAST" = 1 ]; then
   add_segment "$TEMPLATE" -20
   add_segment "$PERSONAL" -16 personal
-  THUMB_AT=$(awk "BEGIN{print $(duration "$TEMPLATE") / $SPEED + 1}")
+  THUMB_AT=$(awk "BEGIN{print $TEMPLATE_THUMB / $SPEED}")
 else
   add_segment "$PERSONAL" -16 personal
   add_segment "$TEMPLATE" -20
+  THUMB_AT=$(awk "BEGIN{print ($(duration "$PERSONAL") + $TEMPLATE_THUMB) / $SPEED}")
 fi
 FILTER+="${CONCAT}concat=n=$N:v=1:a=1[cv][ca];[cv]setpts=PTS/$SPEED,fps=30[v];[ca]atempo=$SPEED[a]"
 
