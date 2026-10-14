@@ -37,3 +37,17 @@ length: 55s
 - המרפאות, השמות, המספרים (230 מטופלים בחודש, 24 עד 190 ביקורות בחצי שנה, מתחרות עם 187 ו-61), הציטוטים והקישור בדויים. אין לוגו רשמי של גוגל או וואטסאפ.
 - התמונה של בניה מהאתר של EZ.Path.AI.
 - לעולם לא מקף ארוך בשום טקסט.
+
+## סרטוני המחקר (14.10.2026)
+
+שני סרטונים לאינסטגרם, כל אחד עם תוכן אחר: `research-photos.html` (תמונות אמיתיות, 35 שניות, "לפני שהם מתקשרים") ו-`research-illustrated.html` (איורים, 20 שניות, "גוגל אומר את זה בעצמו"). רק מקורות מתחום הבריאות, ומקור אחד של גוגל עצמה. כל הסקרים מארה״ב, וזה כתוב בשורת המקור.
+
+| בסרטון | המקור |
+|---|---|
+| 4.7 ביקורות קוראים בממוצע לפני שבוחרים רופא | Press Ganey, Consumer Experience Trends in Healthcare 2023 (1,000 צרכנים). https://www.pressganey.com/resources/blog/healthcare-provider-reviews-drive-patient-choice/ |
+| 37% ויתרו על רופא בגלל דירוג רע, 35% בחרו בגלל דירוג טוב (מתוך מי שבדק דירוגים בשנה האחרונה) | Hanauer et al., "Public Awareness, Perception, and Use of Online Physician Rating Sites", JAMA 2014;311(7), doi:10.1001/jama.2013.283194, סקר מייצג של 2,137 מבוגרים. https://www.sciencedaily.com/releases/2014/02/140218163405.htm |
+| 84% לא ישקלו רופא מתחת ל-4 כוכבים | Press Ganey, The State of HX 2024. https://www.pressganey.com/state-of-hx/ |
+| "יותר ביקורות ודירוגים חיוביים יכולים לעזור לדירוג המקומי של העסק" | Google Business Profile Help, How to improve your local ranking on Google. https://support.google.com/business/answer/7091 |
+| 65% מתעלמים מביקורות בנות יותר משנה (במקור 64.8%) | Press Ganey, Consumer Experience Trends in Healthcare 2023 |
+
+נבדקו ולא נכנסו: Spiegel/Northwestern 2017 (קניות אונליין), Luca/Harvard 2011 (מסעדות), BrightLocal 2025 (צרכנים כללי), Software Advice (האתר לא נפתח לבדיקה).

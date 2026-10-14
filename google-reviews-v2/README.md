@@ -31,3 +31,19 @@ npx hyperframes@0.8.140 render -c reel.html -q delivery -o out/reel-raw.mp4
 ffmpeg -i out/reel-raw.mp4 -filter_complex "[0:v]setpts=PTS/1.2,fps=30[v];[0:a]atempo=1.2[a]" -map "[v]" -map "[a]" \
   -c:v libx264 -preset slow -crf 18 -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart out/instagram-reel.mp4
 ```
+
+## סרטוני המחקר
+
+| קובץ | מה זה |
+|---|---|
+| `out/research-photos-35s.mp4` | "לפני שהם מתקשרים": תמונות אמיתיות ושלושה נתונים (35 שניות) |
+| `out/research-illustrated-20s.mp4` | "גוגל אומר את זה בעצמו": איורים ושני נתונים (20 שניות) |
+| `out/research-photos-cover.jpg`, `out/research-illustrated-cover.jpg` | תמונות שער |
+
+המקורות ב-`BRIEF.md`, הרישיונות ב-`CREDITS.md`. בלי האצה: הזמנים בקובץ הם הזמנים הסופיים.
+
+```bash
+npx hyperframes@0.8.140 render -c research-photos.html -q delivery -o out/rp-raw.mp4
+npx hyperframes@0.8.140 render -c research-illustrated.html -q delivery -o out/ri-raw.mp4
+# ואז דחיסה: ffmpeg -i out/rp-raw.mp4 -c:v libx264 -preset slow -crf 21 -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart out/research-photos-35s.mp4
+```

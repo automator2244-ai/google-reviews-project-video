@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="he" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>גוגל אומר את זה בעצמו</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Frank Ruhl Libre";
+        src: url("assets/fonts/frank-ruhl-libre-hebrew.woff2") format("woff2");
+        font-weight: 300 900;
+        font-display: block;
+        unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+      }
+      @font-face {
+        font-family: "Frank Ruhl Libre";
+        src: url("assets/fonts/frank-ruhl-libre-latin.woff2") format("woff2");
+        font-weight: 300 900;
+        font-display: block;
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+          U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: "Assistant";
+        src: url("assets/fonts/assistant-hebrew.woff2") format("woff2");
+        font-weight: 200 800;
+        font-display: block;
+        unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+      }
+      @font-face {
+        font-family: "Assistant";
+        src: url("assets/fonts/assistant-latin.woff2") format("woff2");
+        font-weight: 200 800;
+        font-display: block;
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+          U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: "JetBrains Mono";
+        src: url("assets/fonts/jetbrains-mono-latin.woff2") format("woff2");
+        font-weight: 400 700;
+        font-display: block;
+      }
+
+      /* EZ.Path.AI type; each scene gets its own tinted paper */
+      :root {
+        --sky: #dcebf5;
+        --sun: #fbefc9;
+        --blush: #fbe1dc;
+        --mint: #dff0e3;
+        --card: #fdfefd;
+        --rule: #c9d0ca;
+        --muted: #4e544f;
+        --ink: #141a15;
+        --accent: #007329;
+        --blue: #1f6fb5;
+        --star: #f2a900;
+        --coral: #d9483b;
+        --display: "Frank Ruhl Libre", serif;
+        --body: "Assistant", sans-serif;
+        --mono: "JetBrains Mono", "Assistant", monospace;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--sky);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--sky);
+        font-family: var(--body);
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+      }
+      bdi {
+        unicode-bidi: isolate;
+      }
+      svg {
+        display: block;
+      }
+      #bg {
+        position: absolute;
+        inset: 0;
+        background: var(--sky);
+      }
+      #dots {
+        position: absolute;
+        left: -40px;
+        top: -40px;
+        width: 1160px;
+        height: 2000px;
+        background-image: radial-gradient(circle, rgba(20, 26, 21, 0.1) 2.2px, rgba(20, 26, 21, 0) 2.8px);
+        background-size: 40px 40px;
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+        direction: rtl;
+      }
+
+      /* top wordmark */
+      #top {
+        position: absolute;
+        right: 72px;
+        top: 176px;
+        height: 70px;
+        padding: 0 30px;
+        border-radius: 35px;
+        background: var(--card);
+        display: flex;
+        align-items: center;
+        box-shadow: 0 10px 26px rgba(20, 40, 25, 0.1);
+        z-index: 30;
+      }
+      .wordmark {
+        font-family: var(--mono);
+        font-size: 30px;
+        font-weight: 700;
+        direction: ltr;
+        letter-spacing: -0.5px;
+      }
+      .wordmark b {
+        color: var(--accent);
+      }
+
+      .big {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        font-family: var(--display);
+        font-size: 124px;
+        font-weight: 800;
+        line-height: 1.04;
+        text-wrap: balance;
+      }
+      .big .w {
+        display: inline-block;
+      }
+      .illus {
+        position: absolute;
+        left: 50%;
+        transform-origin: 50% 100%;
+      }
+      .illus img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+      .src {
+        position: relative;
+        margin-top: 26px;
+        padding-top: 18px;
+        font-size: 27px;
+        font-weight: 600;
+        line-height: 1.35;
+        color: var(--muted);
+      }
+      .src::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 3px;
+        background: var(--rule);
+      }
+      .src bdi {
+        font-family: var(--mono);
+        font-size: 25px;
+        color: var(--ink);
+      }
+
+      /* scene 1 pins */
+      .pin {
+        position: absolute;
+        width: 92px;
+        height: 120px;
+        margin: -120px 0 0 -46px;
+        transform-origin: 50% 100%;
+      }
+      .pin svg {
+        width: 100%;
+        height: 100%;
+      }
+      .pin text {
+        font-family: var(--display);
+        font-weight: 800;
+        font-size: 30px;
+      }
+
+      /* scene 2 quote */
+      #quote {
+        position: absolute;
+        left: 72px;
+        right: 72px;
+        top: 300px;
+        border-radius: 44px;
+        background: var(--card);
+        box-shadow: 0 26px 60px rgba(90, 70, 10, 0.16);
+        padding: 46px 52px 40px;
+      }
+      .q-label {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-size: 34px;
+        font-weight: 800;
+        color: var(--blue);
+      }
+      .q-label i {
+        display: block;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: var(--blue);
+      }
+      .q-mark {
+        position: absolute;
+        left: 40px;
+        top: -40px;
+        font-family: var(--display);
+        font-size: 260px;
+        font-weight: 800;
+        line-height: 1;
+        color: var(--star);
+      }
+      .q-text {
+        margin-top: 22px;
+        font-family: var(--display);
+        font-size: 74px;
+        font-weight: 800;
+        line-height: 1.16;
+        text-wrap: balance;
+      }
+      .q-text .w {
+        display: inline-block;
+      }
+      .q-text .hl {
+        color: var(--accent);
+      }
+
+      /* scene 3 */
+      #s3-fig {
+        position: absolute;
+        right: 80px;
+        top: 760px;
+        font-family: var(--display);
+        font-size: 300px;
+        font-weight: 800;
+        line-height: 0.95;
+        color: var(--coral);
+        direction: ltr;
+      }
+      #s3-txt {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        top: 1060px;
+        font-family: var(--display);
+        font-size: 78px;
+        font-weight: 800;
+        line-height: 1.12;
+        text-wrap: balance;
+      }
+      #s3-txt .hl {
+        color: var(--coral);
+      }
+      #s3-src {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        top: 1300px;
+      }
+      .old {
+        position: absolute;
+        height: 76px;
+        padding: 0 26px;
+        border-radius: 22px;
+        background: var(--card);
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-size: 28px;
+        font-weight: 700;
+        box-shadow: 0 10px 24px rgba(90, 30, 20, 0.12);
+        direction: rtl;
+      }
+      .old .st {
+        color: var(--star);
+        letter-spacing: 2px;
+      }
+      .old .when {
+        font-family: var(--mono);
+        font-size: 24px;
+        color: var(--muted);
+      }
+
+      /* scene 4 end */
+      #cta {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        top: 1120px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .cta-wm {
+        font-family: var(--mono);
+        font-size: 60px;
+        font-weight: 700;
+        direction: ltr;
+        letter-spacing: -1px;
+      }
+      .cta-wm b {
+        color: var(--accent);
+      }
+      .cta-call {
+        margin-top: 12px;
+        font-size: 40px;
+        font-weight: 700;
+        color: var(--muted);
+      }
+      .contact {
+        margin-top: 34px;
+        height: 124px;
+        padding: 0 52px;
+        border-radius: 62px;
+        background: var(--accent);
+        color: #fdfefd;
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        box-shadow: 0 22px 44px rgba(0, 80, 30, 0.22);
+      }
+      .contact svg {
+        width: 52px;
+        height: 52px;
+        fill: none;
+        stroke: #fdfefd;
+        stroke-width: 2.2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .contact span {
+        font-family: var(--mono);
+        font-size: 56px;
+        font-weight: 700;
+        direction: ltr;
+      }
+      .site {
+        margin-top: 24px;
+        font-family: var(--mono);
+        font-size: 34px;
+        font-weight: 700;
+        color: var(--muted);
+        direction: ltr;
+      }
+      #tooth {
+        position: absolute;
+        width: 96px;
+        height: 96px;
+        border-radius: 50%;
+        background: var(--card);
+        border: 5px solid var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 10px 24px rgba(0, 60, 20, 0.16);
+      }
+      #tooth svg {
+        width: 56px;
+        height: 56px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="research-illustrated" data-start="0" data-duration="20" data-width="1080" data-height="1920">
+      <div id="bg" data-layout-allow-overflow><div id="dots"></div></div>
+      <div id="top"><div class="wordmark">EZ<b>.</b>Path<b>.</b>AI</div></div>
+
+      <!-- Scene 1 (0 to 4.6): which clinic does Google show first? -->
+      <section id="s1" class="scene clip" dir="rtl" lang="he" data-start="0" data-duration="4.7" data-track-index="1">
+        <div class="big" id="s1-h" style="top: 300px"><span class="w">איזו</span> <span class="w">מרפאה</span> <span class="w">גוגל</span> <span class="w">מראה</span> <span class="w" style="color: var(--blue)">ראשונה?</span></div>
+        <div class="illus" id="s1-il" style="width: 700px; margin-left: -350px; top: 800px"><img src="assets/illus/map.svg" alt="" /></div>
+        <div class="pin" id="pin1" style="left: 250px; top: 860px"></div>
+        <div class="pin" id="pin2" style="left: 470px; top: 790px"></div>
+        <div class="pin" id="pin3" style="left: 860px; top: 900px"></div>
+      </section>
+
+      <!-- Scene 2 (4.6 to 10.6): Google's own words -->
+      <section id="s2" class="scene clip" dir="rtl" lang="he" data-start="4.5" data-duration="6.2" data-track-index="2">
+        <div id="quote">
+          <div class="q-mark" aria-hidden="true">&#8221;</div>
+          <div class="q-label"><i></i>גוגל כותבת בעצמה:</div>
+          <div class="q-text"><span class="w">"יותר</span> <span class="w hl">ביקורות</span> <span class="w">ודירוגים</span> <span class="w">חיוביים</span> <span class="w">יכולים</span> <span class="w">לעזור</span> <span class="w hl">לדירוג</span> <span class="w hl">המקומי</span> <span class="w">של</span> <span class="w">העסק."</span></div>
+          <div class="src"><div>מקור: <bdi dir="ltr">Google Business Profile Help</bdi></div><div><bdi dir="ltr">How to improve your local ranking on Google</bdi></div></div>
+        </div>
+        <div class="illus" id="s2-il" style="width: 700px; margin-left: -350px; top: 1010px"><img src="assets/illus/reviews.svg" alt="" /></div>
+      </section>
+
+      <!-- Scene 3 (10.6 to 15.4): old reviews do not count -->
+      <section id="s3" class="scene clip" dir="rtl" lang="he" data-start="10.5" data-duration="5" data-track-index="1">
+        <div class="illus" id="s3-il" style="width: 620px; margin-left: -310px; top: 330px"><img src="assets/illus/time.svg" alt="" /></div>
+        <div class="old" id="old1" style="right: 60px; top: 640px"><span class="st">★★★★★</span><span class="when">לפני שנתיים</span></div>
+        <div class="old" id="old2" style="left: 60px; top: 560px"><span class="st">★★★★★</span><span class="when">לפני 3 שנים</span></div>
+        <div id="s3-fig"><bdi dir="ltr"><span id="n65">0</span>%</bdi></div>
+        <div id="s3-txt">מתעלמים מביקורות <span class="hl">בנות יותר משנה.</span></div>
+        <div id="s3-src" class="src">מקור: <bdi dir="ltr">Press Ganey</bdi>, סקר של 1,000 צרכנים בארה״ב, 2023</div>
+      </section>
+
+      <!-- Scene 4 (15.4 to 20): fresh reviews, every month -->
+      <section id="s4" class="scene clip" dir="rtl" lang="he" data-start="15.3" data-duration="4.7" data-track-index="2">
+        <div class="big" id="s4-h" style="top: 300px"><span class="w">ביקורות</span> <span class="w">חדשות,</span> <span class="w" style="color: var(--accent)">כל</span> <span class="w" style="color: var(--accent)">חודש.</span></div>
+        <div class="illus" id="s4-il" style="width: 760px; margin-left: -380px; top: 600px"><img src="assets/illus/arriving.svg" alt="" /></div>
+        <div id="tooth" style="left: 735px; top: 590px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#007329" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3.5c-2.4 0-4 1.9-4 4.6 0 2.5 1.2 4 1.9 6.4.6 2.2.9 6.5 2.6 6.5 1.6 0 1.7-3.6 2.4-5.2.4-.9 1.1-1.3 2.1-1.3s1.7.4 2.1 1.3c.7 1.6.8 5.2 2.4 5.2 1.7 0 2-4.3 2.6-6.5.7-2.4 1.9-3.9 1.9-6.4 0-2.7-1.6-4.6-4-4.6-1.9 0-2.8 1-5 1s-3.1-1-5-1Z" /></svg>
+        </div>
+        <div id="cta">
+          <div class="cta-wm">EZ<b>.</b>Path<b>.</b>AI</div>
+          <div class="cta-call">מהמספר של המרפאה, בלי עבודה לצוות.</div>
+          <div class="contact" id="contact"><svg viewBox="0 0 24 24"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" /></svg><span>055-271-6456</span></div>
+          <div class="site">ezpath-ai.com</div>
+        </div>
+      </section>
+
+      <audio id="music" src="assets/audio/music-illustrated.mp3" data-start="0" data-duration="20" data-track-index="10" data-volume="1"></audio>
+      <audio id="sfx-1" src="assets/audio/pop.mp3" data-start="1.6" data-duration="0.72" data-track-index="11" data-volume="0.16"></audio>
+      <audio id="sfx-2" src="assets/audio/pop.mp3" data-start="4.9" data-duration="0.72" data-track-index="11" data-volume="0.2"></audio>
+      <audio id="sfx-3" src="assets/audio/pop.mp3" data-start="11.2" data-duration="0.72" data-track-index="11" data-volume="0.2"></audio>
+      <audio id="sfx-4" src="assets/audio/pop.mp3" data-start="17.1" data-duration="0.72" data-track-index="11" data-volume="0.2"></audio>
+    </div>
+
+    <script>
+      (function () {
+        const $ = (id) => document.getElementById(id);
+        const pin = (fill, label) =>
+          '<svg viewBox="0 0 64 84"><path d="M32 82 C 32 82 4 50 4 30 A 28 28 0 0 1 60 30 C 60 50 32 82 32 82 Z" fill="' +
+          fill +
+          '"/><circle cx="32" cy="30" r="17" fill="#fdfefd"/><text x="32" y="41" text-anchor="middle" fill="' +
+          fill +
+          '">' +
+          label +
+          "</text></svg>";
+        $("pin1").innerHTML = pin("#1f6fb5", "?");
+        $("pin2").innerHTML = pin("#d9483b", "?");
+        $("pin3").innerHTML = pin("#007329", "?");
+
+        function build() {
+          const tl = gsap.timeline({ paused: true });
+          const words = (sel, t) => tl.fromTo(sel + " .w", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.45, ease: "power4.out", stagger: 0.06 }, t);
+          const out = (sel, t) => tl.to(sel, { opacity: 0, y: -60, duration: 0.35, ease: "power2.in", stagger: 0.04 }, t);
+
+          tl.fromTo("#top", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 0.05);
+          tl.fromTo("#dots", { x: 0, y: 0 }, { x: 30, y: 60, duration: 20, ease: "none" }, 0);
+          // tinted paper per scene
+          tl.to("#bg", { backgroundColor: "#fbefc9", duration: 0.5, ease: "power1.inOut" }, 4.45);
+          tl.to("#bg", { backgroundColor: "#fbe1dc", duration: 0.5, ease: "power1.inOut" }, 10.45);
+          tl.to("#bg", { backgroundColor: "#dff0e3", duration: 0.5, ease: "power1.inOut" }, 15.25);
+
+          // Scene 1
+          words("#s1-h", 0.15);
+          tl.fromTo("#s1-il", { opacity: 0, y: 60, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "power3.out" }, 0.5);
+          ["#pin1", "#pin2", "#pin3"].forEach((s, i) => {
+            tl.fromTo(s, { opacity: 0, y: -90, scale: 0.4 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "back.out(2.2)" }, 1.2 + i * 0.2);
+            tl.to(s, { y: -18, duration: 0.35, ease: "sine.inOut", yoyo: true, repeat: 3 }, 2.2 + i * 0.25);
+          });
+          out(["#s1-h", "#s1-il", "#pin1", "#pin2", "#pin3"], 4.2);
+
+          // Scene 2
+          tl.fromTo("#quote", { opacity: 0, y: 80, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: "power3.out" }, 4.65);
+          tl.fromTo(".q-mark", { opacity: 0, scale: 0.4, rotation: -20 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.5, ease: "back.out(2)" }, 4.9);
+          words("#quote", 5.0);
+          tl.fromTo("#quote .src", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, 6.2);
+          tl.fromTo("#s2-il", { opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 5.6);
+          tl.to("#s2-il", { y: -16, duration: 3.6, ease: "sine.inOut" }, 6.3);
+          out(["#quote", "#s2-il"], 10.2);
+
+          // Scene 3
+          tl.fromTo("#s3-il", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.55, ease: "power3.out" }, 10.6);
+          tl.fromTo(["#old1", "#old2"], { opacity: 0, x: 60 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out", stagger: 0.15 }, 10.8);
+          tl.to(["#old1", "#old2"], { opacity: 0.25, y: 30, rotation: -6, duration: 1.0, ease: "power2.in", stagger: 0.2 }, 12.2);
+          tl.fromTo("#s3-fig", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.55, ease: "back.out(1.8)", transformOrigin: "100% 60%" }, 11.0);
+          const o = { v: 0 };
+          tl.fromTo(o, { v: 0 }, { v: 65, duration: 1.1, ease: "power3.out", onUpdate: () => ($("n65").textContent = Math.round(o.v)) }, 11.1);
+          tl.fromTo("#s3-txt", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 11.5);
+          tl.fromTo("#s3-src", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, 12.0);
+          out(["#s3-il", "#s3-fig", "#s3-txt", "#s3-src", "#old1", "#old2"], 15.0);
+
+          // Scene 4
+          words("#s4-h", 15.45);
+          tl.fromTo("#s4-il", { opacity: 0, x: 120 }, { opacity: 1, x: 0, duration: 0.7, ease: "power3.out" }, 15.6);
+          tl.fromTo("#tooth", { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2.4)" }, 16.2);
+          tl.fromTo("#cta", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.55, ease: "power3.out" }, 16.9);
+          tl.fromTo("#contact", { scale: 0.8 }, { scale: 1, duration: 0.5, ease: "back.out(2)" }, 17.05);
+          tl.to("#contact", { scale: 1.05, duration: 0.35, ease: "power2.out" }, 18.2);
+          tl.to("#contact", { scale: 1, duration: 0.5, ease: "power2.inOut" }, 18.55);
+
+          window.__timelines = window.__timelines || {};
+          window.__timelines["research-illustrated"] = tl;
+          if (typeof window.__hfForceTimelineRebind === "function") window.__hfForceTimelineRebind();
+        }
+
+        Promise.all([
+          document.fonts.load('800 124px "Frank Ruhl Libre"', "אבגד"),
+          document.fonts.load('800 124px "Frank Ruhl Libre"', "0123%?"),
+          document.fonts.load('700 36px "Assistant"', "אבגד"),
+          document.fonts.load('700 30px "JetBrains Mono"', "EZ.Path0123"),
+        ])
+          .then(() => document.fonts.ready)
+          .then(build, build);
+      })();
+    </script>
+  </body>
+</html>

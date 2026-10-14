@@ -1,0 +1,821 @@
+<!doctype html>
+<html lang="he" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>לפני שהם מתקשרים</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Frank Ruhl Libre";
+        src: url("assets/fonts/frank-ruhl-libre-hebrew.woff2") format("woff2");
+        font-weight: 300 900;
+        font-display: block;
+        unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+      }
+      @font-face {
+        font-family: "Frank Ruhl Libre";
+        src: url("assets/fonts/frank-ruhl-libre-latin.woff2") format("woff2");
+        font-weight: 300 900;
+        font-display: block;
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+          U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: "Assistant";
+        src: url("assets/fonts/assistant-hebrew.woff2") format("woff2");
+        font-weight: 200 800;
+        font-display: block;
+        unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+      }
+      @font-face {
+        font-family: "Assistant";
+        src: url("assets/fonts/assistant-latin.woff2") format("woff2");
+        font-weight: 200 800;
+        font-display: block;
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+          U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: "JetBrains Mono";
+        src: url("assets/fonts/jetbrains-mono-latin.woff2") format("woff2");
+        font-weight: 400 700;
+        font-display: block;
+      }
+
+      /* EZ.Path.AI type and paper, with warmer accents for the photo story */
+      :root {
+        --paper: #f4f8f5;
+        --card: #fdfefd;
+        --rule: #ccd3cd;
+        --muted: #4e544f;
+        --ink: #141a15;
+        --accent: #007329;
+        --accent-soft: #d0eed5;
+        --star: #f2a900;
+        --coral: #d9483b;
+        --coral-soft: #fbe1dc;
+        --display: "Frank Ruhl Libre", serif;
+        --body: "Assistant", sans-serif;
+        --mono: "JetBrains Mono", "Assistant", monospace;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--ink);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--ink);
+        font-family: var(--body);
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+      }
+      bdi {
+        unicode-bidi: isolate;
+      }
+      svg {
+        display: block;
+      }
+
+      /* ---------- Photos ---------- */
+      .ph {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+      .ph img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .shade {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(10, 20, 12, 0.32) 0%, rgba(10, 20, 12, 0) 22%, rgba(10, 20, 12, 0) 48%, rgba(10, 20, 12, 0.55) 100%);
+      }
+
+      /* ---------- Top: wordmark and step ---------- */
+      #top {
+        position: absolute;
+        left: 72px;
+        right: 72px;
+        top: 176px;
+        height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        direction: rtl;
+        z-index: 30;
+      }
+      .pill {
+        height: 70px;
+        padding: 0 30px;
+        border-radius: 35px;
+        background: rgba(253, 254, 253, 0.94);
+        display: flex;
+        align-items: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.18);
+      }
+      .wordmark {
+        font-family: var(--mono);
+        font-size: 30px;
+        font-weight: 700;
+        direction: ltr;
+        letter-spacing: -0.5px;
+      }
+      .wordmark b {
+        color: var(--accent);
+      }
+      #step {
+        position: relative;
+        width: 250px;
+      }
+      .st {
+        position: absolute;
+        left: 0;
+        top: -35px;
+        gap: 12px;
+        direction: rtl;
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--muted);
+        opacity: 0;
+      }
+      .st b {
+        font-family: var(--mono);
+        color: var(--accent);
+      }
+
+      /* ---------- Cards over the photos ---------- */
+      .card {
+        position: absolute;
+        left: 72px;
+        right: 72px;
+        border-radius: 44px;
+        background: rgba(253, 254, 253, 0.96);
+        box-shadow: 0 30px 70px rgba(0, 0, 0, 0.28);
+        direction: rtl;
+        padding: 52px 56px 46px;
+      }
+      .headline {
+        font-family: var(--display);
+        font-size: 84px;
+        font-weight: 800;
+        line-height: 1.12;
+        text-wrap: balance;
+      }
+      .headline .w {
+        display: inline-block;
+      }
+      .hl {
+        color: var(--accent);
+      }
+      .fig {
+        font-family: var(--display);
+        font-size: 250px;
+        font-weight: 800;
+        line-height: 0.95;
+        direction: ltr;
+        text-align: right;
+      }
+      .fig-txt {
+        margin-top: 18px;
+        font-family: var(--display);
+        font-size: 66px;
+        font-weight: 700;
+        line-height: 1.15;
+        text-wrap: balance;
+      }
+      .fig-note {
+        margin-top: 14px;
+        font-size: 36px;
+        font-weight: 600;
+        color: var(--muted);
+      }
+      .src {
+        position: relative;
+        margin-top: 30px;
+        padding-top: 20px;
+        font-size: 27px;
+        font-weight: 600;
+        line-height: 1.35;
+        color: var(--muted);
+      }
+      .src::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 3px;
+        background: var(--rule);
+      }
+      .src bdi {
+        font-family: var(--mono);
+        font-size: 25px;
+        color: var(--ink);
+      }
+
+      /* scene 2: reviews stacking up */
+      .rvs {
+        position: absolute;
+        left: 120px;
+        right: 120px;
+        top: 300px;
+        height: 560px;
+      }
+      .rv {
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 150px;
+        border-radius: 30px;
+        background: var(--card);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.22);
+        padding: 24px 32px;
+        direction: rtl;
+        opacity: 0;
+      }
+      .rv-top {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .av {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        color: #fff;
+        font-size: 26px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .rv-name {
+        font-size: 30px;
+        font-weight: 800;
+      }
+      .stars {
+        display: inline-flex;
+        gap: 4px;
+        direction: ltr;
+        margin-right: auto;
+      }
+      .stars svg {
+        width: 30px;
+        height: 30px;
+        fill: var(--star);
+      }
+      .stars .off {
+        fill: #d5dbd6;
+      }
+      .rv-lines {
+        margin-top: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .rv-lines i {
+        display: block;
+        height: 12px;
+        border-radius: 6px;
+        background: #e3e8e4;
+      }
+
+      /* scene 3: two numbers side by side */
+      .duo {
+        display: flex;
+        gap: 26px;
+        margin-top: 6px;
+      }
+      .duo > div {
+        flex: 1;
+        border-radius: 32px;
+        padding: 30px 30px 32px;
+      }
+      #d-bad {
+        background: var(--coral-soft);
+      }
+      #d-good {
+        background: var(--accent-soft);
+      }
+      .duo .n {
+        font-family: var(--display);
+        font-size: 150px;
+        font-weight: 800;
+        line-height: 1;
+        direction: ltr;
+        text-align: right;
+      }
+      #d-bad .n {
+        color: var(--coral);
+      }
+      #d-good .n {
+        color: var(--accent);
+      }
+      .duo .t {
+        margin-top: 12px;
+        font-family: var(--display);
+        font-size: 46px;
+        font-weight: 700;
+        line-height: 1.15;
+      }
+      .duo .ic {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 8px;
+      }
+      #d-bad .ic {
+        stroke: var(--coral);
+      }
+      #d-good .ic {
+        stroke: var(--accent);
+      }
+      .ic {
+        fill: none;
+        stroke-width: 2.2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      /* scene 4: star bar */
+      .bar {
+        margin-top: 30px;
+        display: flex;
+        gap: 14px;
+        direction: ltr;
+        align-items: flex-end;
+      }
+      .bs {
+        position: relative;
+        width: 104px;
+        height: 104px;
+      }
+      .bs svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+      .bs .off {
+        fill: none;
+        stroke: #8a938c;
+        stroke-width: 1.3;
+      }
+      .bs .on {
+        fill: var(--star);
+      }
+      #cut {
+        margin-top: 14px;
+        height: 7px;
+        width: 520px;
+        border-radius: 4px;
+        background: var(--coral);
+        transform-origin: 0% 50%;
+      }
+      #cut-lbl {
+        margin-top: 10px;
+        font-size: 32px;
+        font-weight: 800;
+        color: var(--coral);
+      }
+
+      /* scene 5: the new review */
+      #newrv {
+        position: absolute;
+        left: 120px;
+        right: 120px;
+        top: 330px;
+        border-radius: 34px;
+        background: var(--card);
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.3);
+        padding: 30px 36px;
+        direction: rtl;
+        opacity: 0;
+      }
+      .nr-top {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+      .nr-g {
+        width: 62px;
+        height: 62px;
+        border-radius: 50%;
+        background: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .nr-g svg {
+        width: 36px;
+        height: 36px;
+        fill: #fff;
+      }
+      .nr-title {
+        font-size: 34px;
+        font-weight: 800;
+      }
+      .nr-sub {
+        font-size: 26px;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      .nr-tag {
+        margin-right: auto;
+        padding: 8px 18px;
+        border-radius: 16px;
+        background: var(--accent-soft);
+        color: #004c1a;
+        font-size: 26px;
+        font-weight: 800;
+      }
+      #newrv .stars {
+        margin: 22px 0 0;
+      }
+      #newrv .stars svg {
+        width: 50px;
+        height: 50px;
+      }
+
+      /* ---------- End card ---------- */
+      #end {
+        position: absolute;
+        inset: 0;
+        background: var(--paper);
+        direction: rtl;
+      }
+      #end-dots {
+        position: absolute;
+        left: -40px;
+        top: -40px;
+        width: 1160px;
+        height: 2000px;
+        background-image: radial-gradient(circle, rgba(20, 26, 21, 0.12) 2.2px, rgba(20, 26, 21, 0) 2.8px);
+        background-size: 40px 40px;
+      }
+      #end-glow {
+        position: absolute;
+        width: 1500px;
+        height: 1500px;
+        left: -210px;
+        top: 160px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(0, 115, 41, 0.16) 0%, rgba(0, 115, 41, 0) 62%);
+      }
+      .end {
+        position: absolute;
+        left: 90px;
+        right: 90px;
+        top: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .portrait {
+        position: relative;
+        width: 300px;
+        height: 300px;
+      }
+      .portrait img {
+        position: absolute;
+        left: 20px;
+        top: 20px;
+        width: 260px;
+        height: 260px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .portrait svg {
+        position: absolute;
+        inset: 0;
+        width: 300px;
+        height: 300px;
+      }
+      .end .wm {
+        margin-top: 34px;
+        font-family: var(--mono);
+        font-size: 56px;
+        font-weight: 700;
+        direction: ltr;
+        letter-spacing: -1px;
+      }
+      .end .wm b {
+        color: var(--accent);
+      }
+      .end .rule {
+        margin-top: 34px;
+        width: 220px;
+        height: 6px;
+        border-radius: 3px;
+        background: var(--accent);
+      }
+      .end .q {
+        margin-top: 40px;
+        font-family: var(--display);
+        font-size: 92px;
+        font-weight: 800;
+        line-height: 1.1;
+        text-wrap: balance;
+      }
+      .end .q .w {
+        display: inline-block;
+      }
+      .end .call {
+        margin-top: 24px;
+        font-size: 46px;
+        font-weight: 700;
+        color: var(--muted);
+      }
+      .end .contact {
+        margin-top: 54px;
+        height: 128px;
+        padding: 0 54px;
+        border-radius: 64px;
+        background: var(--accent);
+        color: #fdfefd;
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        box-shadow: 0 22px 44px rgba(0, 80, 30, 0.22);
+      }
+      .end .contact svg {
+        width: 54px;
+        height: 54px;
+        stroke: #fdfefd;
+      }
+      .end .contact span {
+        font-family: var(--mono);
+        font-size: 58px;
+        font-weight: 700;
+        direction: ltr;
+      }
+      .end .site {
+        margin-top: 30px;
+        font-family: var(--mono);
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--muted);
+        direction: ltr;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="research-photos" data-start="0" data-duration="35" data-width="1080" data-height="1920">
+      <!-- Photos, one per beat of the patient's way to the clinic -->
+      <div class="ph clip" id="ph1" data-start="0" data-duration="4.8" data-track-index="0"><img src="assets/img/stock/couch-phone.jpg" alt="" style="object-position: 38% 50%" /></div>
+      <div class="ph clip" id="ph2" data-start="4" data-duration="6.8" data-track-index="1"><img src="assets/img/stock/pink-phone.jpg" alt="" style="object-position: 74% 50%" /></div>
+      <div class="ph clip" id="ph3" data-start="10" data-duration="7.8" data-track-index="0"><img src="assets/img/stock/smiling-phone.jpg" alt="" style="object-position: 40% 30%" /></div>
+      <div class="ph clip" id="ph4" data-start="17" data-duration="6.8" data-track-index="1"><img src="assets/img/stock/blue-couch.jpg" alt="" style="object-position: 60% 40%" /></div>
+      <div class="ph clip" id="ph5" data-start="23" data-duration="3.8" data-track-index="0"><img src="assets/img/stock/door.jpg" alt="" style="object-position: 30% 50%" /></div>
+      <div class="ph clip" id="ph6" data-start="26.2" data-duration="4.4" data-track-index="1"><img src="assets/img/stock/dentist-patient.jpg" alt="" style="object-position: 50% 50%" /></div>
+      <div class="shade clip" id="shade" data-start="0" data-duration="30.2" data-track-index="2" data-layout-allow-overlap></div>
+
+      <!-- Top: wordmark and which finding we are on -->
+      <div id="top">
+        <div class="pill"><div class="wordmark">EZ<b>.</b>Path<b>.</b>AI</div></div>
+        <div id="step" data-layout-allow-overlap>
+          <div class="pill st" id="st1">נתון <b>1/3</b></div>
+          <div class="pill st" id="st2">נתון <b>2/3</b></div>
+          <div class="pill st" id="st3">נתון <b>3/3</b></div>
+        </div>
+      </div>
+
+      <!-- Scene 1 (0 to 4.2) -->
+      <div class="card clip" id="c1" dir="rtl" lang="he" data-start="0" data-duration="4.3" data-track-index="3" style="top: 1110px">
+        <div class="headline"><span class="w">לפני</span> <span class="w">שמטופל</span> <span class="w">חדש</span> <span class="w">מתקשר</span> <span class="w">אליכם,</span> <span class="w hl">הוא</span> <span class="w hl">כבר</span> <span class="w hl">קרא</span> <span class="w hl">עליכם.</span></div>
+      </div>
+
+      <!-- Scene 2 (4.2 to 10.2): 4.7 reviews -->
+      <div class="rvs clip" id="rvs" data-start="4.2" data-duration="6.1" data-track-index="4" data-layout-allow-overlap>
+        <div class="rv" id="rv1" style="top: 0"><div class="rv-top"><div class="av" style="background: #7a5cc4">מ</div><div class="rv-name">מיכל ר.</div><span class="stars" data-stars="5"></span></div><div class="rv-lines"><i style="width: 92%"></i><i style="width: 64%"></i></div></div>
+        <div class="rv" id="rv2" style="top: 100px"><div class="rv-top"><div class="av" style="background: #a8521f">א</div><div class="rv-name">איתי ש.</div><span class="stars" data-stars="4"></span></div><div class="rv-lines"><i style="width: 80%"></i><i style="width: 52%"></i></div></div>
+        <div class="rv" id="rv3" style="top: 200px"><div class="rv-top"><div class="av" style="background: #2d7fc2">י</div><div class="rv-name">יעל ב.</div><span class="stars" data-stars="5"></span></div><div class="rv-lines"><i style="width: 88%"></i><i style="width: 70%"></i></div></div>
+        <div class="rv" id="rv4" style="top: 300px"><div class="rv-top"><div class="av" style="background: #c2410c">ר</div><div class="rv-name">רון ט.</div><span class="stars" data-stars="5"></span></div><div class="rv-lines"><i style="width: 76%"></i><i style="width: 58%"></i></div></div>
+        <div class="rv" id="rv5" style="top: 400px"><div class="rv-top"><div class="av" style="background: #0f766e">ד</div><div class="rv-name">דנה כ.</div><span class="stars" data-stars="4"></span></div><div class="rv-lines"><i style="width: 84%"></i><i style="width: 40%"></i></div></div>
+      </div>
+      <div class="card clip" id="c2" dir="rtl" lang="he" data-start="4.2" data-duration="6.1" data-track-index="3" style="top: 940px">
+        <div class="fig" style="color: var(--accent)"><bdi dir="ltr" id="n47">0.0</bdi></div>
+        <div class="fig-txt">ביקורות קוראים בממוצע, <span class="hl">לפני שבוחרים רופא.</span></div>
+        <div class="src">מקור: <bdi dir="ltr">Press Ganey</bdi>, סקר של 1,000 צרכנים בארה״ב, 2023</div>
+      </div>
+
+      <!-- Scene 3 (10.2 to 17.2): 37% and 35% -->
+      <div class="card clip" id="c3" dir="rtl" lang="he" data-start="10.2" data-duration="7.1" data-track-index="3" style="top: 760px">
+        <div class="duo">
+          <div id="d-bad">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M17 14V2" /><path d="M9 18.12 10 14H4.17a2 2 0 0 1-1.92-2.56l2.33-8A2 2 0 0 1 6.5 2H20a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-2.76a2 2 0 0 0-1.79 1.11L12 22a3.13 3.13 0 0 1-3-3.88Z" /></svg>
+            <div class="n"><bdi dir="ltr"><span id="n37">0</span>%</bdi></div>
+            <div class="t">ויתרו על רופא בגלל דירוג רע.</div>
+          </div>
+          <div id="d-good">
+            <svg class="ic" viewBox="0 0 24 24"><path d="M7 10v12" /><path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2a3.13 3.13 0 0 1 3 3.88Z" /></svg>
+            <div class="n"><bdi dir="ltr"><span id="n35">0</span>%</bdi></div>
+            <div class="t">בחרו רופא בגלל דירוג טוב.</div>
+          </div>
+        </div>
+        <div class="fig-note">מתוך מי שבדק דירוגים של רופאים בשנה האחרונה.</div>
+        <div class="src">מקור: <bdi dir="ltr">JAMA, 2014</bdi> (<bdi dir="ltr">Hanauer et al.</bdi>), סקר מייצג של 2,137 מבוגרים בארה״ב</div>
+      </div>
+
+      <!-- Scene 4 (17.2 to 23.2): 84% -->
+      <div class="card clip" id="c4" dir="rtl" lang="he" data-start="17.2" data-duration="6.1" data-track-index="3" style="top: 700px">
+        <div class="fig" style="color: var(--coral)"><bdi dir="ltr"><span id="n84">0</span>%</bdi></div>
+        <div class="fig-txt">לא ישקלו רופא עם דירוג <span style="color: var(--coral)">מתחת ל-4 כוכבים.</span></div>
+        <div class="bar" id="bar"></div>
+        <div id="cut"></div>
+        <div id="cut-lbl">הרף המינימלי</div>
+        <div class="src">מקור: <bdi dir="ltr">Press Ganey, The State of HX</bdi>, 2024</div>
+      </div>
+
+      <!-- Scene 5 (23.2 to 30.2) -->
+      <div class="card clip" id="c5a" dir="rtl" lang="he" data-start="23.2" data-duration="3.3" data-track-index="3" style="top: 1150px">
+        <div class="headline"><span class="w">המטופלים</span> <span class="w">שלכם</span> <span class="w">כבר</span> <span class="w hl">מרוצים.</span></div>
+      </div>
+      <div id="newrv" class="clip" data-start="26.4" data-duration="3.9" data-track-index="4">
+        <div class="nr-top">
+          <div class="nr-g"><svg viewBox="0 0 24 24"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z" /></svg></div>
+          <div>
+            <div class="nr-title">ביקורת חדשה בגוגל</div>
+            <div class="nr-sub">נועה ל. · לפני דקה</div>
+          </div>
+          <div class="nr-tag">חדש</div>
+        </div>
+        <div class="stars" data-stars="5"></div>
+      </div>
+      <div class="card clip" id="c5b" dir="rtl" lang="he" data-start="26.4" data-duration="3.9" data-track-index="3" style="top: 1150px">
+        <div class="headline"><span class="w">צריך</span> <span class="w">רק</span> <span class="w">שזה</span> <span class="w hl">ייראה</span> <span class="w hl">בגוגל.</span></div>
+      </div>
+
+      <!-- Scene 6 (30.2 to 35): end card -->
+      <section id="end" class="clip" dir="rtl" lang="he" data-start="30.2" data-duration="4.8" data-track-index="5">
+        <div id="end-dots"></div>
+        <div id="end-glow"></div>
+        <div class="end" id="end-in">
+          <div class="portrait" id="portrait">
+            <img src="assets/img/bnaya.jpg" alt="" />
+            <svg viewBox="0 0 300 300"><circle id="ring" cx="150" cy="150" r="144" fill="none" stroke="#007329" stroke-width="6" stroke-linecap="round" transform="rotate(-90 150 150)" /></svg>
+          </div>
+          <div class="wm" id="wm">EZ<b>.</b>Path<b>.</b>AI</div>
+          <div class="rule" id="rule"></div>
+          <div class="q" id="q"><span class="w">רוצים</span> <span class="w">שזה</span> <span class="w">ייראה</span> <span class="w">ככה</span> <span class="w hl">אצלכם?</span></div>
+          <div class="call" id="call">שיחה של 15 דקות, ואני אראה לכם.</div>
+          <div class="contact" id="contact"><svg class="ic" viewBox="0 0 24 24"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" /></svg><span>055-271-6456</span></div>
+          <div class="site" id="site">ezpath-ai.com</div>
+        </div>
+      </section>
+
+      <audio id="music" src="assets/audio/music-photos.mp3" data-start="0" data-duration="35" data-track-index="10" data-volume="1"></audio>
+      <audio id="sfx-1" src="assets/audio/pop.mp3" data-start="4.7" data-duration="0.72" data-track-index="11" data-volume="0.18"></audio>
+      <audio id="sfx-2" src="assets/audio/pop.mp3" data-start="10.5" data-duration="0.72" data-track-index="11" data-volume="0.2"></audio>
+      <audio id="sfx-3" src="assets/audio/pop.mp3" data-start="17.5" data-duration="0.72" data-track-index="11" data-volume="0.2"></audio>
+      <audio id="sfx-4" src="assets/audio/pop.mp3" data-start="26.6" data-duration="0.72" data-track-index="11" data-volume="0.22"></audio>
+    </div>
+
+    <script>
+      (function () {
+        const STAR =
+          '<svg viewBox="0 0 24 24"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/></svg>';
+        const $ = (id) => document.getElementById(id);
+        document.querySelectorAll("[data-stars]").forEach((el) => {
+          const n = +el.getAttribute("data-stars");
+          let h = "";
+          for (let i = 0; i < 5; i++) h += i < n ? STAR : STAR.replace("<svg ", '<svg class="off" ');
+          el.innerHTML = h;
+        });
+        let bs = "";
+        for (let i = 0; i < 5; i++) bs += '<div class="bs" id="bs' + i + '">' + STAR.replace("<svg ", '<svg class="off" ') + STAR.replace("<svg ", '<svg class="on" ') + "</div>";
+        $("bar").innerHTML = bs;
+
+        function build() {
+          const tl = gsap.timeline({ paused: true });
+          const counter = (id, from, to, t, d, dec) => {
+            const o = { v: from };
+            tl.fromTo(o, { v: from }, { v: to, duration: d, ease: "power3.out", onUpdate: () => ($(id).textContent = o.v.toFixed(dec || 0)) }, t);
+          };
+          const cardIn = (id, t) => tl.fromTo("#" + id, { opacity: 0, y: 80, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: "power3.out" }, t);
+          const cardOut = (id, t) => tl.to("#" + id, { opacity: 0, y: -50, duration: 0.35, ease: "power2.in" }, t);
+          const words = (sel, t) => tl.fromTo(sel + " .w", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.45, ease: "power4.out", stagger: 0.06 }, t);
+          // photo in: crossfade plus a slow push in
+          const photo = (id, t, d, from, to) => {
+            tl.fromTo("#" + id, { opacity: 0 }, { opacity: 1, duration: 0.6, ease: "power1.inOut" }, t);
+            tl.fromTo("#" + id + " img", { scale: from }, { scale: to, duration: d, ease: "none" }, t);
+          };
+          const step = (id, tIn, tOut) => {
+            tl.fromTo("#" + id, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, tIn);
+            tl.to("#" + id, { opacity: 0, y: -20, duration: 0.3, ease: "power2.in" }, tOut);
+          };
+
+          tl.fromTo("#top", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 0.1);
+          tl.to("#top", { opacity: 0, duration: 0.35, ease: "power1.in" }, 29.9);
+
+          // Scene 1: she is already reading about you
+          tl.set("#ph1", { opacity: 1 }, 0);
+          tl.fromTo("#ph1 img", { scale: 1.02 }, { scale: 1.14, duration: 4.8, ease: "none" }, 0);
+          cardIn("c1", 0.35);
+          words("#c1", 0.5);
+          cardOut("c1", 3.9);
+
+          // Scene 2: 4.7 reviews
+          photo("ph2", 4.0, 6.8, 1.12, 1.02);
+          step("st1", 4.3, 9.9);
+          ["#rv1", "#rv2", "#rv3", "#rv4", "#rv5"].forEach((s, i) => {
+            tl.fromTo(s, { opacity: 0, y: -60, rotation: i % 2 ? 2 : -2 }, { opacity: 1, y: 0, rotation: i % 2 ? 1 : -1, duration: 0.45, ease: "back.out(1.6)" }, 4.5 + i * 0.32);
+          });
+          tl.fromTo("#rv5", { opacity: 1 }, { opacity: 0.55, duration: 0.3, ease: "none", immediateRender: false }, 6.4);
+          cardIn("c2", 4.6);
+          counter("n47", 0, 4.7, 4.8, 1.6, 1);
+          tl.to("#rvs", { y: -24, duration: 3.8, ease: "sine.inOut" }, 6.0);
+          tl.to("#rvs", { opacity: 0, y: -80, duration: 0.35, ease: "power2.in" }, 9.85);
+          cardOut("c2", 9.85);
+
+          // Scene 3: 37% walked away, 35% chose
+          photo("ph3", 10.0, 7.8, 1.0, 1.1);
+          step("st2", 10.3, 16.9);
+          cardIn("c3", 10.4);
+          tl.fromTo("#d-bad", { opacity: 0, x: 60 }, { opacity: 1, x: 0, duration: 0.45, ease: "power3.out" }, 10.6);
+          counter("n37", 0, 37, 10.7, 1.1);
+          tl.fromTo("#d-good", { opacity: 0, x: -60 }, { opacity: 1, x: 0, duration: 0.45, ease: "power3.out" }, 12.2);
+          counter("n35", 0, 35, 12.3, 1.1);
+          tl.fromTo("#d-bad .ic", { rotation: 0 }, { rotation: -14, duration: 0.25, ease: "power2.out", yoyo: true, repeat: 1, transformOrigin: "50% 50%" }, 11.6);
+          tl.fromTo("#d-good .ic", { rotation: 0 }, { rotation: 14, duration: 0.25, ease: "power2.out", yoyo: true, repeat: 1, transformOrigin: "50% 50%" }, 13.2);
+          tl.fromTo("#c3 .fig-note", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, 13.6);
+          cardOut("c3", 16.85);
+
+          // Scene 4: 84% need four stars
+          photo("ph4", 17.0, 6.8, 1.1, 1.0);
+          step("st3", 17.3, 22.9);
+          cardIn("c4", 17.4);
+          counter("n84", 0, 84, 17.6, 1.2);
+          for (let i = 0; i < 5; i++) {
+            tl.fromTo("#bs" + i, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(2.2)" }, 18.3 + i * 0.08);
+            if (i < 4) tl.fromTo("#bs" + i + " .on", { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "none" }, 18.9 + i * 0.14);
+            else tl.set("#bs4 .on", { opacity: 0 }, 18.3);
+          }
+          tl.fromTo("#cut", { scaleX: 0 }, { scaleX: 1, duration: 0.55, ease: "power2.inOut" }, 19.6);
+          tl.fromTo("#cut-lbl", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, 20.0);
+          cardOut("c4", 22.85);
+
+          // Scene 5: your patients are happy, it should show
+          photo("ph5", 23.0, 3.8, 1.0, 1.1);
+          cardIn("c5a", 23.4);
+          words("#c5a", 23.55);
+          cardOut("c5a", 26.2);
+          photo("ph6", 26.2, 4.4, 1.12, 1.02);
+          tl.fromTo("#newrv", { opacity: 0, y: -70, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: "back.out(1.7)" }, 26.6);
+          tl.fromTo("#newrv .stars svg", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2.4)", stagger: 0.09 }, 27.0);
+          cardIn("c5b", 26.7);
+          words("#c5b", 26.85);
+          tl.to("#newrv", { y: -14, duration: 2.5, ease: "sine.inOut" }, 27.4);
+          tl.to(["#newrv", "#c5b"], { opacity: 0, duration: 0.3, ease: "power1.in" }, 30.0);
+
+          // Scene 6: end card
+          tl.fromTo("#end", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power1.out" }, 30.2);
+          tl.fromTo("#portrait", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.55, ease: "back.out(1.7)" }, 30.3);
+          const ring = $("ring");
+          const RL = 2 * Math.PI * 144;
+          ring.setAttribute("stroke-dasharray", RL);
+          tl.fromTo(ring, { attr: { "stroke-dashoffset": RL } }, { attr: { "stroke-dashoffset": 0 }, duration: 0.9, ease: "power2.inOut" }, 30.4);
+          tl.fromTo("#wm", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 30.5);
+          tl.fromTo("#rule", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "power2.inOut" }, 30.65);
+          words("#q", 30.7);
+          tl.fromTo("#call", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 31.25);
+          tl.fromTo("#contact", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, 31.5);
+          tl.fromTo("#site", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, 31.8);
+          tl.to("#contact", { scale: 1.05, duration: 0.35, ease: "power2.out" }, 32.6);
+          tl.to("#contact", { scale: 1, duration: 0.5, ease: "power2.inOut" }, 32.95);
+          tl.to("#end-in", { y: -12, duration: 3.4, ease: "sine.inOut" }, 31.5);
+          tl.fromTo("#end-dots", { x: 0, y: 0 }, { x: 12, y: 30, duration: 4.8, ease: "none" }, 30.2);
+
+          window.__timelines = window.__timelines || {};
+          window.__timelines["research-photos"] = tl;
+          if (typeof window.__hfForceTimelineRebind === "function") window.__hfForceTimelineRebind();
+        }
+
+        Promise.all([
+          document.fonts.load('800 84px "Frank Ruhl Libre"', "אבגד"),
+          document.fonts.load('800 84px "Frank Ruhl Libre"', "0123%."),
+          document.fonts.load('700 36px "Assistant"', "אבגד"),
+          document.fonts.load('700 30px "JetBrains Mono"', "EZ.Path0123"),
+        ])
+          .then(() => document.fonts.ready)
+          .then(build, build);
+      })();
+    </script>
+  </body>
+</html>
