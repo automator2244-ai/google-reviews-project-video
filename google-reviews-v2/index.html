@@ -1395,7 +1395,7 @@
         margin-right: auto;
         align-self: flex-start;
         position: relative;
-        width: 150px;
+        width: 176px;
         height: 56px;
         border-radius: 28px;
         background: var(--accent-soft);
@@ -1772,7 +1772,7 @@
           <div class="res card" id="r1">
             <div>
               <div class="res-name">מרפאת שיניים הדר</div>
-              <div class="res-row"><span class="res-rate">4.9</span><span class="stars" data-stars="5"></span><span class="res-cnt" id="r1-cnt">(312)</span></div>
+              <div class="res-row"><span class="res-rate">4.9</span><span class="stars" data-stars="5"></span><span class="res-cnt" id="r1-cnt">(96)</span></div>
             </div>
             <div class="res-dist">1.2 ק״מ</div>
             <div class="res-ring" id="r1-ring"></div>
@@ -1780,7 +1780,7 @@
           <div class="res card" id="r2">
             <div>
               <div class="res-name">מרפאת שיניים גל</div>
-              <div class="res-row"><span class="res-rate">4.8</span><span class="stars" data-stars="5"></span><span class="res-cnt">(187)</span></div>
+              <div class="res-row"><span class="res-rate">4.8</span><span class="stars" data-stars="5"></span><span class="res-cnt">(61)</span></div>
             </div>
             <div class="res-dist">0.9 ק״מ</div>
           </div>
@@ -2062,14 +2062,14 @@
           <div class="res card" id="k1" style="top: 0">
             <div>
               <div class="res-name">מרפאת שיניים הדר</div>
-              <div class="res-row"><span class="res-rate">4.9</span><span class="stars" data-stars="5"></span><span class="res-cnt">(312)</span></div>
+              <div class="res-row"><span class="res-rate">4.9</span><span class="stars" data-stars="5"></span><span class="res-cnt">(96)</span></div>
             </div>
             <div class="res-dist">1.2 ק״מ</div>
           </div>
           <div class="res card" id="k2" style="top: 190px">
             <div>
               <div class="res-name">מרפאת שיניים גל</div>
-              <div class="res-row"><span class="res-rate">4.8</span><span class="stars" data-stars="5"></span><span class="res-cnt">(187)</span></div>
+              <div class="res-row"><span class="res-rate">4.8</span><span class="stars" data-stars="5"></span><span class="res-cnt">(61)</span></div>
             </div>
             <div class="res-dist">0.9 ק״מ</div>
           </div>
@@ -2079,7 +2079,7 @@
               <div class="res-row">
                 <span class="res-rate swap"><span class="ov" id="k3-r0">5.0</span><span class="nv" id="k3-r1">4.9</span></span>
                 <span class="stars" data-stars="5"></span>
-                <span class="res-cnt swap"><span class="ov" id="k3-c0">(24)</span><span class="nv" id="k3-c1">(486)</span></span>
+                <span class="res-cnt swap"><span class="ov" id="k3-c0">(24)</span><span class="nv" id="k3-c1">(190)</span></span>
               </div>
             </div>
             <div class="res-dist">0.6 ק״מ</div>
@@ -2241,7 +2241,7 @@
         $("bigstars").innerHTML = bs;
 
         // Month ticker on the profile card
-        const MONTHS = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני"];
+        const MONTHS = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "6 חודשים"];
         $("pc-month").innerHTML = MONTHS.map((m, i) => '<div class="pm" id="pm' + i + '">' + m + "</div>").join("");
 
         // Patient dots: 14 x 10 grid, filled in a diagonal wave
@@ -2544,18 +2544,19 @@
           // ---------------- Scene 6: growth and ranking (37.8 to 45) ----------------
           tl.fromTo("#pcard", { opacity: 0, y: 70, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "power3.out" }, 37.8);
           capIn("cap8", 38.05, 41.3);
-          counter("pc-cnt", 24, 486, 38.4, 3.0, "sine.inOut");
-          for (let i = 0; i < 6; i++) {
-            const t = 38.4 + i * 0.5;
+          counter("pc-cnt", 24, 190, 38.4, 2.4, "sine.inOut");
+          for (let i = 0; i < 7; i++) {
+            const t = 38.4 + i * 0.4;
             tl.fromTo("#pm" + i, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.2, ease: "power2.out" }, t);
-            if (i < 5) tl.to("#pm" + i, { opacity: 0, y: -30, duration: 0.2, ease: "power2.in" }, t + 0.42);
+            if (i < 6) tl.to("#pm" + i, { opacity: 0, y: -30, duration: 0.2, ease: "power2.in" }, t + 0.34);
           }
           ["#rv1", "#rv2", "#rv3"].forEach((s, i) => {
             tl.fromTo(s, { opacity: 0, y: -50, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "back.out(1.6)" }, 39.0 + i * 0.6);
           });
-          tl.to("#pc-cnt", { scale: 1.2, duration: 0.2, ease: "power2.out" }, 41.4);
-          tl.to("#pc-cnt", { scale: 1, duration: 0.3, ease: "power2.inOut" }, 41.6);
-          tl.to(["#pcard", "#rv1", "#rv2", "#rv3"], { opacity: 0, y: -80, duration: 0.35, ease: "power2.in", stagger: 0.04 }, 41.45);
+          tl.to("#pc-cnt", { scale: 1.2, duration: 0.2, ease: "power2.out" }, 40.85);
+          tl.to("#pc-cnt", { scale: 1, duration: 0.3, ease: "power2.inOut" }, 41.05);
+          tl.fromTo("#pc-month", { scale: 1 }, { scale: 1.12, duration: 0.2, ease: "power2.out", yoyo: true, repeat: 1 }, 40.85);
+          tl.to(["#pcard", "#rv1", "#rv2", "#rv3"], { opacity: 0, y: -80, duration: 0.3, ease: "power2.in", stagger: 0.04 }, 41.5);
           // the same search as the start, now the clinic climbs
           tl.fromTo("#s6-search", { opacity: 0, y: -40 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 41.75);
           ["#k1", "#k2", "#k3"].forEach((s, i) => {

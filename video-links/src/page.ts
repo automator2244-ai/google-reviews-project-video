@@ -1,3 +1,4 @@
+import { CONTACT_NAME, CONTACT_PHONE, CONTACT_ROLE, CONTACT_WA, PHOTO, SITE } from "./brand";
 import { escapeHtml } from "./util";
 
 const STYLE = `
@@ -144,8 +145,42 @@ const VIDEO_STYLE = `
 html,body{margin:0;height:100%;background:#0b0c0f;color:#e8eaed;font:15px/1.5 system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
 main{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px}
 h1{font-size:17px;font-weight:600;margin:0;text-align:center}
-video{display:block;max-width:100%;max-height:calc(100svh - 80px);aspect-ratio:9/16;background:#000;border-radius:14px}
+video{display:block;max-width:100%;max-height:calc(100vh - 80px);max-height:calc(100svh - 80px);aspect-ratio:9/16;background:#000;border-radius:14px}
+.player{display:flex;flex-direction:column;align-items:center;gap:12px;max-width:100%}
+.side{display:none}
+@media (min-width:900px) and (min-aspect-ratio:1/1){
+main{flex-direction:row;gap:56px;padding:24px}
+h1{font-size:20px}
+video{height:calc(100vh - 96px);max-height:900px;width:auto;border-radius:18px}
+.side{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;width:340px;padding:32px 28px;border-radius:22px;background:#15171c;border:1px solid #262a31}
+.side img{width:112px;height:112px;border-radius:50%;border:3px solid #22c55e;object-fit:cover}
+.who{font-size:15px;color:#9aa0a6}.who b{display:block;font-size:19px;color:#e8eaed}
+.side p{margin:4px 0 6px;font-size:21px;font-weight:700;line-height:1.35}
+.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:52px;border-radius:26px;font-size:17px;font-weight:700;text-decoration:none}
+.btn svg{width:22px;height:22px;flex:none}
+.wa{background:#22c55e;color:#06210f}.call{border:1px solid #3a3f48;color:#e8eaed}
+.num{direction:ltr;unicode-bidi:isolate}
+.site{font-size:14px;color:#9aa0a6;text-decoration:none;direction:ltr}
+}
 `;
+
+const WA_ICON =
+  '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2s.8 2.3 1 2.5c.1.2 1.7 2.6 4.1 3.6 1.5.7 2.1.7 2.9.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.2-.2-.4-.3z"/></svg>';
+const PHONE_ICON =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>';
+
+// Shown beside the video on wide screens only (WhatsApp Web / Desktop users); phones see just the video.
+function sideCard(name: string): string {
+  const text = encodeURIComponent(`היי ${CONTACT_NAME}, ראיתי את הסרטון ששלחת ל${name} ואשמח לשמוע עוד`);
+  return `<aside class="side">
+<img src="${PHOTO}" alt="${escapeHtml(CONTACT_NAME)}">
+<div class="who"><b>${escapeHtml(CONTACT_NAME)}</b>${escapeHtml(CONTACT_ROLE)}</div>
+<p>רוצים לראות איך זה יעבוד אצלכם?</p>
+<a class="btn wa" href="https://wa.me/${CONTACT_WA}?text=${text}" target="_blank" rel="noopener">${WA_ICON}<span>דברו איתי בוואטסאפ</span></a>
+<a class="btn call" href="tel:+${CONTACT_WA}">${PHONE_ICON}<span class="num">${CONTACT_PHONE}</span></a>
+<a class="site" href="https://${SITE}" target="_blank" rel="noopener">${SITE}</a>
+</aside>`;
+}
 
 export function videoPage(id: string, name: string, origin: string): string {
   const title = escapeHtml(`סרטון אישי עבור ${name}`);
@@ -160,8 +195,9 @@ export function videoPage(id: string, name: string, origin: string): string {
 <meta property="og:image:width" content="540"><meta property="og:image:height" content="960">
 <meta name="twitter:card" content="summary_large_image">
 <style>${VIDEO_STYLE}</style></head><body><main>
-<h1>${title}</h1>
-<video id="v" src="/m/${id}.mp4" poster="/m/${id}.jpg" controls playsinline preload="metadata"></video>
+<div class="player"><h1>${title}</h1>
+<video id="v" src="/m/${id}.mp4" poster="/m/${id}.jpg" controls playsinline preload="metadata"></video></div>
+${sideCard(name)}
 </main>
 <script>
 (function(){var v=document.getElementById('v'),sent={},url='/e/${id}';

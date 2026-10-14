@@ -13,9 +13,9 @@
 cd google-reviews-v2
 npx hyperframes@0.8.140 check
 npx hyperframes@0.8.140 render -q delivery -o out/google-reviews-v2-full.mp4
-npx hyperframes@0.8.140 render -c outro.html -q delivery -o out/outro.mp4
+npx hyperframes@0.8.140 render -c cards/outro.html -q delivery -o out/outro.mp4
 # טלפון אחר בכרטיס הסיום:
-npx hyperframes@0.8.140 render -c outro.html -q delivery -o out/outro.mp4 --variables '{"contact":"050-0000000"}'
+npx hyperframes@0.8.140 render -c cards/outro.html -q delivery -o out/outro.mp4 --variables '{"contact":"050-0000000"}'
 ```
 
 התסריט, הנתונים והמקורות: `BRIEF.md`. הסצנות והזמנים: `STORYBOARD.md`.
