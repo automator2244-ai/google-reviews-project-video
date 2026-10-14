@@ -5,28 +5,27 @@
 הכלי רץ על המחשב שלך ולא בענן, כי יוטיוב חוסם תמלולים לשרתים בענן כמעט מיד.
 
 ## התקנה (פעם אחת)
-פותחים את **Terminal** (או "שורת הפקודה") ב-Windows ומריצים:
+פותחים **PowerShell** ב-Windows ומריצים:
 
 ```
-winget install Python.Python.3.12
-winget install Git.Git
+winget install -e --id Python.Python.3.12 --source winget --accept-source-agreements --accept-package-agreements
+winget install -e --id Git.Git --source winget --accept-source-agreements --accept-package-agreements
 ```
 
-סוגרים את החלון ופותחים חדש, ואז:
+סוגרים את החלון ופותחים חדש, ואז (תיקייה באנגלית בכונן C, כדי לא להיתקע על שם משתמש בעברית או על OneDrive):
 
 ```
-cd %USERPROFILE%\Documents
-git clone https://github.com/automator2244-ai/google-reviews-project-video.git
+mkdir C:\ezpath; cd C:\ezpath; git clone https://github.com/automator2244-ai/google-reviews-project-video.git
 ```
 
 בפעם הראשונה ש-Git מעלה משהו ל-GitHub נפתח חלון התחברות בדפדפן. מתחברים פעם אחת וזהו.
 
 ## הרצה
 ```
-cd %USERPROFILE%\Documents\google-reviews-project-video\youtube-transcripts
-git pull
-yt @channelname
+cd C:\ezpath\google-reviews-project-video\youtube-transcripts; git pull; .\yt.bat @channelname
 ```
+
+בטבלה למטה `yt` הוא קיצור של `.\yt.bat`.
 
 | מה רוצים | הפקודה |
 |---|---|
