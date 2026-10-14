@@ -255,4 +255,65 @@ const filled = (rows) => rows.filter((r) => r[1] !== '');
   console.log('ok  map squares: rectangle search, full square split into quarters, city from address');
 }
 
+// ---------- test 6: second list, 5 to 14 reviews, from clinics already looked at ----------
+{
+  n = 0;
+  const ss = makeSpreadsheet([]);
+  const seen = ss.sheets['_נסרקו'];
+  const rows = [
+    ['s1', 'חמש', '050-000-0005', 'נייד', 'א', 'd', 5],     // already checked (column G filled): skipped
+    ['s2', 'ארבע', '050-000-0004', 'נייד', 'א', 'd'],        // 4 reviews: out
+    ['s3', 'חמש', '050-000-0105', 'נייד', 'א', 'd'],         // 5: in
+    ['s4', 'ארבע עשרה', '050-000-0014', 'נייד', 'א', 'd'],   // 14: in
+    ['s5', 'חמש עשרה', '050-000-0015', 'נייד', 'א', 'd'],    // 15: out (that is the first list)
+    ['s6', 'קווי', '03-555-0007', 'קווי', 'א', 'd'],          // landline: never asked
+    ['s7', 'כבר בגיליון', '052-111-1111', 'נייד', 'א', 'd'], // phone already in a tab: never asked
+    ['s8', 'נסגרה', '050-000-0008', 'נייד', 'א', 'd'],       // closed now: out
+    ['s9', 'עשר', '050-000-0010', 'נייד', 'א', 'd'],         // 10: in
+    ['s10', 'נמחקה', '050-000-0011', 'נייד', 'א', 'd'],      // gone from Google (404)
+  ];
+  rows.forEach((r, i) => r.forEach((v, j) => seen.set(i + 2, j + 1, v)));
+  const a = ss.sheets['עסקי'];
+  a.set(2, 2, 'קיימת'); a.set(2, 3, '052-111-1111');
+  const details = {
+    s2: { reviews: 4 }, s3: { reviews: 5, rating: 4.8 }, s4: { reviews: 14 }, s5: { reviews: 15 },
+    s8: { reviews: 9, status: 'CLOSED_PERMANENTLY' }, s9: { reviews: 10 },
+  };
+  const asked = [];
+  const g = {
+    fetchAll(reqs) {
+      return reqs.map((q) => {
+        const id = decodeURIComponent(q.url.split('/places/')[1].split('?')[0]);
+        asked.push(id);
+        assert.strictEqual(q.headers['X-Goog-Api-Key'], 'TESTKEY');
+        assert(q.headers['X-Goog-FieldMask'].includes('userRatingCount') && !q.headers['X-Goog-FieldMask'].includes('places.'));
+        const d = details[id];
+        if (!d) return { getResponseCode: () => 404, getContentText: () => '{"error":{"message":"not found"}}' };
+        const row = rows.find((r) => r[0] === id);
+        const p = place({ id, name: row[1], phone: row[2], reviews: d.reviews, rating: d.rating, status: d.status });
+        return { getResponseCode: () => 200, getContentText: () => JSON.stringify(p) };
+      });
+    },
+  };
+  const ctx = load(ss, g, new Date('2026-10-14T06:00:00Z'));
+  ctx.addFewReviews();
+  assert.deepStrictEqual(asked.sort(), ['s10', 's2', 's3', 's4', 's5', 's8', 's9'], 'only unchecked mobiles not already listed');
+  const names = (sheet) => filled(dataRows(sheet)).map((r) => r[1]);
+  const all = [...names(a), ...names(ss.sheets['מאובטח'])];
+  assert.deepStrictEqual(all.filter((x) => !['קיימת', 'מרפאות עם 5 עד 14 ביקורות'].includes(x)).sort(), ['ארבע עשרה', 'חמש', 'עשר'].sort());
+  assert.strictEqual(a.cell(3, 2), '', 'blank row before the new list');
+  assert.strictEqual(a.cell(4, 2), 'מרפאות עם 5 עד 14 ביקורות', 'title row');
+  assert.strictEqual(a.cell(4, 3), '', 'title row has no phone');
+  assert.strictEqual(a.cell(5, 7), 5, 'review count written');
+  assert.strictEqual(ss.sheets['מאובטח'].cell(2, 2), 'מרפאות עם 5 עד 14 ביקורות', 'title row in the second tab too');
+  assert.strictEqual(seen.cell(4, 7), 5, 'count saved in _נסרקו');
+  assert.strictEqual(seen.cell(11, 7), 'לא נמצא');
+  assert.strictEqual(seen.cell(7, 7), '', 'landline not asked');
+  // A second run asks nobody again and adds nothing.
+  asked.length = 0;
+  ctx.addFewReviews();
+  assert.strictEqual(asked.length, 0, 'nothing asked twice');
+  console.log('ok  5 to 14 reviews: rechecks mobiles once, adds under a title row, no duplicates');
+}
+
 console.log('\nALL PASSED');
