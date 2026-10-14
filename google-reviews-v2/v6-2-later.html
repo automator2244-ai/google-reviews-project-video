@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="he" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>אכתוב אחר כך</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <link rel="stylesheet" href="ez-shared.css" />
+    <style>
+      /* A notebook page: ruled lines, a red margin, handwriting, taped polaroids of the day */
+      :root {
+        --page: #fbf7ee;
+        --rule: rgba(64, 120, 190, 0.18);
+        --margin: rgba(217, 72, 59, 0.45);
+        --pen: #22303f;
+        --green: #007329;
+        --coral: #d9483b;
+        --hand: "Amatic SC", "Assistant", sans-serif;
+      }
+      html,
+      body,
+      #root {
+        background: var(--page);
+        color: var(--pen);
+      }
+      #lines {
+        position: absolute;
+        inset: 0;
+        background-image: linear-gradient(transparent 62px, var(--rule) 62px, var(--rule) 64px);
+        background-size: 100% 64px;
+      }
+      #margin {
+        position: absolute;
+        right: 110px;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: var(--margin);
+      }
+      #wm {
+        position: absolute;
+        left: 80px;
+        top: 186px;
+        font-size: 28px;
+        color: var(--pen);
+        z-index: 20;
+      }
+      #clockrow {
+        position: absolute;
+        right: 150px;
+        top: 230px;
+        display: flex;
+        align-items: center;
+        gap: 26px;
+        direction: rtl;
+      }
+      #clock {
+        width: 120px;
+        height: 120px;
+      }
+      #time {
+        position: relative;
+        width: 420px;
+        height: 120px;
+        font-family: var(--hand);
+        font-size: 110px;
+        font-weight: 700;
+        line-height: 120px;
+      }
+      .tm {
+        position: absolute;
+        right: 0;
+        top: 0;
+        white-space: nowrap;
+        opacity: 0;
+      }
+      #bubble {
+        position: absolute;
+        left: 140px;
+        right: 150px;
+        top: 390px;
+        height: 290px;
+        transform-origin: 30% 100%;
+      }
+      #bubble-body {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: #fff;
+        border: 5px solid var(--pen);
+        box-shadow: 8px 10px 0 rgba(34, 48, 63, 0.12);
+      }
+      .bdot {
+        position: absolute;
+        border-radius: 50%;
+        background: #fff;
+        border: 5px solid var(--pen);
+      }
+      .btxt {
+        position: absolute;
+        left: 60px;
+        right: 60px;
+        top: 0;
+        height: 290px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-family: var(--hand);
+        font-size: 74px;
+        font-weight: 700;
+        line-height: 1.02;
+        direction: rtl;
+        opacity: 0;
+      }
+      .pol {
+        position: absolute;
+        left: 50%;
+        top: 760px;
+        width: 560px;
+        margin-left: -280px;
+        padding: 24px 24px 80px;
+        background: #fff;
+        box-shadow: 0 16px 34px rgba(34, 48, 63, 0.18);
+        opacity: 0;
+      }
+      .pol img {
+        display: block;
+        width: 100%;
+        height: 360px;
+        object-fit: contain;
+        background: #f3f0e8;
+      }
+      .pol span {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 12px;
+        text-align: center;
+        font-family: var(--hand);
+        font-size: 56px;
+        font-weight: 700;
+        direction: rtl;
+      }
+      .tape {
+        position: absolute;
+        left: 50%;
+        top: -22px;
+        width: 160px;
+        height: 46px;
+        margin-left: -80px;
+        background: rgba(255, 210, 94, 0.7);
+        transform: rotate(-3deg);
+      }
+      .note {
+        position: absolute;
+        left: 150px;
+        right: 150px;
+        font-family: var(--hand);
+        font-weight: 700;
+        direction: rtl;
+        text-align: center;
+      }
+      #pop {
+        position: absolute;
+        left: 360px;
+        top: 520px;
+        font-family: var(--hand);
+        font-size: 90px;
+        font-weight: 700;
+        color: var(--coral);
+        opacity: 0;
+      }
+      #moral {
+        top: 420px;
+        font-size: 150px;
+        line-height: 1;
+      }
+      #moral .g {
+        color: var(--green);
+      }
+      #ul {
+        position: absolute;
+        left: 230px;
+        top: 900px;
+        width: 620px;
+        height: 60px;
+      }
+      #ul path {
+        fill: none;
+        stroke: var(--green);
+        stroke-width: 9;
+        stroke-linecap: round;
+      }
+      #chat {
+        position: absolute;
+        left: 150px;
+        right: 150px;
+        top: 400px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        direction: rtl;
+      }
+      .cb {
+        align-self: flex-start;
+        padding: 18px 26px;
+        border-radius: 26px;
+        border-top-right-radius: 8px;
+        background: #fff;
+        border: 3px solid #dfe5df;
+        font-size: 38px;
+        font-weight: 700;
+        box-shadow: 0 10px 22px rgba(34, 48, 63, 0.12);
+      }
+      .cb.out {
+        align-self: flex-end;
+        background: #d9fdd3;
+        border-color: #bfe8b8;
+        border-top-right-radius: 26px;
+        border-top-left-radius: 8px;
+      }
+      #stat {
+        position: absolute;
+        left: 120px;
+        right: 150px;
+        top: 1210px;
+        direction: rtl;
+        display: flex;
+        align-items: center;
+        gap: 26px;
+      }
+      #stat-n {
+        position: relative;
+        flex: none;
+        font-family: var(--hand);
+        font-size: 150px;
+        font-weight: 700;
+        color: var(--green);
+        line-height: 1;
+        padding: 10px 24px;
+        direction: ltr;
+      }
+      #circle {
+        position: absolute;
+        left: -16px;
+        top: -10px;
+        width: 290px;
+        height: 190px;
+      }
+      #circle path {
+        fill: none;
+        stroke: var(--coral);
+        stroke-width: 6;
+        stroke-linecap: round;
+      }
+      #stat-t {
+        font-family: var(--hand);
+        font-size: 66px;
+        font-weight: 700;
+        line-height: 1.02;
+      }
+      #stat-t small {
+        display: block;
+        margin-top: 8px;
+        font-family: var(--body);
+        font-size: 26px;
+        font-weight: 600;
+        color: #5b6470;
+      }
+      #stat-t bdi {
+        font-family: var(--mono);
+        font-size: 24px;
+        color: var(--pen);
+      }
+      #end-h {
+        top: 380px;
+        font-size: 130px;
+        line-height: 1;
+      }
+      #end-h .g {
+        color: var(--green);
+      }
+      #end-wm {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 940px;
+        text-align: center;
+        font-size: 66px;
+        color: var(--pen);
+      }
+      #end-call {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 1080px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="v6-2" data-start="0" data-duration="30" data-width="1080" data-height="1920">
+      <div id="lines"></div>
+      <div id="margin"></div>
+      <div id="wm" class="wordmark">EZ<b>.</b>Path<b>.</b>AI</div>
+
+      <!-- 0 to 17: the day -->
+      <section class="scene clip" id="day" dir="rtl" lang="he" data-start="0" data-duration="17.2" data-track-index="1">
+        <div id="clockrow">
+          <svg id="clock" viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="#fff" stroke="#22303f" stroke-width="6" /><line id="hh" x1="60" y1="60" x2="60" y2="32" stroke="#22303f" stroke-width="8" stroke-linecap="round" /><line id="mh" x1="60" y1="60" x2="60" y2="18" stroke="#d9483b" stroke-width="5" stroke-linecap="round" /><circle cx="60" cy="60" r="6" fill="#22303f" /></svg>
+          <div id="time"><span class="tm" id="tm1">14:00</span><span class="tm" id="tm2">16:30</span><span class="tm" id="tm3">19:00</span><span class="tm" id="tm4">22:00</span></div>
+        </div>
+        <div id="bubble">
+          <div class="bdot" id="bd1" style="width: 54px; height: 54px; left: 150px; top: 300px"></div>
+          <div class="bdot" id="bd2" style="width: 32px; height: 32px; left: 200px; top: 360px"></div>
+          <div id="bubble-body"></div>
+          <div class="btxt" id="bt1">"וואו, איזה צוות! אני חייב לכתוב להם ביקורת."</div>
+          <div class="btxt" id="bt2">"אכתוב אחר כך..."</div>
+          <div class="btxt" id="bt3">"אחרי הארוחה..."</div>
+        </div>
+        <div id="pop">פוף.</div>
+        <div class="pol" data-layout-allow-overlap id="p1" style="transform: rotate(-4deg)"><div class="tape"></div><img src="assets/illus/happy.svg" alt="" /><span>יוצא מהמרפאה</span></div>
+        <div class="pol" data-layout-allow-overlap id="p2" style="transform: rotate(3deg)"><div class="tape"></div><img src="assets/illus/work.svg" alt="" /><span>חזרה לעבודה</span></div>
+        <div class="pol" data-layout-allow-overlap id="p3" style="transform: rotate(-2deg)"><div class="tape"></div><img src="assets/illus/family.svg" alt="" /><span>הילדים</span></div>
+        <div class="pol" data-layout-allow-overlap id="p4" style="transform: rotate(4deg)"><div class="tape"></div><img src="assets/illus/night.svg" alt="" /><span>לילה</span></div>
+      </section>
+
+      <!-- 17 to 21: the moral -->
+      <section class="scene clip" id="mor" dir="rtl" lang="he" data-start="17" data-duration="4.2" data-track-index="2">
+        <div class="note" id="moral"><span class="w">ככה</span> <span class="w">זה.</span><br /><span class="w">מטופלים</span> <span class="w">מרוצים</span><br /><span class="w g">פשוט</span> <span class="w g">שוכחים.</span></div>
+        <svg id="ul" viewBox="0 0 620 60"><path id="ulp" d="M10 40 C 120 10, 260 55, 380 28 S 560 18, 610 36" /></svg>
+      </section>
+
+      <!-- 21 to 26: the reminder -->
+      <section class="scene clip" id="rem" dir="rtl" lang="he" data-start="21" data-duration="5.2" data-track-index="1">
+        <div class="note" id="rem-h" style="top: 250px; font-size: 96px">17:00, אותו יום:</div>
+        <div id="chat">
+          <div class="cb" id="m1">היי, איך היה הטיפול היום?</div>
+          <div class="cb out" id="m2">היה מעולה!</div>
+          <div class="cb" id="m3">איזה כיף. נשמח לביקורת קצרה בגוגל <img src="assets/emoji/pray.svg" alt="" style="width: 1.1em; height: 1.1em; vertical-align: -0.2em" /></div>
+        </div>
+        <div class="pol" data-layout-allow-overlap id="p5" style="top: 770px; width: 400px; margin-left: -200px; padding-bottom: 24px; transform: rotate(-3deg)"><div class="tape"></div><img src="assets/illus/notify.svg" alt="" style="height: 300px" /></div>
+        <div id="stat"><div id="stat-n"><svg id="circle" viewBox="0 0 290 190"><path id="cp" d="M150 12 C 60 8, 10 60, 22 110 C 36 168, 160 186, 238 156 C 300 128, 286 40, 196 18 C 170 12, 140 14, 120 20" /></svg><bdi dir="ltr">74%</bdi></div><div id="stat-t">יותר סביר שיכתבו, אם מבקשים.<small>מקור: <bdi dir="ltr">rater8, 2025</bdi>, סקר של יותר מ-1,000 מטופלים בארה״ב</small></div></div>
+      </section>
+
+      <!-- 26 to 30 -->
+      <section class="scene clip" id="end" dir="rtl" lang="he" data-start="26" data-duration="4" data-track-index="2">
+        <div class="note" id="end-h"><span class="w">אנחנו</span> <span class="w">מזכירים</span> <span class="w">להם</span> <span class="w">בשבילכם.</span><br /><span class="w g">באותו</span> <span class="w g">יום.</span></div>
+        <div id="end-wm" class="wordmark">EZ<b>.</b>Path<b>.</b>AI</div>
+        <div id="end-call"><div class="call-pill" id="pill"><svg viewBox="0 0 24 24"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" /></svg><span>055-271-6456</span></div></div>
+      </section>
+
+      <audio id="music" src="assets/audio/m6-kalimba.mp3" data-start="0" data-duration="30" data-track-index="10" data-volume="1"></audio>
+      <audio id="sfx-1" src="assets/audio/pop.mp3" data-start="16.0" data-duration="0.72" data-track-index="11" data-volume="0.25"></audio>
+      <audio id="sfx-2" src="assets/audio/pop.mp3" data-start="21.6" data-duration="0.72" data-track-index="11" data-volume="0.16"></audio>
+      <audio id="sfx-3" src="assets/audio/click-soft.mp3" data-start="22.6" data-duration="0.37" data-track-index="11" data-volume="0.3"></audio>
+    </div>
+
+    <script>
+      (function () {
+        function build() {
+          const tl = gsap.timeline({ paused: true });
+          // clock hands: total minutes since midnight drive both hands, so they always turn forward
+          const angle = (h, m) => ({ hh: (h * 60 + m) * 0.5, mh: (h * 60 + m) * 6 });
+          tl.fromTo("#wm", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "none" }, 0);
+          tl.to("#wm", { opacity: 0, duration: 0.3, ease: "none" }, 26.0);
+          tl.fromTo("#lines", { y: 0 }, { y: -64, duration: 30, ease: "none" }, 0);
+
+          // clock and time
+          tl.fromTo("#clockrow", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, 0.05);
+          const T = [["#tm1", 0.1, 14, 0], ["#tm2", 5.0, 16, 30], ["#tm3", 9.0, 19, 0], ["#tm4", 13.0, 22, 0]];
+          let prev = null;
+          T.forEach(([id, t, h, m], i) => {
+            const a = angle(h, m);
+            if (i === 0) {
+              tl.set("#hh", { rotation: a.hh, svgOrigin: "60 60" }, 0);
+              tl.set("#mh", { rotation: a.mh, svgOrigin: "60 60" }, 0);
+            } else {
+              const p = angle(prev[0], prev[1]);
+              tl.fromTo("#hh", { rotation: p.hh, svgOrigin: "60 60" }, { rotation: a.hh, svgOrigin: "60 60", duration: 0.8, ease: "power2.inOut" }, t - 0.2);
+              tl.fromTo("#mh", { rotation: p.mh, svgOrigin: "60 60" }, { rotation: a.mh, svgOrigin: "60 60", duration: 0.8, ease: "power2.inOut" }, t - 0.2);
+              tl.to(T[i - 1][0], { opacity: 0, y: -30, duration: 0.2, ease: "power2.in" }, t - 0.15);
+            }
+            tl.fromTo(id, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, t + 0.1);
+            prev = [h, m];
+          });
+          tl.to("#clockrow", { opacity: 0, duration: 0.3, ease: "none" }, 16.8);
+
+          // the thought bubble shrinks with every polaroid
+          tl.fromTo("#bubble", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.55, ease: "back.out(1.8)" }, 0.6);
+          tl.fromTo("#bt1", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "none" }, 0.9);
+          tl.to("#bt1", { opacity: 0, duration: 0.25, ease: "none" }, 5.0);
+          tl.to("#bubble", { scale: 0.72, duration: 0.6, ease: "power2.inOut" }, 5.0);
+          tl.fromTo("#bt2", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "none" }, 5.4);
+          tl.to("#bt2", { opacity: 0, duration: 0.25, ease: "none" }, 9.0);
+          tl.to("#bubble", { scale: 0.45, duration: 0.6, ease: "power2.inOut" }, 9.0);
+          tl.fromTo("#bt3", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "none" }, 9.4);
+          tl.to("#bt3", { opacity: 0, duration: 0.25, ease: "none" }, 13.0);
+          tl.to("#bubble", { scale: 0.18, duration: 1.4, ease: "power2.in" }, 13.4);
+          tl.to("#bubble", { scale: 0, opacity: 0, duration: 0.2, ease: "power2.in" }, 15.9);
+          tl.fromTo("#pop", { opacity: 0, scale: 0.4, rotation: -10 }, { opacity: 1, scale: 1, rotation: -6, duration: 0.3, ease: "back.out(2.4)" }, 16.0);
+
+          // polaroids land on the page
+          [["#p1", 1.4], ["#p2", 5.3], ["#p3", 9.3], ["#p4", 13.3]].forEach(([s, t], i) => {
+            const r = [-4, 3, -2, 4][i];
+            tl.fromTo(s, { opacity: 0, y: -260, rotation: r * 3, scale: 1.15 }, { opacity: 1, y: 0, rotation: r, scale: 1, duration: 0.55, ease: "back.out(1.3)" }, t);
+          });
+          tl.to(["#pop", "#p1", "#p2", "#p3", "#p4"], { opacity: 0, y: 60, duration: 0.3, ease: "power2.in", stagger: 0.03 }, 16.8);
+
+          // the moral
+          tl.fromTo("#moral .w", { opacity: 0, y: 40, rotation: -3 }, { opacity: 1, y: 0, rotation: 0, duration: 0.4, ease: "power3.out", stagger: 0.12 }, 17.1);
+          const ul = document.getElementById("ulp");
+          const UL = ul.getTotalLength();
+          ul.setAttribute("stroke-dasharray", UL);
+          tl.fromTo(ul, { attr: { "stroke-dashoffset": UL } }, { attr: { "stroke-dashoffset": 0 }, duration: 0.6, ease: "power2.out" }, 18.3);
+          tl.to(["#moral", "#ul"], { opacity: 0, duration: 0.3, ease: "none" }, 20.8);
+
+          // the reminder
+          tl.fromTo("#rem-h", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 21.05);
+          tl.fromTo("#m1", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.8)", transformOrigin: "100% 0%" }, 21.6);
+          tl.fromTo("#m2", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.8)", transformOrigin: "0% 0%" }, 22.6);
+          tl.fromTo("#m3", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.8)", transformOrigin: "100% 0%" }, 23.2);
+          tl.fromTo("#p5", { opacity: 0, y: -200, rotation: -9 }, { opacity: 1, y: 0, rotation: -3, duration: 0.5, ease: "back.out(1.3)" }, 21.8);
+          tl.fromTo("#stat", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 23.6);
+          const cp = document.getElementById("cp");
+          const CL = cp.getTotalLength();
+          cp.setAttribute("stroke-dasharray", CL);
+          tl.fromTo(cp, { attr: { "stroke-dashoffset": CL } }, { attr: { "stroke-dashoffset": 0 }, duration: 0.7, ease: "power2.out" }, 24.0);
+          tl.to(["#rem-h", "#chat", "#p5", "#stat"], { opacity: 0, duration: 0.3, ease: "none" }, 25.8);
+
+          // end
+          tl.fromTo("#end-h .w", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out", stagger: 0.09 }, 26.1);
+          tl.fromTo("#end-wm", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, 26.9);
+          tl.fromTo("#pill", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, 27.2);
+          tl.to("#pill", { scale: 1.05, duration: 0.3, ease: "power2.out", yoyo: true, repeat: 1 }, 28.4);
+
+          window.__timelines = window.__timelines || {};
+          window.__timelines["v6-2"] = tl;
+          if (typeof window.__hfForceTimelineRebind === "function") window.__hfForceTimelineRebind();
+        }
+        Promise.all([
+          document.fonts.load('700 110px "Amatic SC"', "אבגד 0123:"),
+          document.fonts.load('700 38px "Assistant"', "אבגד"),
+          document.fonts.load('700 30px "JetBrains Mono"', "EZ.Path0123"),
+        ])
+          .then(() => document.fonts.ready)
+          .then(build, build);
+      })();
+    </script>
+  </body>
+</html>

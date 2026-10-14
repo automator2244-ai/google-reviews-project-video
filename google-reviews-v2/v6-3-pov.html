@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="he" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>מעל הכתף</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <link rel="stylesheet" href="ez-shared.css" />
+    <style>
+      /* The whole frame is a phone screen in dark mode; at the end it shrinks onto the brand paper */
+      :root {
+        --bg: #101418;
+        --surface: #1a2026;
+        --surface-2: #232b33;
+        --line: #2e3842;
+        --fg: #eef2f4;
+        --dim: #9aa6b0;
+        --green: #3fd17a;
+        --star: #f5b400;
+        --red: #ff6b5b;
+        --paper: #f4f8f5;
+      }
+      html,
+      body,
+      #root {
+        background: var(--paper);
+        color: var(--fg);
+      }
+      #screen {
+        position: absolute;
+        inset: 0;
+        background: var(--bg);
+        overflow: hidden;
+        transform-origin: 50% 38%;
+        direction: rtl;
+      }
+      .status {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 26px 70px 0;
+        direction: ltr;
+        font-size: 36px;
+        font-weight: 700;
+        z-index: 12;
+      }
+      .sys {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .sig {
+        display: flex;
+        gap: 5px;
+        align-items: flex-end;
+        height: 26px;
+      }
+      .sig i {
+        display: block;
+        width: 7px;
+        border-radius: 2px;
+        background: var(--fg);
+      }
+      .batt {
+        width: 54px;
+        height: 26px;
+        border-radius: 8px;
+        border: 3px solid var(--fg);
+        padding: 3px;
+      }
+      .batt i {
+        display: block;
+        width: 70%;
+        height: 100%;
+        border-radius: 3px;
+        background: var(--fg);
+      }
+      #search {
+        position: absolute;
+        left: 50px;
+        right: 50px;
+        top: 300px;
+        height: 110px;
+        border-radius: 55px;
+        background: var(--surface-2);
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        padding: 0 40px;
+        font-size: 42px;
+        font-weight: 600;
+        z-index: 3;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      }
+      #search svg {
+        width: 44px;
+        height: 44px;
+        stroke: var(--dim);
+        fill: none;
+        stroke-width: 2.4;
+      }
+      .caret {
+        width: 4px;
+        height: 50px;
+        background: var(--green);
+        border-radius: 2px;
+      }
+      #map {
+        position: absolute;
+        inset: 0;
+        background: #161c21;
+      }
+      #map svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+      .pin {
+        position: absolute;
+        width: 76px;
+        height: 100px;
+        margin: -100px 0 0 -38px;
+        transform-origin: 50% 100%;
+      }
+      .pin svg {
+        width: 100%;
+        height: 100%;
+      }
+      #sheet {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 900px;
+        bottom: 0;
+        border-radius: 48px 48px 0 0;
+        background: var(--surface);
+        box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.5);
+        padding: 24px 50px 0;
+        z-index: 2;
+      }
+      .grab {
+        width: 110px;
+        height: 10px;
+        border-radius: 5px;
+        background: var(--line);
+        margin: 0 auto 26px;
+      }
+      .row {
+        position: relative;
+        padding: 28px 0;
+        border-bottom: 2px solid var(--line);
+      }
+      .r-name {
+        font-size: 42px;
+        font-weight: 800;
+      }
+      .r-meta {
+        margin-top: 8px;
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        font-size: 34px;
+        color: var(--dim);
+      }
+      .r-meta b {
+        color: var(--fg);
+      }
+      .r-meta .st {
+        color: var(--star);
+        letter-spacing: 1px;
+        direction: ltr;
+      }
+      .r-meta bdi {
+        font-family: var(--mono);
+        font-size: 32px;
+      }
+      .r-open {
+        margin-top: 6px;
+        font-size: 30px;
+        color: var(--green);
+        font-weight: 700;
+      }
+      /* detail page */
+      .detail {
+        position: absolute;
+        inset: 0;
+        background: var(--bg);
+        z-index: 6;
+        padding: 210px 50px 0;
+        transform: translateX(-1080px);
+      }
+      .d-top {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        font-size: 36px;
+        color: var(--dim);
+        margin-top: 100px;
+      }
+      .d-top svg {
+        width: 46px;
+        height: 46px;
+        stroke: var(--fg);
+        fill: none;
+        stroke-width: 2.4;
+      }
+      .d-name {
+        margin-top: 30px;
+        font-size: 60px;
+        font-weight: 800;
+      }
+      .d-rate {
+        margin-top: 14px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        font-size: 40px;
+      }
+      .d-rate b {
+        font-size: 84px;
+        direction: ltr;
+      }
+      .d-rate .st {
+        color: var(--star);
+        font-size: 48px;
+        direction: ltr;
+      }
+      .d-rate bdi {
+        font-family: var(--mono);
+        color: var(--dim);
+      }
+      .d-btns {
+        margin-top: 30px;
+        display: flex;
+        gap: 18px;
+      }
+      .d-btn {
+        height: 96px;
+        padding: 0 40px;
+        border-radius: 48px;
+        background: var(--surface-2);
+        font-size: 36px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+      }
+      .d-btn.call {
+        background: var(--green);
+        color: #0b1a10;
+      }
+      .d-btn svg {
+        width: 40px;
+        height: 40px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2.4;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+      .d-h {
+        margin-top: 46px;
+        font-size: 40px;
+        font-weight: 800;
+      }
+      .rvlist {
+        position: relative;
+        margin-top: 20px;
+        height: 900px;
+        overflow: hidden;
+      }
+      .rvs {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+      .rv {
+        padding: 26px 30px;
+        border-radius: 28px;
+        background: var(--surface);
+      }
+      .rv-top {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-size: 32px;
+        font-weight: 800;
+      }
+      .rv-top i {
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        font-style: normal;
+        font-size: 26px;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .rv-top em {
+        margin-right: auto;
+        font-style: normal;
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--dim);
+      }
+      .rv-top em.old {
+        color: var(--red);
+      }
+      .rv-top em.new {
+        color: var(--green);
+      }
+      .rv .st {
+        margin-top: 10px;
+        color: var(--star);
+        font-size: 34px;
+        direction: ltr;
+        text-align: right;
+      }
+      .rv .ln {
+        margin-top: 10px;
+        height: 12px;
+        border-radius: 6px;
+        background: var(--surface-2);
+      }
+      #calling {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, #0f3d22, #07160d);
+        z-index: 9;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 520px;
+        gap: 24px;
+        opacity: 0;
+      }
+      #calling .who {
+        font-size: 66px;
+        font-weight: 800;
+      }
+      #calling .st {
+        font-size: 38px;
+        color: var(--dim);
+      }
+      #calling .av {
+        width: 220px;
+        height: 220px;
+        border-radius: 50%;
+        background: var(--green);
+        color: #0b1a10;
+        font-size: 110px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      /* overlays on top of the screen */
+      #cap {
+        position: absolute;
+        left: 50px;
+        right: 50px;
+        top: 168px;
+        height: 104px;
+        z-index: 20;
+      }
+      .cp {
+        position: absolute;
+        right: 0;
+        top: 0;
+        max-width: 980px;
+        height: 104px;
+        padding: 0 34px;
+        border-radius: 52px;
+        background: rgba(253, 254, 253, 0.96);
+        color: #141a15;
+        font-size: 40px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        white-space: nowrap;
+        direction: rtl;
+        opacity: 0;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      }
+      .cp b {
+        color: #007329;
+        margin-left: 10px;
+      }
+      #timer {
+        position: absolute;
+        left: 50px;
+        top: 440px;
+        height: 70px;
+        padding: 0 24px;
+        border-radius: 35px;
+        background: var(--red);
+        color: #fff;
+        font-family: var(--mono);
+        font-size: 36px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        z-index: 20;
+        direction: ltr;
+      }
+      #timer i {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #fff;
+      }
+      #finger {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 150px;
+        height: 150px;
+        z-index: 30;
+        opacity: 0;
+        filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.5));
+      }
+      .ripple {
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        margin: -60px 0 0 -60px;
+        border-radius: 50%;
+        border: 6px solid var(--green);
+        background: rgba(63, 209, 122, 0.25);
+        opacity: 0;
+        z-index: 29;
+      }
+      /* end */
+      #end-h {
+        position: absolute;
+        left: 70px;
+        right: 70px;
+        top: 230px;
+        text-align: center;
+        font-family: var(--display);
+        font-size: 80px;
+        font-weight: 800;
+        line-height: 1.1;
+        color: #141a15;
+        direction: rtl;
+        opacity: 0;
+      }
+      #end-h .g {
+        color: #007329;
+      }
+      #end-foot {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 1290px;
+        text-align: center;
+        opacity: 0;
+      }
+      #end-foot .wordmark {
+        font-size: 46px;
+        color: #141a15;
+        margin-bottom: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="v6-3" data-start="0" data-duration="20" data-width="1080" data-height="1920">
+      <div id="screen" data-layout-allow-overlap>
+        <div id="map">
+          <svg viewBox="0 0 1080 1920" preserveAspectRatio="none">
+            <path d="M720 380 C 760 520 900 600 1080 620 L1080 900 L860 900 C 820 780 740 700 650 640 C 600 560 640 460 620 380 Z" fill="#1c2b22" />
+            <path d="M0 760 C 200 700 340 800 540 760 C 720 724 820 800 1080 780" stroke="#1d2a36" stroke-width="56" fill="none" />
+            <path d="M-20 560 L 1100 500" stroke="#2a333c" stroke-width="30" fill="none" />
+            <path d="M380 380 L 470 900" stroke="#2a333c" stroke-width="30" fill="none" />
+            <path d="M-20 680 L 1100 700" stroke="#242c34" stroke-width="16" fill="none" />
+            <path d="M150 380 L 210 900" stroke="#242c34" stroke-width="14" fill="none" />
+            <path d="M780 380 L 720 900" stroke="#242c34" stroke-width="14" fill="none" />
+          </svg>
+          <div class="pin" id="pinA" style="left: 560px; top: 640px"></div>
+          <div class="pin" id="pinB" style="left: 860px; top: 520px"></div>
+          <div class="pin" id="pinC" style="left: 250px; top: 800px"></div>
+          <svg id="me" style="position: absolute; left: 500px; top: 700px; width: 50px; height: 50px; inset: auto" viewBox="0 0 50 50"><circle cx="25" cy="25" r="22" fill="rgba(80,160,255,0.25)" /><circle cx="25" cy="25" r="11" fill="#4ea1ff" stroke="#fff" stroke-width="4" /></svg>
+        </div>
+        <div class="status"><span>17:42</span><span class="sys"><span class="sig"><i style="height: 9px"></i><i style="height: 14px"></i><i style="height: 19px"></i><i style="height: 25px"></i></span><span class="batt"><i></i></span></span></div>
+        <div id="search"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg><span id="q"></span><span class="caret" id="caret"></span></div>
+        <div id="sheet">
+          <div class="grab"></div>
+          <div class="row" id="rowA"><div class="r-name">מרפאת שיניים שקד</div><div class="r-meta"><b>4.9</b><span class="st">★★★★★</span><bdi dir="ltr">(9)</bdi><span>· 0.4 ק״מ</span></div><div class="r-open">פתוח עכשיו</div></div>
+          <div class="row" id="rowB"><div class="r-name">מרפאת שיניים אור</div><div class="r-meta"><b>4.8</b><span class="st">★★★★★</span><bdi dir="ltr">(160)</bdi><span>· 0.9 ק״מ</span></div><div class="r-open">פתוח עכשיו</div></div>
+          <div class="row" id="rowC"><div class="r-name">מרפאת שיניים גל</div><div class="r-meta"><b>4.6</b><span class="st">★★★★★</span><bdi dir="ltr">(38)</bdi><span>· 1.3 ק״מ</span></div><div class="r-open">פתוח עכשיו</div></div>
+        </div>
+
+        <!-- detail A: few, old reviews -->
+        <div class="detail" id="dA" data-layout-allow-overlap>
+          <div class="d-top"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>חזרה</div>
+          <div class="d-name">מרפאת שיניים שקד</div>
+          <div class="d-rate"><b>4.9</b><span class="st">★★★★★</span><bdi dir="ltr">(9)</bdi></div>
+          <div class="d-h">ביקורות</div>
+          <div class="rvlist"><div class="rvs" id="rvsA">
+            <div class="rv"><div class="rv-top"><i style="background: #7a5cc4">ש</i>שירה מ.<em class="old" id="oldA">לפני שנה וחצי</em></div><div class="st">★★★★★</div><div class="ln" style="width: 80%"></div></div>
+            <div class="rv"><div class="rv-top"><i style="background: #a8521f">ע</i>עומר ד.<em class="old">לפני שנתיים</em></div><div class="st">★★★★★</div><div class="ln" style="width: 64%"></div></div>
+            <div class="rv"><div class="rv-top"><i style="background: #2d7fc2">מ</i>מאיה ל.<em class="old">לפני 3 שנים</em></div><div class="st">★★★★☆</div><div class="ln" style="width: 72%"></div></div>
+          </div></div>
+        </div>
+
+        <!-- detail B: many, fresh reviews -->
+        <div class="detail" id="dB" data-layout-allow-overlap>
+          <div class="d-top"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>חזרה</div>
+          <div class="d-name">מרפאת שיניים אור</div>
+          <div class="d-rate"><b>4.8</b><span class="st">★★★★★</span><bdi dir="ltr">(160)</bdi></div>
+          <div class="d-btns"><div class="d-btn call" id="callbtn"><svg viewBox="0 0 24 24"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" /></svg>התקשרות</div><div class="d-btn">מסלול</div><div class="d-btn">אתר</div></div>
+          <div class="d-h">ביקורות</div>
+          <div class="rvlist" style="height: 760px"><div class="rvs" id="rvsB">
+            <div class="rv"><div class="rv-top"><i style="background: #0f766e">נ</i>נועה ל.<em class="new">לפני יומיים</em></div><div class="st">★★★★★</div><div class="ln" style="width: 86%"></div></div>
+            <div class="rv"><div class="rv-top"><i style="background: #c2410c">א</i>אבי ר.<em class="new">לפני 4 ימים</em></div><div class="st">★★★★★</div><div class="ln" style="width: 70%"></div></div>
+            <div class="rv"><div class="rv-top"><i style="background: #7a5cc4">ד</i>דנה כ.<em class="new">לפני שבוע</em></div><div class="st">★★★★☆</div><div class="ln" style="width: 60%"></div></div>
+            <div class="rv"><div class="rv-top"><i style="background: #2d7fc2">י</i>יוסי ב.<em class="new">לפני שבוע</em></div><div class="st">★★★★★</div><div class="ln" style="width: 78%"></div></div>
+            <div class="rv"><div class="rv-top"><i style="background: #a8521f">מ</i>מיכל ש.<em>לפני שבועיים</em></div><div class="st">★★★★★</div><div class="ln" style="width: 66%"></div></div>
+          </div></div>
+        </div>
+
+        <div id="calling" data-layout-allow-overlap><div class="av">א</div><div class="who">מרפאת שיניים אור</div><div class="st">מתקשר...</div></div>
+      </div>
+
+      <!-- transcript pills and the timer -->
+      <div id="cap" data-layout-allow-overlap>
+        <div class="cp" id="cp1"><b>⦁</b>ככה בוחרים רופא שיניים היום:</div>
+        <div class="cp" id="cp2">הכי קרובה... אבל רק 9 ביקורות.</div>
+        <div class="cp" id="cp3">והאחרונה מלפני שנה וחצי. לא.</div>
+        <div class="cp" id="cp4">160 ביקורות. האחרונה מלפני יומיים.</div>
+        <div class="cp" id="cp5">סגור. מתקשרים.</div>
+        <div class="cp" id="cp6">הבחירה הזו לקחה <b style="margin: 0 10px">16</b> שניות.</div>
+      </div>
+      <div id="timer"><i></i><span id="tval">00:00</span></div>
+      <div id="finger"></div>
+      <div class="ripple" id="rp1"></div>
+      <div class="ripple" id="rp2"></div>
+      <div class="ripple" id="rp3"></div>
+      <div class="ripple" id="rp4"></div>
+
+      <div id="end-h"><span class="w">מה</span> <span class="w">רואים</span> <span class="w">אצלכם</span><br /><span class="w g">ב-16</span> <span class="w g">השניות</span> <span class="w g">האלה?</span></div>
+      <div id="end-foot"><div class="wordmark">EZ<b>.</b>Path<b>.</b>AI</div><div class="call-pill" id="pill"><svg viewBox="0 0 24 24"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" /></svg><span>055-271-6456</span></div></div>
+
+      <audio id="music" src="assets/audio/m6-chill.mp3" data-start="0" data-duration="20" data-track-index="10" data-volume="1"></audio>
+      <audio id="sfx-1" src="assets/audio/click-soft.mp3" data-start="4.0" data-duration="0.37" data-track-index="11" data-volume="0.35"></audio>
+      <audio id="sfx-2" src="assets/audio/click-soft.mp3" data-start="7.0" data-duration="0.37" data-track-index="11" data-volume="0.35"></audio>
+      <audio id="sfx-3" src="assets/audio/click-soft.mp3" data-start="8.2" data-duration="0.37" data-track-index="11" data-volume="0.35"></audio>
+      <audio id="sfx-4" src="assets/audio/click-soft.mp3" data-start="12.6" data-duration="0.37" data-track-index="11" data-volume="0.35"></audio>
+    </div>
+
+    <script>
+      (function () {
+        const $ = (id) => document.getElementById(id);
+        const PIN = (c, label) =>
+          '<svg viewBox="0 0 64 84"><path d="M32 82 C 32 82 4 50 4 30 A 28 28 0 0 1 60 30 C 60 50 32 82 32 82 Z" fill="' + c + '"/><circle cx="32" cy="30" r="12" fill="#101418"/></svg>';
+        $("pinA").innerHTML = PIN("#ff6b5b");
+        $("pinB").innerHTML = PIN("#3fd17a");
+        $("pinC").innerHTML = PIN("#9aa6b0");
+        $("finger").innerHTML =
+          '<svg viewBox="0 0 24 24"><path d="M6 14 V4 a2 2 0 0 1 4 0 V9 a2 2 0 0 1 4 0 v1 a2 2 0 0 1 4 0 v1 a2 2 0 0 1 4 0 v3 a8 8 0 0 1 -8 8 h-2 c-2.8 0 -4.5 -0.86 -5.99 -2.34 l-3.6 -3.6 a2 2 0 0 1 2.83 -2.82 L6 14 Z" fill="#fdfefd" stroke="#141a15" stroke-width="1.15" stroke-linejoin="round"/></svg>';
+        const root = $("root");
+        function pos(el) {
+          let x = 0, y = 0, e = el;
+          while (e && e !== root) { x += e.offsetLeft; y += e.offsetTop; e = e.offsetParent; }
+          return { cx: x + el.offsetWidth / 2, cy: y + el.offsetHeight / 2 };
+        }
+        const TIP = { x: 150 * (8 / 24), y: 150 * (2 / 24) };
+
+        function build() {
+          const tl = gsap.timeline({ paused: true });
+          const P = { A: pos($("rowA")), B: pos($("rowB")), call: pos($("callbtn")), back: pos(document.querySelector("#dA .d-top")) };
+          const fingerAt = (p) => ({ x: p.cx - TIP.x, y: p.cy - TIP.y });
+          let r = 0;
+          function tap(t, p) {
+            const el = $("rp" + (++r));
+            el.style.left = p.cx + "px";
+            el.style.top = p.cy + "px";
+            tl.to("#finger", { scale: 0.88, duration: 0.1, ease: "power2.in", transformOrigin: "33% 8%" }, t);
+            tl.to("#finger", { scale: 1, duration: 0.18, ease: "power2.out", transformOrigin: "33% 8%" }, t + 0.1);
+            tl.fromTo(el, { opacity: 0, scale: 0.3 }, { opacity: 0.9, scale: 0.6, duration: 0.08, ease: "none" }, t + 0.04);
+            tl.to(el, { opacity: 0, scale: 1.6, duration: 0.45, ease: "power2.out" }, t + 0.12);
+          }
+          function move(t, p, d) {
+            const f = fingerAt(p);
+            tl.to("#finger", { x: f.x, y: f.y, duration: d || 0.5, ease: "power3.inOut" }, t);
+          }
+          function cap(id, tIn, tOut) {
+            tl.fromTo("#" + id, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, tIn);
+            if (tOut) tl.to("#" + id, { opacity: 0, y: -20, duration: 0.2, ease: "power2.in" }, tOut);
+          }
+
+          // timer counts the real seconds of the search
+          const o = { v: 0 };
+          tl.fromTo(o, { v: 0 }, { v: 16, duration: 16, ease: "none", onUpdate: () => ($("tval").textContent = "00:" + String(Math.floor(o.v)).padStart(2, "0")) }, 0);
+          tl.fromTo("#timer i", { opacity: 1 }, { opacity: 0.2, duration: 0.5, ease: "none", yoyo: true, repeat: 31 }, 0);
+
+          // search
+          const Q = "רופא שיניים";
+          const qi = { v: 0 };
+          tl.fromTo(qi, { v: 0 }, { v: Q.length, duration: 1.1, ease: "none", onUpdate: () => ($("q").textContent = Q.slice(0, Math.round(qi.v))) }, 0.15);
+          for (let t = 1.3, on = false; t < 3; t += 0.4, on = !on) tl.set("#caret", { opacity: on ? 1 : 0 }, t);
+          cap("cp1", 0.1, 3.0);
+          ["#pinA", "#pinB", "#pinC"].forEach((s, i) => tl.fromTo(s, { opacity: 0, y: -80, scale: 0.4 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: "back.out(2.2)" }, 1.5 + i * 0.15));
+          tl.fromTo("#sheet", { y: 700 }, { y: 0, duration: 0.6, ease: "power3.out" }, 1.8);
+
+          // clinic A: close, but few and old
+          cap("cp2", 3.1, 5.4);
+          const fA = fingerAt(P.A);
+          tl.fromTo("#finger", { opacity: 0, x: fA.x + 260, y: fA.y + 300 }, { opacity: 1, x: fA.x, y: fA.y, duration: 0.6, ease: "power3.out" }, 3.3);
+          tap(4.0, P.A);
+          tl.fromTo("#dA", { x: -1080 }, { x: 0, duration: 0.45, ease: "power3.inOut" }, 4.2);
+          tl.set("#dA", { x: -1080 }, 0);
+          tl.to("#finger", { opacity: 0, duration: 0.2, ease: "none" }, 4.3);
+          cap("cp3", 5.5, 7.5);
+          tl.fromTo("#oldA", { scale: 1 }, { scale: 1.25, duration: 0.25, ease: "power2.out", yoyo: true, repeat: 1 }, 5.7);
+          const fBack = fingerAt(P.back);
+          tl.fromTo("#finger", { opacity: 0, x: fBack.x + 200, y: fBack.y + 200 }, { opacity: 1, x: fBack.x, y: fBack.y, duration: 0.5, ease: "power3.out" }, 6.4);
+          tap(7.0, P.back);
+          tl.to("#dA", { x: -1080, duration: 0.4, ease: "power3.inOut" }, 7.15);
+
+          // clinic B: many, fresh
+          move(7.5, P.B, 0.55);
+          tap(8.2, P.B);
+          tl.fromTo("#dB", { x: -1080 }, { x: 0, duration: 0.45, ease: "power3.inOut" }, 8.4);
+          tl.set("#dB", { x: -1080 }, 0);
+          tl.to("#finger", { opacity: 0, duration: 0.2, ease: "none" }, 8.5);
+          cap("cp4", 8.6, 11.6);
+          tl.to("#rvsB", { y: -420, duration: 2.2, ease: "power2.inOut" }, 9.3);
+
+          // call
+          cap("cp5", 11.7, 13.4);
+          const fC = fingerAt(P.call);
+          tl.fromTo("#finger", { opacity: 0, x: fC.x + 220, y: fC.y + 260 }, { opacity: 1, x: fC.x, y: fC.y, duration: 0.5, ease: "power3.out" }, 11.9);
+          tap(12.6, P.call);
+          tl.fromTo("#calling", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "power1.out" }, 12.8);
+          tl.set("#calling", { opacity: 0 }, 0);
+          tl.to("#finger", { opacity: 0, duration: 0.2, ease: "none" }, 12.9);
+          tl.fromTo("#calling .av", { scale: 1 }, { scale: 1.08, duration: 0.5, ease: "sine.inOut", yoyo: true, repeat: 3 }, 13.2);
+          cap("cp6", 13.6, 15.9);
+          tl.to("#timer", { scale: 1.15, duration: 0.25, ease: "power2.out", yoyo: true, repeat: 1 }, 15.8);
+
+          // shrink to the end card
+          tl.to("#screen", { scale: 0.44, borderRadius: "90px", boxShadow: "0 40px 90px rgba(10,30,15,0.35)", duration: 0.8, ease: "power3.inOut" }, 16.0);
+          tl.to(["#timer", "#cap"], { opacity: 0, duration: 0.25, ease: "none" }, 16.0);
+          tl.to("#end-h", { opacity: 1, duration: 0.4, ease: "power1.out" }, 16.5);
+          tl.fromTo("#end-h .w", { y: 40 }, { y: 0, duration: 0.45, ease: "power3.out", stagger: 0.07 }, 16.5);
+          tl.to("#end-foot", { opacity: 1, duration: 0.4, ease: "power1.out" }, 17.2);
+          tl.fromTo("#pill", { scale: 0.7 }, { scale: 1, duration: 0.4, ease: "back.out(2)" }, 17.2);
+          tl.to("#pill", { scale: 1.05, duration: 0.3, ease: "power2.out", yoyo: true, repeat: 1 }, 18.4);
+
+          window.__timelines = window.__timelines || {};
+          window.__timelines["v6-3"] = tl;
+          if (typeof window.__hfForceTimelineRebind === "function") window.__hfForceTimelineRebind();
+        }
+        Promise.all([
+          document.fonts.load('800 42px "Assistant"', "אבגד"),
+          document.fonts.load('800 80px "Frank Ruhl Libre"', "אבגד 16"),
+          document.fonts.load('700 36px "JetBrains Mono"', "EZ.Path0123:()"),
+        ])
+          .then(() => document.fonts.ready)
+          .then(build, build);
+      })();
+    </script>
+  </body>
+</html>

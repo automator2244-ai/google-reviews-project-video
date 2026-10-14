@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="he" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>A או B</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <link rel="stylesheet" href="ez-shared.css" />
+    <style>
+      /* Game show: dark stage, two contestants (coral A, green B), a countdown ring */
+      :root {
+        --stage: #121614;
+        --stage-2: #1c2420;
+        --fg: #f4f8f5;
+        --dim: #9aa79d;
+        --a: #ff6b5b;
+        --b: #3fd17a;
+        --card: #fdfefd;
+        --ink: #141a15;
+        --star: #f2a900;
+        --show: "Secular One", "Assistant", sans-serif;
+      }
+      html,
+      body,
+      #root {
+        background: var(--stage);
+        color: var(--fg);
+      }
+      .spot {
+        position: absolute;
+        width: 1200px;
+        height: 1200px;
+        border-radius: 50%;
+      }
+      #spot-a {
+        right: -500px;
+        top: 100px;
+        background: radial-gradient(circle, rgba(255, 107, 91, 0.2) 0%, rgba(255, 107, 91, 0) 60%);
+      }
+      #spot-b {
+        left: -500px;
+        top: 700px;
+        background: radial-gradient(circle, rgba(63, 209, 122, 0.2) 0%, rgba(63, 209, 122, 0) 60%);
+      }
+      #wm {
+        position: absolute;
+        left: 80px;
+        top: 186px;
+        font-size: 28px;
+        color: var(--fg);
+        z-index: 20;
+      }
+      #wm b {
+        color: var(--b);
+      }
+      .title {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        top: 250px;
+        font-family: var(--show);
+        font-size: 84px;
+        line-height: 1.1;
+        direction: rtl;
+        text-align: right;
+      }
+      .ccard {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        height: 340px;
+        border-radius: 44px;
+        background: var(--card);
+        color: var(--ink);
+        direction: rtl;
+        display: flex;
+        align-items: center;
+        gap: 36px;
+        padding: 0 44px;
+        box-shadow: 0 26px 60px rgba(0, 0, 0, 0.4);
+      }
+      #ca {
+        top: 470px;
+      }
+      #cb {
+        top: 890px;
+      }
+      .badge {
+        flex: none;
+        width: 170px;
+        height: 170px;
+        border-radius: 50%;
+        font-family: var(--show);
+        font-size: 120px;
+        line-height: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--ink);
+      }
+      #ca .badge {
+        background: var(--a);
+      }
+      #cb .badge {
+        background: var(--b);
+      }
+      .rate {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        direction: rtl;
+      }
+      .rate b {
+        font-family: var(--show);
+        font-size: 92px;
+        font-weight: 400;
+        line-height: 1;
+        direction: ltr;
+      }
+      .rate span {
+        font-size: 52px;
+        color: var(--star);
+        letter-spacing: 2px;
+        direction: ltr;
+      }
+      .cnt {
+        margin-top: 8px;
+        font-size: 44px;
+        font-weight: 800;
+      }
+      .cnt bdi {
+        font-family: var(--mono);
+      }
+      .last {
+        margin-top: 6px;
+        font-size: 36px;
+        font-weight: 700;
+        color: #5b625c;
+      }
+      .last em {
+        font-style: normal;
+        padding: 2px 14px;
+        border-radius: 12px;
+      }
+      #ca .last em {
+        background: #ffe1dc;
+        color: #a8281b;
+      }
+      #cb .last em {
+        background: #d0eed5;
+        color: #004c1a;
+      }
+      #vs {
+        position: absolute;
+        left: 50%;
+        top: 790px;
+        width: 120px;
+        height: 120px;
+        margin-left: -60px;
+        border-radius: 50%;
+        background: var(--stage);
+        border: 6px solid var(--fg);
+        font-family: var(--show);
+        font-size: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        direction: ltr;
+        z-index: 5;
+      }
+      #timer {
+        position: absolute;
+        left: 50%;
+        top: 1280px;
+        width: 200px;
+        height: 200px;
+        margin-left: -100px;
+      }
+      #tnum {
+        position: absolute;
+        left: 50%;
+        top: 1280px;
+        width: 200px;
+        height: 200px;
+        margin-left: -100px;
+        font-family: var(--show);
+        font-size: 110px;
+        line-height: 200px;
+        text-align: center;
+      }
+      #pick {
+        position: absolute;
+        left: 120px;
+        top: 860px;
+        padding: 10px 30px;
+        border: 8px solid var(--b);
+        border-radius: 22px;
+        color: var(--b);
+        font-family: var(--show);
+        font-size: 64px;
+        transform: rotate(-10deg);
+        z-index: 6;
+        background: var(--stage);
+        direction: rtl;
+      }
+      /* reasons */
+      #why-h {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        top: 260px;
+        font-family: var(--show);
+        font-size: 100px;
+        direction: rtl;
+      }
+      #why-h b {
+        font-weight: 400;
+        color: var(--b);
+      }
+      .rs {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        display: flex;
+        gap: 30px;
+        align-items: flex-start;
+        direction: rtl;
+        padding: 30px 34px;
+        border-radius: 34px;
+        background: var(--stage-2);
+        border: 3px solid #2c362f;
+      }
+      .rs i {
+        flex: none;
+        width: 76px;
+        height: 76px;
+        border-radius: 50%;
+        background: var(--b);
+        color: var(--ink);
+        font-style: normal;
+        font-family: var(--show);
+        font-size: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .rs p {
+        font-size: 46px;
+        font-weight: 800;
+        line-height: 1.22;
+        text-wrap: balance;
+      }
+      .rs p b {
+        color: var(--b);
+        font-family: var(--show);
+        font-weight: 400;
+      }
+      .rs small {
+        display: block;
+        margin-top: 8px;
+        font-size: 26px;
+        font-weight: 600;
+        color: var(--dim);
+      }
+      .rs small bdi {
+        font-family: var(--mono);
+        color: var(--fg);
+        font-size: 24px;
+      }
+      /* your turn */
+      #you {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        top: 360px;
+        text-align: center;
+        font-family: var(--show);
+        direction: rtl;
+      }
+      #you .l1 {
+        display: block;
+        font-size: 120px;
+        line-height: 1.1;
+      }
+      #you .l2 {
+        margin-top: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 40px;
+        direction: ltr;
+        font-size: 70px;
+      }
+      #you .l2 span {
+        width: 210px;
+        height: 210px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 150px;
+        color: var(--ink);
+      }
+      #you .l3 {
+        display: block;
+        margin-top: 60px;
+        font-size: 72px;
+        color: var(--b);
+      }
+      #end-h {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        top: 420px;
+        text-align: center;
+        font-family: var(--show);
+        font-size: 110px;
+        line-height: 1.1;
+        direction: rtl;
+      }
+      #end-h b {
+        font-weight: 400;
+        color: var(--b);
+      }
+      #end-sub {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        top: 700px;
+        text-align: center;
+        font-size: 46px;
+        font-weight: 700;
+        color: var(--dim);
+        direction: rtl;
+      }
+      #end-wm {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 920px;
+        text-align: center;
+        font-size: 66px;
+        color: var(--fg);
+      }
+      #end-wm b {
+        color: var(--b);
+      }
+      #end-call {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 1060px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="v6-1" data-start="0" data-duration="25" data-width="1080" data-height="1920">
+      <div class="spot" id="spot-a"></div>
+      <div class="spot" id="spot-b"></div>
+      <div id="wm" class="wordmark">EZ<b>.</b>Path<b>.</b>AI</div>
+
+      <!-- 0 to 8.5: the question -->
+      <section class="scene clip" id="s1" dir="rtl" lang="he" data-start="0" data-duration="9.6" data-track-index="1">
+        <div class="title" id="t1"><span class="w">לאיזו</span> <span class="w">מרפאה</span> <span class="w">הייתם</span> <span class="w">הולכים?</span></div>
+        <div class="ccard" id="ca">
+          <div class="badge">A</div>
+          <div>
+            <div class="rate"><b>5.0</b><span>★★★★★</span></div>
+            <div class="cnt"><bdi dir="ltr">11</bdi> ביקורות</div>
+            <div class="last">אחרונה: <em>לפני שנתיים</em></div>
+          </div>
+        </div>
+        <div id="vs">VS</div>
+        <div class="ccard" id="cb">
+          <div class="badge">B</div>
+          <div>
+            <div class="rate"><b>4.7</b><span>★★★★★</span></div>
+            <div class="cnt"><bdi dir="ltr">148</bdi> ביקורות</div>
+            <div class="last">אחרונה: <em>אתמול</em></div>
+          </div>
+        </div>
+        <svg id="timer" viewBox="0 0 200 200"><circle cx="100" cy="100" r="88" fill="none" stroke="#2c362f" stroke-width="14" /><circle id="ring" cx="100" cy="100" r="88" fill="none" stroke="#f2a900" stroke-width="14" stroke-linecap="round" transform="rotate(-90 100 100)" /></svg>
+        <div id="tnum"></div>
+        <div id="pick">הבחירה: <bdi dir="ltr">B</bdi></div>
+      </section>
+
+      <!-- 9.2 to 16: why B -->
+      <section class="scene clip" id="s2" dir="rtl" lang="he" data-start="9.3" data-duration="7" data-track-index="2">
+        <div id="why-h"><b><bdi dir="ltr">B.</bdi></b> והנה למה:</div>
+        <div class="rs" id="r1" style="top: 470px"><i>1</i><p><b>65%</b> מתעלמים מביקורות בנות יותר משנה.<small>מקור: <bdi dir="ltr">Press Ganey, 2023</bdi></small></p></div>
+        <div class="rs" id="r2" style="top: 790px"><i>2</i><p>ביקורת או שתיים פחות מושלמות <b>מוסיפות אמון.</b><small>מקור: <bdi dir="ltr">Press Ganey, 2023</bdi></small></p></div>
+        <div class="rs" id="r3" style="top: 1110px"><i>3</i><p><b>51%</b> קוראים לפחות 6 ביקורות. <span style="white-space: nowrap">ל-<bdi dir="ltr">A</bdi> יש 11.</span><small>מקור: <bdi dir="ltr">rater8, 2025</bdi>, סקר בארה״ב</small></p></div>
+      </section>
+
+      <!-- 16 to 21: your turn -->
+      <section class="scene clip" id="s3" dir="rtl" lang="he" data-start="16" data-duration="5.2" data-track-index="1">
+        <div id="you"><span class="l1" id="y1">ואצלכם?</span><div class="l2" id="y2"><span style="background: var(--a)">A</span>או<span style="background: var(--b)">B</span></div><span class="l3" id="y3">כתבו בתגובות</span></div>
+      </section>
+
+      <!-- 21 to 25 -->
+      <section class="scene clip" id="s4" dir="rtl" lang="he" data-start="21" data-duration="4" data-track-index="2">
+        <div id="end-h">רוצים להיות <b>B?</b></div>
+        <div id="end-sub">הודעה אחת אחרי כל ביקור. ביקורות טריות כל חודש.</div>
+        <div id="end-wm" class="wordmark">EZ<b>.</b>Path<b>.</b>AI</div>
+        <div id="end-call"><div class="call-pill" id="pill"><svg viewBox="0 0 24 24"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" /></svg><span>055-271-6456</span></div></div>
+      </section>
+
+      <audio id="music" src="assets/audio/m6-bitbit.mp3" data-start="0" data-duration="25" data-track-index="10" data-volume="1"></audio>
+      <audio id="sfx-1" src="assets/audio/click-soft.mp3" data-start="5.4" data-duration="0.37" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-2" src="assets/audio/click-soft.mp3" data-start="6.4" data-duration="0.37" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-3" src="assets/audio/click-soft.mp3" data-start="7.4" data-duration="0.37" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-4" src="assets/audio/pop.mp3" data-start="8.5" data-duration="0.72" data-track-index="11" data-volume="0.28"></audio>
+    </div>
+
+    <script>
+      (function () {
+        const $ = (id) => document.getElementById(id);
+        function build() {
+          const tl = gsap.timeline({ paused: true });
+          tl.fromTo("#wm", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "none" }, 0);
+          tl.to("#wm", { opacity: 0, duration: 0.3, ease: "none" }, 21.0);
+          tl.fromTo("#spot-a", { x: 0, y: 0 }, { x: -80, y: 120, duration: 12.5, ease: "sine.inOut", yoyo: true, repeat: 1 }, 0);
+          tl.fromTo("#spot-b", { x: 0, y: 0 }, { x: 90, y: -140, duration: 12.5, ease: "sine.inOut", yoyo: true, repeat: 1 }, 0);
+
+          // contestants enter
+          tl.fromTo("#t1 .w", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.35, ease: "power4.out", stagger: 0.07 }, 0.05);
+          tl.fromTo("#ca", { opacity: 0, x: 700 }, { opacity: 1, x: 0, duration: 0.5, ease: "back.out(1.2)" }, 0.5);
+          tl.fromTo("#cb", { opacity: 0, x: -700 }, { opacity: 1, x: 0, duration: 0.5, ease: "back.out(1.2)" }, 0.8);
+          tl.fromTo("#vs", { opacity: 0, scale: 0, rotation: -90 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.45, ease: "back.out(2.4)" }, 1.25);
+          tl.fromTo(["#ca .last", "#cb .last"], { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "none", stagger: 0.3 }, 2.2);
+          tl.fromTo("#ca .badge", { scale: 1 }, { scale: 1.1, duration: 0.2, ease: "power2.out", yoyo: true, repeat: 1 }, 3.0);
+          tl.fromTo("#cb .badge", { scale: 1 }, { scale: 1.1, duration: 0.2, ease: "power2.out", yoyo: true, repeat: 1 }, 3.5);
+
+          // countdown 3, 2, 1
+          const ring = $("ring");
+          const L = 2 * Math.PI * 88;
+          ring.setAttribute("stroke-dasharray", L);
+          tl.fromTo(["#timer", "#tnum"], { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(2)" }, 4.9);
+          tl.fromTo(ring, { attr: { "stroke-dashoffset": 0 } }, { attr: { "stroke-dashoffset": L }, duration: 3, ease: "none" }, 5.4);
+          tl.set("#tnum", { textContent: "3" }, 4.9);
+          tl.set("#tnum", { textContent: "2" }, 6.4);
+          tl.set("#tnum", { textContent: "1" }, 7.4);
+          [5.4, 6.4, 7.4].forEach((t) => tl.fromTo("#tnum", { scale: 1.35 }, { scale: 1, duration: 0.3, ease: "power2.out" }, t));
+          tl.to(["#timer", "#tnum"], { opacity: 0, scale: 0.6, duration: 0.25, ease: "power2.in" }, 8.4);
+
+          // the reveal
+          tl.to("#ca", { opacity: 0.3, scale: 0.96, duration: 0.35, ease: "power2.out" }, 8.5);
+          tl.to("#cb", { scale: 1.05, boxShadow: "0 0 0 10px #3fd17a, 0 30px 70px rgba(0,0,0,0.5)", duration: 0.35, ease: "back.out(2)" }, 8.5);
+          tl.fromTo("#pick", { opacity: 0, scale: 2.2, rotation: -30 }, { opacity: 1, scale: 1, rotation: -10, duration: 0.3, ease: "power4.in" }, 8.6);
+          tl.to(["#t1", "#ca", "#vs", "#cb", "#pick"], { opacity: 0, y: -80, duration: 0.3, ease: "power2.in", stagger: 0.03 }, 9.2);
+
+          // why
+          tl.fromTo("#why-h", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 9.4);
+          ["#r1", "#r2", "#r3"].forEach((s, i) => {
+            tl.fromTo(s, { opacity: 0, x: 140 }, { opacity: 1, x: 0, duration: 0.45, ease: "power3.out" }, 9.9 + i * 1.6);
+            tl.fromTo(s + " i", { scale: 0, rotation: -90 }, { scale: 1, rotation: 0, duration: 0.4, ease: "back.out(2.4)" }, 10.05 + i * 1.6);
+          });
+          tl.to(["#why-h", "#r1", "#r2", "#r3"], { opacity: 0, y: -60, duration: 0.3, ease: "power2.in", stagger: 0.04 }, 15.8);
+
+          // your turn
+          tl.fromTo("#y1", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, 16.1);
+          tl.fromTo("#y2 span", { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2.4)", stagger: 0.3 }, 16.6);
+          tl.to("#y2 span", { y: -24, duration: 0.25, ease: "power2.out", yoyo: true, repeat: 5, stagger: 0.25 }, 17.6);
+          tl.fromTo("#y3", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 18.0);
+          tl.to("#you", { opacity: 0, duration: 0.3, ease: "power1.in" }, 20.8);
+
+          // end
+          tl.fromTo("#end-h", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, 21.05);
+          tl.fromTo("#end-sub", { opacity: 0 }, { opacity: 1, duration: 0.35, ease: "none" }, 21.5);
+          tl.fromTo("#end-wm", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, 21.8);
+          tl.fromTo("#pill", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, 22.1);
+          tl.to("#pill", { scale: 1.06, duration: 0.25, ease: "power2.out", yoyo: true, repeat: 1 }, 23.3);
+
+          window.__timelines = window.__timelines || {};
+          window.__timelines["v6-1"] = tl;
+          if (typeof window.__hfForceTimelineRebind === "function") window.__hfForceTimelineRebind();
+        }
+        Promise.all([
+          document.fonts.load('400 84px "Secular One"', "אבגד AB"),
+          document.fonts.load('400 84px "Secular One"', "0123%."),
+          document.fonts.load('800 46px "Assistant"', "אבגד"),
+          document.fonts.load('700 30px "JetBrains Mono"', "EZ.Path0123"),
+        ])
+          .then(() => document.fonts.ready)
+          .then(build, build);
+      })();
+    </script>
+  </body>
+</html>

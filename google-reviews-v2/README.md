@@ -61,3 +61,13 @@ npx hyperframes@0.8.140 render -c research-illustrated.html -q delivery -o out/r
 | `v5-5-myth.html` | `out/v5-5-myth-25s.mp4` | כרטיסי מיתוס ועובדה | Funkeriffic |
 
 לכל סרטון יש תמונת שער (`out/<שם>-cover.jpg`). הפקה: `npx hyperframes@0.8.140 render -c <קובץ> -q delivery -o out/raw.mp4`, ואחר כך דחיסה ב-ffmpeg (crf 21) כמו בסרטוני המחקר.
+
+## שלושת הסרטונים המקוריים
+
+התסריטים, הקריאה השנייה והמקורות: `SCRIPTS-3.md`.
+
+| קובץ מקור | קובץ מוכן | פורמט | מוזיקה |
+|---|---|---|---|
+| `v6-1-ab.html` | `out/v6-1-ab-25s.mp4` | משחק "A או B" עם שעון עצר, מזמין תגובות | Bit Bit Loop |
+| `v6-2-later.html` | `out/v6-2-later-30s.mp4` | מחברת בכתב יד: הכוונה לכתוב ביקורת שנשכחת במשך היום | Kalimba Relaxation Music |
+| `v6-3-pov.html` | `out/v6-3-pov-20s.mp4` | כל המסך הוא טלפון: חיפוש, השוואה והתקשרות, עם שעון שסופר 16 שניות | Be Chillin |

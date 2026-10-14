@@ -37,3 +37,11 @@
 | `assets/img/stock/dentist-talk.jpg` | https://www.pexels.com/photo/3845983/ | Pexels License |
 | `assets/img/stock/dentist-laptop.jpg` | https://www.pexels.com/photo/6627359/ | Pexels License |
 | `assets/illus/questions.svg`, `feedback.svg`, `gifts.svg`, `texting.svg` | unDraw (Questions, Feedback, Gifts, Texting), צבועים מחדש | unDraw License |
+
+## שלושת הסרטונים המקוריים
+
+| נכס | מקור | רישיון |
+|---|---|---|
+| `assets/audio/m6-bitbit.mp3`, `m6-kalimba.mp3`, `m6-chill.mp3` | FreePD: Bit Bit Loop, Kalimba Relaxation Music, Be Chillin | נחלת הכלל (CC0) |
+| `assets/fonts/secular-one-*.woff2`, `amatic-sc-*.woff2` | Google Fonts: Secular One, Amatic SC | SIL Open Font License 1.1 |
+| `assets/illus/happy.svg`, `work.svg`, `family.svg`, `night.svg`, `notify.svg` | unDraw (Happy, Multitasking, Family, Late at night, My notifications), צבועים מחדש | unDraw License |
