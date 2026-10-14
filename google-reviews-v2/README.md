@@ -6,6 +6,8 @@
 |---|---|
 | `out/google-reviews-v2-full.mp4` | האנימציה |
 | `out/outro.mp4` | כרטיס הסיום (4.6 שניות), בא אחרי ההקלטה האישית |
+| `out/instagram-reel.mp4` | רילס לאינסטגרם (34 שניות), מתוך אותן סצנות, עם סיום וטלפון |
+| `out/instagram-reel-cover.jpg` | תמונת שער לרילס |
 
 ## הפקה מחדש
 
@@ -19,3 +21,13 @@ npx hyperframes@0.8.140 render -c cards/outro.html -q delivery -o out/outro.mp4 
 ```
 
 התסריט, הנתונים והמקורות: `BRIEF.md`. הסצנות והזמנים: `STORYBOARD.md`.
+
+## הרילס לאינסטגרם (`reel.html`)
+
+אותן סצנות בסדר אחר: הפער (230 מול 0), החיפוש, הטלפון, המשוב, התוצאה וסיום עם טלפון. הכול מוקטן ל-80% כדי שהכתוביות לא ייפלו מתחת לכפתורים ולכיתוב של אינסטגרם בתחתית המסך. המוזיקה: `assets/audio/music-reel.mp3` (אותו קטע, 40.6 שניות עם דעיכה).
+
+```bash
+npx hyperframes@0.8.140 render -c reel.html -q delivery -o out/reel-raw.mp4
+ffmpeg -i out/reel-raw.mp4 -filter_complex "[0:v]setpts=PTS/1.2,fps=30[v];[0:a]atempo=1.2[a]" -map "[v]" -map "[a]" \
+  -c:v libx264 -preset slow -crf 18 -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart out/instagram-reel.mp4
+```
