@@ -1,0 +1,271 @@
+<!doctype html>
+<html
+  lang="he"
+  data-resolution="portrait"
+  data-composition-variables='[
+    {"id":"contact","type":"string","label":"טלפון בכרטיס הסיום","default":"055-271-6456"}
+  ]'
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>כרטיס סיום</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Frank Ruhl Libre";
+        src: url("assets/fonts/frank-ruhl-libre-hebrew.woff2") format("woff2");
+        font-weight: 300 900;
+        font-display: block;
+        unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+      }
+      @font-face {
+        font-family: "Frank Ruhl Libre";
+        src: url("assets/fonts/frank-ruhl-libre-latin.woff2") format("woff2");
+        font-weight: 300 900;
+        font-display: block;
+        unicode-range: U+0000-00FF, U+2000-206F;
+      }
+      @font-face {
+        font-family: "Assistant";
+        src: url("assets/fonts/assistant-hebrew.woff2") format("woff2");
+        font-weight: 200 800;
+        font-display: block;
+        unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+      }
+      @font-face {
+        font-family: "Assistant";
+        src: url("assets/fonts/assistant-latin.woff2") format("woff2");
+        font-weight: 200 800;
+        font-display: block;
+        unicode-range: U+0000-00FF, U+2000-206F;
+      }
+      @font-face {
+        font-family: "JetBrains Mono";
+        src: url("assets/fonts/jetbrains-mono-latin.woff2") format("woff2");
+        font-weight: 400 700;
+        font-display: block;
+      }
+      :root {
+        --paper: #f4f8f5;
+        --paper-3: #dbe4dc;
+        --rule: #ccd3cd;
+        --muted: #4e544f;
+        --ink: #141a15;
+        --accent: #007329;
+        --accent-soft: #d0eed5;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--paper);
+        font-family: "Assistant", sans-serif;
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+      }
+      #bg {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+      #bg-dots {
+        position: absolute;
+        left: -120px;
+        top: -120px;
+        width: 1320px;
+        height: 2160px;
+        background-image: radial-gradient(circle, rgba(20, 26, 21, 0.13) 2.2px, rgba(20, 26, 21, 0) 2.8px);
+        background-size: 40px 40px;
+      }
+      #glow {
+        position: absolute;
+        width: 1500px;
+        height: 1500px;
+        left: -210px;
+        top: 160px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(0, 115, 41, 0.16) 0%, rgba(0, 115, 41, 0) 62%);
+      }
+      .end {
+        position: absolute;
+        left: 108px;
+        right: 108px;
+        top: 400px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        direction: rtl;
+      }
+      .portrait {
+        position: relative;
+        width: 300px;
+        height: 300px;
+      }
+      .portrait img {
+        position: absolute;
+        left: 20px;
+        top: 20px;
+        width: 260px;
+        height: 260px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .portrait svg {
+        position: absolute;
+        inset: 0;
+        width: 300px;
+        height: 300px;
+      }
+      .wordmark {
+        margin-top: 40px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 58px;
+        font-weight: 700;
+        direction: ltr;
+        letter-spacing: -1px;
+      }
+      .wordmark b {
+        color: var(--accent);
+      }
+      .rule {
+        margin-top: 44px;
+        width: 220px;
+        height: 6px;
+        border-radius: 3px;
+        background: var(--accent);
+      }
+      .q {
+        margin-top: 50px;
+        font-family: "Frank Ruhl Libre", serif;
+        font-size: 92px;
+        font-weight: 800;
+        line-height: 1.12;
+        text-wrap: balance;
+      }
+      .q .hl {
+        color: var(--accent);
+      }
+      .call {
+        margin-top: 26px;
+        font-size: 48px;
+        font-weight: 700;
+        color: var(--muted);
+      }
+      .contact {
+        margin-top: 70px;
+        height: 132px;
+        padding: 0 56px;
+        border-radius: 66px;
+        background: var(--accent);
+        color: #fdfefd;
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        box-shadow: 0 22px 44px rgba(0, 80, 30, 0.22);
+      }
+      .contact svg {
+        width: 56px;
+        height: 56px;
+        stroke: #fdfefd;
+        fill: none;
+        stroke-width: 2.2;
+      }
+      .contact span {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 60px;
+        font-weight: 700;
+        direction: ltr;
+      }
+      .site {
+        margin-top: 34px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--muted);
+        direction: ltr;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="outro" data-start="0" data-duration="4.6" data-width="1080" data-height="1920">
+      <div id="bg" data-layout-allow-overflow>
+        <div id="bg-dots"></div>
+        <div id="glow"></div>
+      </div>
+      <section id="card" class="clip" data-start="0" data-duration="4.6" data-track-index="1" style="position: absolute; inset: 0">
+        <div class="end">
+          <div class="portrait" id="portrait">
+            <img src="assets/img/bnaya.jpg" alt="" />
+            <svg viewBox="0 0 300 300"><circle id="ring" cx="150" cy="150" r="144" fill="none" stroke="#007329" stroke-width="6" stroke-linecap="round" transform="rotate(-90 150 150)" /></svg>
+          </div>
+          <div class="wordmark" id="wordmark">EZ<b>.</b>Path<b>.</b>AI</div>
+          <div class="rule" id="rule"></div>
+          <div class="q" id="q">רוצים לראות איך זה יעבוד <span class="hl">אצלכם?</span></div>
+          <div class="call" id="call">שיחה של 15 דקות, ואני אראה לכם.</div>
+          <div class="contact" id="contact">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" /></svg>
+            <span id="contact-txt">055-271-6456</span>
+          </div>
+          <div class="site" id="site">ezpath-ai.com</div>
+        </div>
+      </section>
+      <audio id="music" src="assets/audio/music-outro.mp3" data-start="0" data-duration="4.6" data-track-index="10" data-volume="1"></audio>
+    </div>
+    <script>
+      (function () {
+        let vars = {};
+        try {
+          if (window.__hyperframes && typeof window.__hyperframes.getVariables === "function") vars = window.__hyperframes.getVariables() || {};
+        } catch (e) {
+          vars = {};
+        }
+        if (vars.contact) document.getElementById("contact-txt").textContent = vars.contact;
+
+        function build() {
+          const tl = gsap.timeline({ paused: true });
+          const ring = document.getElementById("ring");
+          const RL = 2 * Math.PI * 144;
+          ring.setAttribute("stroke-dasharray", RL);
+          tl.fromTo("#bg-dots", { x: 0, y: 0 }, { x: 10, y: 24, duration: 4.6, ease: "none" }, 0);
+          tl.fromTo("#glow", { scale: 0.9 }, { scale: 1.05, duration: 4.6, ease: "sine.inOut" }, 0);
+          tl.fromTo("#portrait", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.55, ease: "back.out(1.7)" }, 0.05);
+          tl.fromTo(ring, { attr: { "stroke-dashoffset": RL } }, { attr: { "stroke-dashoffset": 0 }, duration: 0.9, ease: "power2.inOut" }, 0.15);
+          tl.fromTo("#wordmark", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 0.25);
+          tl.fromTo("#rule", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "power2.inOut" }, 0.4);
+          tl.fromTo("#q", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.5, ease: "power4.out" }, 0.45);
+          tl.fromTo("#call", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 0.75);
+          tl.fromTo("#contact", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, 1.0);
+          tl.fromTo("#site", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, 1.3);
+          tl.to("#contact", { scale: 1.05, duration: 0.35, ease: "power2.out" }, 2.1);
+          tl.to("#contact", { scale: 1, duration: 0.5, ease: "power2.inOut" }, 2.45);
+          tl.to(".end", { y: -12, duration: 3.4, ease: "sine.inOut" }, 1.0);
+          window.__timelines["outro"] = tl;
+          if (typeof window.__hfForceTimelineRebind === "function") window.__hfForceTimelineRebind();
+        }
+        Promise.all([
+          document.fonts.load('800 92px "Frank Ruhl Libre"', "אבגד"),
+          document.fonts.load('700 48px "Assistant"', "אבגד"),
+          document.fonts.load('700 60px "JetBrains Mono"', "EZ.Path0123-"),
+        ])
+          .then(() => document.fonts.ready)
+          .then(build, build);
+      })();
+    </script>
+  </body>
+</html>

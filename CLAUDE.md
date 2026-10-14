@@ -6,7 +6,8 @@
 
 ## חלקים בריפו
 - `leads/`: גיליון הלידים [לידים רופאי שיניים](https://docs.google.com/spreadsheets/d/13bRjc6ezK3SAYv4YQFW8SEUj3FYZdTM-Frg3Hlb_xS8/edit) (מזהה `13bRjc6ezK3SAYv4YQFW8SEUj3FYZdTM-Frg3Hlb_xS8`). Apps Script (`leads/leads.gs`) ממלא אותו כל א' עד ה' ב-07:00 מ-Google Places: רק נייד, רק 15 עד 70 ביקורות, בלי תקרת חיפושים (לבקשת בניה). לשוניות "עסקי" ו"מאובטח", טלפון בעמודה C, סטטוס בעמודה E. פרטים ב-`leads/README.md`.
-- `google-reviews-demo/`: סרטון התבנית (55 שניות, HyperFrames). הקובץ המוכן: `google-reviews-demo/out/google-reviews-demo-full.mp4`. יש לו CLAUDE.md משלו.
+- `google-reviews-v2/`: סרטון התבנית הנוכחי (55 שניות, HyperFrames, בשפת העיצוב של EZ.Path.AI), אחיד לכל המרפאות. הקובץ המוכן: `google-reviews-v2/out/google-reviews-v2-full.mp4`, וכרטיס הסיום שבא אחרי ההקלטה של בניה: `google-reviews-v2/out/outro.mp4`. התסריט, הנתונים והמקורות שלהם ב-`google-reviews-v2/BRIEF.md`.
+- `google-reviews-demo/`: סרטון התבנית הקודם (גרסה 1, נשאר לתיעוד).
 - `youtube-transcripts/`: כלי שמוריד תמלולים מערוצי יוטיוב. רץ על המחשב של בניה (Windows, `yt @channel`), לאט כדי לא להיחסם, ומעלה לבד ל-GitHub. מהענן יוטיוב חוסם תמלולים, אז לא מורידים מכאן. פרטים ב-`youtube-transcripts/README.md`.
 - `video-links/`: השירות על `go.ezpath-ai.com`. כל עסק מקבל קישור אישי לדף עם הסרטון שלו, ובדשבורד (`/admin`) רואים מי נכנס, מי ניגן ועד איפה צפה. פרטים ב-`video-links/README.md`.
 
@@ -18,7 +19,7 @@
    ```bash
    scripts/publish.sh --name "שם העסק" --phone 0501234567 --personal /path/to/recording.mp4
    ```
-   ברירת המחדל: התבנית (האנימציה) קודם ואחריה ההקלטה האישית, וכל הסרטון במהירות פי 1.2 (בקשת בניה; הגובה של הקול נשמר). `--personal-first` הופך את הסדר, `--speed 1` מבטל את ההאצה, `--id <id>` מחליף סרטון לנמען קיים. הסרטון יוצא ב-1080x1920, ורעשי הרקע בהקלטה האישית מנוקים לבד.
+   ברירת המחדל: התבנית (האנימציה) קודם, אחריה ההקלטה האישית ובסוף כרטיס הסיום (`--no-outro` מוריד אותו), וכל הסרטון במהירות פי 1.2 (בקשת בניה; הגובה של הקול נשמר). `--personal-first` הופך את הסדר, `--speed 1` מבטל את ההאצה, `--id <id>` מחליף סרטון לנמען קיים. הסרטון יוצא ב-1080x1920, ורעשי הרקע בהקלטה האישית מנוקים לבד.
    אם בניה אומר שהקול לא מסונכרן עם התמונה: `--sync <שניות>` (חיובי כשהקול מאחר). אם ההקלטה חשוכה: `--brighten`. בודקים בפריימים ובסאונד שהתיקון עזר.
 5. בודקים את `video-links/out/<id>/video.mp4`: מחלצים כמה פריימים ומסתכלים עליהם, ומוודאים שיש סאונד ושהאורך הגיוני.
 6. מריצים את התוכן של `out/<id>/register.sql` על מסד הנתונים D1 `ezpath-loom-tracker` (מזהה `ac6d97bd-2f85-4220-9f2f-61f7270c93b6`) דרך חיבור Cloudflare (`d1_database_query`). זה יוצר את הנמען ואישור העלאה לשעה.

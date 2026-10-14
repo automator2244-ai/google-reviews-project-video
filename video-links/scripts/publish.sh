@@ -5,7 +5,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 DB="ezpath-loom-tracker"
-TEMPLATE="../google-reviews-demo/out/google-reviews-demo-full.mp4"
+TEMPLATE="../google-reviews-v2/out/google-reviews-v2-full.mp4"
+OUTRO="../google-reviews-v2/out/outro.mp4"
 W=1080 H=1920
 SPEED=1.2 # whole video plays faster; pitch stays natural
 
@@ -14,7 +15,9 @@ usage() {
 Usage: scripts/publish.sh --name "שם העסק" [--phone 050...] (--personal clip.mp4 | --video ready.mp4) [options]
   --personal FILE   personal recording, merged with the template
   --video FILE      a finished video, uploaded as-is (only re-encoded for the web)
-  --template FILE   template video (default: ../google-reviews-demo/out/google-reviews-demo-full.mp4)
+  --template FILE   template video (default: ../google-reviews-v2/out/google-reviews-v2-full.mp4)
+  --outro FILE      end card added after the personal recording (default: ../google-reviews-v2/out/outro.mp4)
+  --no-outro        no end card
   --personal-first  put the personal part before the template (default: after it)
   --sync SEC        fix voice/picture sync in the personal recording: 0.3 = voice was 0.3s late, -0.3 = early
   --brighten        brighten a dark personal recording a little
@@ -26,7 +29,7 @@ EOF
   exit 1
 }
 
-NAME="" PHONE="" NOTE="" PERSONAL="" VIDEO="" ID="" PERSONAL_LAST=1 LOCAL=0 SYNC=0 BRIGHTEN=0
+NAME="" PHONE="" NOTE="" PERSONAL="" VIDEO="" ID="" PERSONAL_LAST=1 NO_OUTRO=0 LOCAL=0 SYNC=0 BRIGHTEN=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --name) NAME="$2"; shift 2 ;;
@@ -35,6 +38,8 @@ while [ $# -gt 0 ]; do
     --personal) PERSONAL="$2"; shift 2 ;;
     --video) VIDEO="$2"; shift 2 ;;
     --template) TEMPLATE="$2"; shift 2 ;;
+    --outro) OUTRO="$2"; shift 2 ;;
+    --no-outro) NO_OUTRO=1; shift ;;
     --id) ID="$2"; shift 2 ;;
     --personal-first) PERSONAL_LAST=0; shift ;;
     --personal-last) PERSONAL_LAST=1; shift ;; # the default; kept so old commands still work
@@ -51,6 +56,7 @@ awk "BEGIN{exit !($SYNC >= -2 && $SYNC <= 2)}" 2>/dev/null || { echo "--sync mus
 [ -n "$PERSONAL" ] || [ -n "$VIDEO" ] || usage
 for f in "$PERSONAL" "$VIDEO"; do [ -z "$f" ] || [ -f "$f" ] || { echo "File not found: $f" >&2; exit 1; }; done
 [ -n "$VIDEO" ] || [ -f "$TEMPLATE" ] || { echo "Template not found: $TEMPLATE" >&2; exit 1; }
+[ -n "$VIDEO" ] || [ "$NO_OUTRO" = 1 ] || [ -f "$OUTRO" ] || { echo "End card not found: $OUTRO (or pass --no-outro)" >&2; exit 1; }
 
 # 050-123-4567 / +972 50... / 00972... -> 972501234567
 if [ -n "$PHONE" ]; then
@@ -104,7 +110,7 @@ add_segment() { # file lufs [personal]
 }
 
 # Thumbnail (the WhatsApp preview) always comes from the template part, never the personal recording.
-TEMPLATE_THUMB=2.5 # seconds into the template: the review card
+TEMPLATE_THUMB=10.6 # seconds into the template: the "84%" number
 THUMB_AT=1
 if [ -n "$VIDEO" ]; then
   add_segment "$VIDEO" -16
@@ -116,6 +122,9 @@ else
   add_segment "$PERSONAL" -16 personal
   add_segment "$TEMPLATE" -20
   THUMB_AT=$(awk "BEGIN{print ($(duration "$PERSONAL") + $TEMPLATE_THUMB) / $SPEED}")
+fi
+if [ -z "$VIDEO" ] && [ "$NO_OUTRO" = 0 ]; then
+  add_segment "$OUTRO" -20
 fi
 FILTER+="${CONCAT}concat=n=$N:v=1:a=1[cv][ca];[cv]setpts=PTS/$SPEED,fps=30[v];[ca]atempo=$SPEED[a]"
 

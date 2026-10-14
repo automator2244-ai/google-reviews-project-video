@@ -1,0 +1,2619 @@
+<!doctype html>
+<html lang="he" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>ביקורות בגוגל למרפאות</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      /* Brand fonts from the EZ.Path.AI site, local copies (SIL OFL 1.1). */
+      @font-face {
+        font-family: "Frank Ruhl Libre";
+        src: url("assets/fonts/frank-ruhl-libre-hebrew.woff2") format("woff2");
+        font-weight: 300 900;
+        font-display: block;
+        unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+      }
+      @font-face {
+        font-family: "Frank Ruhl Libre";
+        src: url("assets/fonts/frank-ruhl-libre-latin.woff2") format("woff2");
+        font-weight: 300 900;
+        font-display: block;
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+          U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: "Assistant";
+        src: url("assets/fonts/assistant-hebrew.woff2") format("woff2");
+        font-weight: 200 800;
+        font-display: block;
+        unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+      }
+      @font-face {
+        font-family: "Assistant";
+        src: url("assets/fonts/assistant-latin.woff2") format("woff2");
+        font-weight: 200 800;
+        font-display: block;
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+          U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: "JetBrains Mono";
+        src: url("assets/fonts/jetbrains-mono-latin.woff2") format("woff2");
+        font-weight: 400 700;
+        font-display: block;
+      }
+
+      /* EZ.Path.AI tokens (hue 150), converted from the site's OKLCH values */
+      :root {
+        --paper: #f4f8f5;
+        --paper-2: #e8efe9;
+        --paper-3: #dbe4dc;
+        --rule: #ccd3cd;
+        --neutral: #767c77;
+        --muted: #4e544f;
+        --ink: #141a15;
+        --accent: #007329;
+        --accent-deep: #004c1a;
+        --accent-soft: #d0eed5;
+        --card: #fdfefd;
+        --star: #f2a900;
+        --chat-bg: #e9ede6;
+        --out-bubble: #d6f2d4;
+        --link: #0b62c4;
+        --display: "Frank Ruhl Libre", serif;
+        --body: "Assistant", sans-serif;
+        --mono: "JetBrains Mono", "Assistant", monospace;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: var(--paper);
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--paper);
+        font-family: var(--body);
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+      }
+      bdi {
+        unicode-bidi: isolate;
+      }
+      svg {
+        display: block;
+      }
+      .emo {
+        display: inline-block;
+        width: 1.15em;
+        height: 1.15em;
+        vertical-align: -0.22em;
+        margin: 0 0.05em;
+      }
+      .scene {
+        position: absolute;
+        inset: 0;
+        direction: rtl;
+      }
+
+      /* ---------- Persistent background ---------- */
+      #bg {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+      #bg-dots {
+        position: absolute;
+        left: -120px;
+        top: -120px;
+        width: 1320px;
+        height: 2160px;
+        background-image: radial-gradient(circle, rgba(20, 26, 21, 0.13) 2.2px, rgba(20, 26, 21, 0) 2.8px);
+        background-size: 40px 40px;
+      }
+      .glow {
+        position: absolute;
+        border-radius: 50%;
+      }
+      #glow-a {
+        width: 1300px;
+        height: 1300px;
+        left: -560px;
+        top: -560px;
+        background: radial-gradient(circle, rgba(0, 115, 41, 0.17) 0%, rgba(0, 115, 41, 0) 62%);
+      }
+      #glow-b {
+        width: 1400px;
+        height: 1400px;
+        left: 300px;
+        top: 1000px;
+        background: radial-gradient(circle, rgba(0, 115, 41, 0.14) 0%, rgba(0, 115, 41, 0) 64%);
+      }
+
+      /* ---------- Top bar ---------- */
+      #topbar {
+        position: absolute;
+        left: 108px;
+        right: 108px;
+        top: 74px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        direction: rtl;
+        z-index: 30;
+      }
+      .wordmark {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 30px;
+        font-weight: 700;
+        color: var(--ink);
+        direction: ltr;
+        letter-spacing: -0.5px;
+      }
+      .wordmark b {
+        color: var(--accent);
+        font-weight: 700;
+      }
+      #chap {
+        position: relative;
+        width: 360px;
+        height: 56px;
+      }
+      .chap-item {
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        direction: ltr;
+        opacity: 0;
+      }
+      .chap-num {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 26px;
+        font-weight: 700;
+        color: var(--accent);
+      }
+      .chap-lbl {
+        font-family: var(--body);
+        font-size: 30px;
+        font-weight: 600;
+        color: var(--muted);
+      }
+      #prog {
+        position: absolute;
+        left: 108px;
+        right: 108px;
+        top: 148px;
+        height: 5px;
+        border-radius: 3px;
+        background: var(--paper-3);
+        overflow: hidden;
+        z-index: 30;
+      }
+      #prog-fill {
+        width: 100%;
+        height: 100%;
+        background: var(--accent);
+        transform-origin: 100% 50%;
+      }
+
+      /* ---------- Captions ---------- */
+      .cap {
+        position: absolute;
+        left: 96px;
+        right: 96px;
+        top: 1474px;
+        height: 250px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        direction: rtl;
+      }
+      .cap-inner {
+        display: block;
+        width: 100%;
+        font-family: var(--display);
+        font-size: 74px;
+        font-weight: 800;
+        line-height: 1.2;
+        text-align: center;
+        text-wrap: balance;
+        color: var(--ink);
+        opacity: 0;
+      }
+      .hl {
+        display: inline-block;
+        color: var(--accent);
+      }
+      .cap .hl {
+        background-image: linear-gradient(#d0eed5, #d0eed5);
+        background-repeat: no-repeat;
+        background-position: right 0 bottom 8px;
+        background-size: 0% 30px;
+        padding: 0 8px;
+      }
+
+      /* ---------- Shared bits ---------- */
+      .card {
+        background: var(--card);
+        border: 3px solid var(--rule);
+        box-shadow: 0 18px 40px rgba(20, 40, 25, 0.1);
+      }
+      .stars {
+        display: inline-flex;
+        gap: 4px;
+        direction: ltr;
+      }
+      .stars svg {
+        width: 30px;
+        height: 30px;
+        fill: var(--star);
+        stroke: none;
+      }
+      .clinic-av svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      /* ---------- Scene 1: search ---------- */
+      #s1-search {
+        position: absolute;
+        left: 108px;
+        right: 108px;
+        top: 224px;
+        height: 124px;
+        border-radius: 62px;
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        padding: 0 44px;
+      }
+      #s1-search svg {
+        width: 46px;
+        height: 46px;
+        stroke: var(--muted);
+        fill: none;
+        stroke-width: 2.4;
+        flex: none;
+      }
+      .q-text {
+        font-size: 44px;
+        font-weight: 600;
+        color: var(--ink);
+        white-space: nowrap;
+      }
+      .q-caret {
+        width: 4px;
+        height: 52px;
+        border-radius: 2px;
+        background: var(--accent);
+        margin-right: -14px;
+        flex: none;
+      }
+      #s1-map {
+        position: absolute;
+        left: 108px;
+        right: 108px;
+        top: 384px;
+        height: 400px;
+        border-radius: 40px;
+        overflow: hidden;
+        background: #e3ebe2;
+        border: 3px solid var(--rule);
+      }
+      #s1-map > svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+      .pin {
+        position: absolute;
+        width: 64px;
+        height: 84px;
+        margin: -84px 0 0 -32px;
+        transform-origin: 50% 100%;
+      }
+      .pin svg {
+        width: 100%;
+        height: 100%;
+      }
+      .pin .pin-body {
+        fill: var(--ink);
+      }
+      .pin.ours .pin-body {
+        fill: var(--accent);
+      }
+      .res-list {
+        position: absolute;
+        left: 108px;
+        right: 108px;
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+      }
+      #s1-list {
+        top: 824px;
+      }
+      .res {
+        position: relative;
+        height: 168px;
+        border-radius: 32px;
+        padding: 0 40px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .res-name {
+        font-size: 40px;
+        font-weight: 700;
+        line-height: 1.15;
+      }
+      .res-row {
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-size: 32px;
+      }
+      .res-rate {
+        font-weight: 700;
+        direction: ltr;
+      }
+      .res-cnt {
+        position: relative;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--muted);
+        direction: ltr;
+        padding: 2px 10px;
+        border-radius: 10px;
+      }
+      .res-dist {
+        flex: none;
+        padding: 10px 20px;
+        border-radius: 22px;
+        background: var(--paper-2);
+        font-size: 28px;
+        font-weight: 600;
+        color: var(--muted);
+      }
+      .res-ring {
+        position: absolute;
+        inset: -9px;
+        border-radius: 40px;
+        border: 6px solid var(--accent);
+        opacity: 0;
+      }
+      .tag-ours {
+        display: inline-block;
+        margin-right: 14px;
+        padding: 4px 14px;
+        border-radius: 12px;
+        background: var(--accent-soft);
+        color: var(--accent-deep);
+        font-size: 24px;
+        font-weight: 700;
+        vertical-align: 6px;
+      }
+
+      /* ---------- Scene 2: stats ---------- */
+      .stat {
+        position: absolute;
+        left: 108px;
+        right: 108px;
+        top: 236px;
+        height: 1180px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .st-eyebrow {
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 30px;
+        font-weight: 700;
+        color: var(--accent);
+        direction: ltr;
+      }
+      .st-eyebrow i {
+        display: block;
+        width: 80px;
+        height: 4px;
+        border-radius: 2px;
+        background: var(--accent);
+        transform-origin: 0% 50%;
+      }
+      .st-fig {
+        margin-top: 12px;
+        font-family: var(--display);
+        font-size: 330px;
+        font-weight: 800;
+        line-height: 1;
+        color: var(--accent);
+        direction: ltr;
+        transform-origin: 100% 60%;
+      }
+      .st-text {
+        margin-top: 26px;
+        max-width: 864px;
+        font-family: var(--display);
+        font-size: 70px;
+        font-weight: 700;
+        line-height: 1.18;
+        color: var(--ink);
+        text-wrap: balance;
+      }
+      .st-text .w {
+        display: inline-block;
+      }
+      .st-sub {
+        margin-top: 22px;
+        font-size: 44px;
+        font-weight: 600;
+        color: var(--muted);
+      }
+      .st-vis {
+        margin-top: 46px;
+      }
+      .st-src {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        padding-top: 22px;
+        font-size: 28px;
+        font-weight: 600;
+        line-height: 1.35;
+        color: var(--muted);
+      }
+      .st-src i {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 3px;
+        background: var(--rule);
+        transform-origin: 100% 50%;
+      }
+      .st-src bdi {
+        font-family: "JetBrains Mono", monospace;
+        font-size: 26px;
+        color: var(--ink);
+      }
+      .ghost {
+        position: absolute;
+        left: -40px;
+        top: 520px;
+        font-family: var(--display);
+        font-size: 980px;
+        font-weight: 800;
+        line-height: 1;
+        color: var(--paper-3);
+        direction: ltr;
+      }
+      .big-stars {
+        display: flex;
+        align-items: flex-end;
+        gap: 18px;
+        direction: ltr;
+      }
+      .bs {
+        position: relative;
+        width: 120px;
+        height: 120px;
+      }
+      .bs svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+      .bs .off {
+        fill: none;
+        stroke: var(--neutral);
+        stroke-width: 1.3;
+      }
+      .bs .on {
+        fill: var(--star);
+      }
+      .bs-line {
+        position: relative;
+        margin-top: 18px;
+        height: 6px;
+        width: 548px;
+        border-radius: 3px;
+        background: var(--accent);
+        direction: ltr;
+        transform-origin: 0% 50%;
+      }
+      .bs-lbl {
+        margin-top: 14px;
+        font-size: 32px;
+        font-weight: 700;
+        color: var(--accent);
+      }
+      .old-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+      .old {
+        position: relative;
+        width: 600px;
+        height: 92px;
+        border-radius: 22px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+        font-size: 32px;
+        font-weight: 600;
+      }
+      .old .when {
+        font-family: "JetBrains Mono", "Assistant", monospace;
+        font-size: 28px;
+        color: var(--muted);
+      }
+      .old .strike {
+        position: absolute;
+        left: 22px;
+        right: 22px;
+        top: 50%;
+        height: 5px;
+        margin-top: -2px;
+        border-radius: 3px;
+        background: var(--ink);
+        transform-origin: 100% 50%;
+      }
+
+      /* ---------- Scene 3: the gap ---------- */
+      .gap-col {
+        position: absolute;
+        top: 300px;
+        width: 400px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      #gap-a {
+        right: 108px;
+      }
+      #gap-b {
+        left: 108px;
+      }
+      .gap-lbl {
+        font-size: 40px;
+        font-weight: 700;
+        color: var(--muted);
+      }
+      .gap-num {
+        margin-top: 6px;
+        font-family: var(--display);
+        font-size: 230px;
+        font-weight: 800;
+        line-height: 1.02;
+        direction: ltr;
+      }
+      #gap-a .gap-num {
+        color: var(--accent);
+      }
+      #gap-b .gap-num {
+        color: var(--ink);
+      }
+      .pgrid {
+        position: relative;
+        margin-top: 36px;
+        width: 392px;
+        height: 280px;
+      }
+      .pd {
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+      }
+      .pd.off {
+        background: var(--paper-3);
+      }
+      .pd.on {
+        background: var(--accent);
+      }
+      #gap-rule {
+        position: absolute;
+        left: 538px;
+        top: 320px;
+        width: 4px;
+        height: 760px;
+        border-radius: 2px;
+        background: var(--rule);
+        transform-origin: 50% 0%;
+      }
+      .gap-note {
+        margin-top: 30px;
+        font-size: 34px;
+        font-weight: 600;
+        color: var(--muted);
+      }
+
+      /* ---------- Phone (scenes 4 and 5) ---------- */
+      #phone {
+        position: absolute;
+        left: 188px;
+        top: 168px;
+        width: 704px;
+        height: 1280px;
+      }
+      .ph-body {
+        position: absolute;
+        inset: 0;
+        border-radius: 96px;
+        background: #101712;
+        box-shadow: 0 50px 100px rgba(10, 30, 15, 0.32), inset 0 0 0 4px #2e3a31;
+      }
+      .ph-screen {
+        position: absolute;
+        left: 18px;
+        top: 18px;
+        right: 18px;
+        bottom: 18px;
+        border-radius: 80px;
+        overflow: hidden;
+        background: var(--chat-bg);
+      }
+      .ph-island {
+        position: absolute;
+        top: 34px;
+        left: 50%;
+        width: 190px;
+        height: 52px;
+        margin-left: -95px;
+        border-radius: 26px;
+        background: #040705;
+        z-index: 40;
+      }
+      .scr {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+      .status {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 98px;
+        direction: ltr;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 6px 64px 0 70px;
+        font-size: 29px;
+        font-weight: 700;
+        z-index: 3;
+      }
+      .status .sys {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .sig {
+        display: flex;
+        align-items: flex-end;
+        gap: 4px;
+        height: 22px;
+      }
+      .sig i {
+        display: block;
+        width: 6px;
+        border-radius: 2px;
+        background: currentColor;
+      }
+      .batt {
+        width: 46px;
+        height: 22px;
+        border-radius: 7px;
+        border: 3px solid currentColor;
+        padding: 2px;
+      }
+      .batt i {
+        display: block;
+        width: 72%;
+        height: 100%;
+        border-radius: 3px;
+        background: currentColor;
+      }
+
+      /* lock screen */
+      #scr-lock {
+        background: radial-gradient(circle at 30% 20%, #2f8a4c 0%, #0f5a29 45%, #06301a 100%);
+        color: #f4f8f5;
+        z-index: 2;
+      }
+      .lk-time {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 150px;
+        text-align: center;
+        font-family: var(--body);
+        font-size: 176px;
+        font-weight: 300;
+        line-height: 1;
+        direction: ltr;
+      }
+      .lk-date {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 350px;
+        text-align: center;
+        font-size: 34px;
+        font-weight: 600;
+        opacity: 0.9;
+      }
+      .notif {
+        position: absolute;
+        left: 30px;
+        right: 30px;
+        top: 460px;
+        padding: 26px 28px;
+        border-radius: 40px;
+        background: rgba(253, 254, 253, 0.94);
+        color: var(--ink);
+        display: flex;
+        gap: 22px;
+        align-items: flex-start;
+        direction: rtl;
+        box-shadow: 0 16px 40px rgba(0, 20, 8, 0.3);
+      }
+      .nt-app {
+        flex: none;
+        width: 84px;
+        height: 84px;
+        border-radius: 22px;
+        background: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .nt-app svg {
+        width: 50px;
+        height: 50px;
+        stroke: #fff;
+        fill: none;
+        stroke-width: 2.2;
+      }
+      .nt-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+      }
+      .nt-name {
+        font-size: 30px;
+        font-weight: 800;
+      }
+      .nt-when {
+        font-size: 24px;
+        color: var(--muted);
+        flex: none;
+      }
+      .nt-msg {
+        margin-top: 6px;
+        font-size: 29px;
+        line-height: 1.35;
+      }
+
+      /* chat screens */
+      .scr-chat .status {
+        color: #fff;
+        background: var(--accent-deep);
+      }
+      .chat-head {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 98px;
+        height: 116px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        padding: 0 28px 10px;
+        background: var(--accent-deep);
+        color: #fff;
+        z-index: 3;
+        direction: rtl;
+      }
+      .chat-head .back {
+        width: 44px;
+        height: 44px;
+        stroke: #fff;
+        fill: none;
+        stroke-width: 2.4;
+      }
+      .chat-head .clinic-av {
+        width: 76px;
+        height: 76px;
+      }
+      .ch-name {
+        font-size: 32px;
+        font-weight: 700;
+        line-height: 1.15;
+      }
+      .ch-sub {
+        font-size: 23px;
+        opacity: 0.85;
+        margin-top: 2px;
+      }
+      .chat-body {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 214px;
+        bottom: 106px;
+        overflow: hidden;
+        background-color: var(--chat-bg);
+        background-image: radial-gradient(circle, rgba(20, 60, 30, 0.06) 2px, rgba(20, 60, 30, 0) 2.6px);
+        background-size: 34px 34px;
+        direction: rtl;
+      }
+      .chat-scroll {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        padding: 22px 24px 24px;
+      }
+      .date-chip {
+        align-self: center;
+        padding: 6px 22px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.85);
+        color: var(--muted);
+        font-size: 22px;
+        font-weight: 600;
+      }
+      .msg-in,
+      .msg-out {
+        position: relative;
+        font-size: 30px;
+        line-height: 1.4;
+        color: var(--ink);
+        opacity: 0;
+      }
+      .msg-in {
+        align-self: flex-start;
+        width: 560px;
+        transform-origin: 100% 0%;
+      }
+      .msg-out {
+        align-self: flex-end;
+        max-width: 520px;
+        transform-origin: 0% 0%;
+      }
+      .bubble {
+        position: relative;
+        padding: 16px 22px 12px;
+        border-radius: 22px;
+        background: #fff;
+        box-shadow: 0 2px 2px rgba(0, 0, 0, 0.08);
+      }
+      .msg-in .bubble {
+        border-top-right-radius: 6px;
+      }
+      .msg-out .bubble {
+        background: var(--out-bubble);
+        border-top-left-radius: 6px;
+      }
+      .bubble p + p {
+        margin-top: 8px;
+      }
+      .meta {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 6px;
+        margin-top: 2px;
+        font-size: 21px;
+        color: #56625a;
+        direction: ltr;
+      }
+      .meta svg {
+        width: 28px;
+        height: 28px;
+        stroke: #3aa6e0;
+        fill: none;
+        stroke-width: 2.2;
+      }
+      .link {
+        position: relative;
+        display: inline-block;
+        color: var(--link);
+        text-decoration: underline;
+        text-underline-offset: 5px;
+        font-weight: 600;
+        padding: 0 4px;
+      }
+      .link-hl {
+        position: absolute;
+        inset: -4px -6px;
+        border-radius: 10px;
+        background: rgba(0, 115, 41, 0.2);
+        opacity: 0;
+      }
+      .qr-list {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 6px;
+      }
+      .qr {
+        position: relative;
+        height: 74px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        border-radius: 16px;
+        background: #fff;
+        box-shadow: 0 2px 2px rgba(0, 0, 0, 0.08);
+        color: var(--accent-deep);
+        font-size: 29px;
+        font-weight: 700;
+        opacity: 0;
+      }
+      .qr svg {
+        width: 28px;
+        height: 28px;
+        stroke: var(--accent-deep);
+        fill: none;
+        stroke-width: 2.4;
+      }
+      .slot {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+      }
+      .typing {
+        position: absolute;
+        right: 0;
+        top: 0;
+        display: flex;
+        gap: 9px;
+        padding: 22px 26px;
+        border-radius: 22px;
+        border-top-right-radius: 6px;
+        background: #fff;
+        opacity: 0;
+      }
+      .typing i {
+        display: block;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #97a39a;
+      }
+      .chat-input {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 106px;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 0 22px 18px;
+        background: var(--chat-bg);
+        direction: rtl;
+      }
+      .ci-field {
+        flex: 1;
+        height: 70px;
+        border-radius: 35px;
+        background: #fff;
+        display: flex;
+        align-items: center;
+        padding: 0 30px;
+        font-size: 28px;
+        color: #6f7b72;
+      }
+      .ci-mic {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: var(--accent-deep);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .ci-mic svg {
+        width: 34px;
+        height: 34px;
+        stroke: #fff;
+        fill: none;
+        stroke-width: 2.2;
+      }
+      .scr-dim {
+        position: absolute;
+        inset: 0;
+        background: #000;
+        opacity: 0;
+        z-index: 10;
+      }
+      #scr-chat {
+        opacity: 0;
+        z-index: 3;
+      }
+      #scr-chat2 {
+        opacity: 0;
+        z-index: 14;
+      }
+
+      /* review screen */
+      #scr-review {
+        background: #fff;
+        color: var(--ink);
+        opacity: 0;
+        z-index: 12;
+        direction: rtl;
+      }
+      #scr-review .status {
+        color: var(--ink);
+      }
+      .rv-top {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 98px;
+        height: 90px;
+        display: flex;
+        align-items: center;
+        padding: 0 34px;
+      }
+      .rv-top svg {
+        width: 44px;
+        height: 44px;
+        stroke: var(--ink);
+        fill: none;
+        stroke-width: 2.2;
+      }
+      .rv-head {
+        position: absolute;
+        left: 40px;
+        right: 40px;
+        top: 196px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .rv-head .clinic-av {
+        width: 116px;
+        height: 116px;
+      }
+      .rv-name {
+        margin-top: 18px;
+        font-size: 38px;
+        font-weight: 800;
+      }
+      .rv-sub {
+        margin-top: 8px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 26px;
+        font-weight: 600;
+        color: var(--muted);
+      }
+      .rv-sub svg {
+        width: 26px;
+        height: 26px;
+        fill: var(--star);
+      }
+      .rv-user {
+        position: absolute;
+        left: 48px;
+        right: 48px;
+        top: 506px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+      }
+      .rv-av {
+        width: 72px;
+        height: 72px;
+        border-radius: 50%;
+        background: #7a5cc4;
+        color: #fff;
+        font-size: 36px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .rv-uname {
+        font-size: 30px;
+        font-weight: 700;
+      }
+      .rv-upub {
+        font-size: 22px;
+        color: var(--muted);
+      }
+      .rv-stars {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 630px;
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        direction: ltr;
+      }
+      .rs {
+        position: relative;
+        width: 90px;
+        height: 90px;
+      }
+      .rs svg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+      }
+      .rs .rs-off {
+        fill: none;
+        stroke: #7d8a80;
+        stroke-width: 1.4;
+      }
+      .rs .rs-on {
+        fill: var(--star);
+        opacity: 0;
+      }
+      .rv-field {
+        position: absolute;
+        left: 48px;
+        right: 48px;
+        top: 780px;
+        height: 230px;
+        border: 3px solid var(--rule);
+        border-radius: 22px;
+      }
+      .caret {
+        position: absolute;
+        right: 30px;
+        top: 28px;
+        width: 4px;
+        height: 46px;
+        border-radius: 2px;
+        background: var(--accent);
+      }
+      .rv-post {
+        position: absolute;
+        left: 48px;
+        right: 48px;
+        bottom: 64px;
+        height: 104px;
+        border-radius: 52px;
+        background: #dde3de;
+        color: #5f6b62;
+        font-size: 38px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .rv-done {
+        position: absolute;
+        inset: 0;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 34px;
+        opacity: 0;
+        z-index: 5;
+      }
+      .done-check {
+        width: 190px;
+        height: 190px;
+        border-radius: 50%;
+        background: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .done-check svg {
+        width: 110px;
+        height: 110px;
+        stroke: #fff;
+        fill: none;
+        stroke-width: 2.6;
+      }
+      .done-txt {
+        font-size: 44px;
+        font-weight: 800;
+      }
+      .done-stars {
+        display: flex;
+        gap: 10px;
+        direction: ltr;
+      }
+      .done-stars svg {
+        width: 54px;
+        height: 54px;
+        fill: var(--star);
+      }
+
+      /* ---------- Scene 5: email to the owner ---------- */
+      #mail {
+        position: absolute;
+        left: 84px;
+        top: 560px;
+        width: 470px;
+        border-radius: 36px;
+        padding: 34px 32px 32px;
+        direction: rtl;
+        opacity: 0;
+        z-index: 20;
+      }
+      .ml-top {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+      .ml-ic {
+        flex: none;
+        width: 70px;
+        height: 70px;
+        border-radius: 20px;
+        background: var(--accent-soft);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .ml-ic svg {
+        width: 40px;
+        height: 40px;
+        stroke: var(--accent-deep);
+        fill: none;
+        stroke-width: 2.2;
+      }
+      .ml-title {
+        font-size: 33px;
+        font-weight: 800;
+        line-height: 1.15;
+      }
+      .ml-when {
+        font-size: 23px;
+        font-weight: 600;
+        color: var(--muted);
+      }
+      .ml-rule {
+        margin: 24px 0 20px;
+        height: 3px;
+        background: var(--paper-3);
+      }
+      .ml-who {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--muted);
+      }
+      .ml-quote {
+        margin-top: 10px;
+        font-family: var(--display);
+        font-size: 44px;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+      .ml-btn {
+        position: relative;
+        margin-top: 28px;
+        height: 92px;
+        border-radius: 46px;
+        background: var(--accent);
+        color: #fff;
+        font-size: 32px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        overflow: hidden;
+      }
+      .ml-btn svg {
+        width: 34px;
+        height: 34px;
+        stroke: #fff;
+        fill: none;
+        stroke-width: 2.4;
+      }
+      .ml-btn .b2 {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        background: var(--accent-deep);
+        opacity: 0;
+      }
+
+      /* ---------- Scene 6: growth ---------- */
+      #pcard {
+        position: absolute;
+        left: 108px;
+        right: 108px;
+        top: 224px;
+        border-radius: 40px;
+        padding: 40px 44px;
+      }
+      .pc-head {
+        display: flex;
+        align-items: center;
+        gap: 22px;
+      }
+      .pc-head .clinic-av {
+        width: 96px;
+        height: 96px;
+      }
+      .pc-name {
+        font-size: 42px;
+        font-weight: 800;
+        line-height: 1.15;
+      }
+      .pc-tag {
+        margin-top: 4px;
+        font-size: 28px;
+        font-weight: 600;
+        color: var(--muted);
+      }
+      .pc-month {
+        margin-right: auto;
+        align-self: flex-start;
+        position: relative;
+        width: 150px;
+        height: 56px;
+        border-radius: 28px;
+        background: var(--accent-soft);
+        overflow: hidden;
+      }
+      .pm {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--accent-deep);
+        opacity: 0;
+      }
+      .pc-body {
+        margin-top: 30px;
+        display: flex;
+        align-items: center;
+        gap: 34px;
+      }
+      .pc-rate {
+        font-family: var(--display);
+        font-size: 150px;
+        font-weight: 800;
+        line-height: 0.95;
+        direction: ltr;
+      }
+      .pc-stars svg {
+        width: 50px;
+        height: 50px;
+      }
+      .pc-count {
+        margin-top: 10px;
+        font-size: 40px;
+        font-weight: 700;
+        color: var(--muted);
+      }
+      .pc-count bdi {
+        display: inline-block;
+        min-width: 2.2em;
+        font-family: "JetBrains Mono", monospace;
+        font-weight: 700;
+        color: var(--accent);
+        text-align: right;
+      }
+      #feed {
+        position: absolute;
+        left: 108px;
+        right: 108px;
+        top: 676px;
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+      }
+      .rv {
+        height: 196px;
+        border-radius: 32px;
+        padding: 26px 34px;
+        opacity: 0;
+      }
+      .rv-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .rv-who {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        font-size: 32px;
+        font-weight: 800;
+      }
+      .rv-who i {
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-style: normal;
+        font-size: 28px;
+        font-weight: 800;
+      }
+      .rv-new {
+        padding: 6px 16px;
+        border-radius: 14px;
+        background: var(--accent-soft);
+        color: var(--accent-deep);
+        font-size: 24px;
+        font-weight: 800;
+      }
+      .rv-txt {
+        margin-top: 14px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        font-size: 32px;
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .rv-txt .stars svg {
+        width: 28px;
+        height: 28px;
+      }
+      #s6-search {
+        position: absolute;
+        left: 108px;
+        right: 108px;
+        top: 300px;
+        height: 112px;
+        border-radius: 56px;
+        display: flex;
+        align-items: center;
+        gap: 22px;
+        padding: 0 40px;
+        font-size: 40px;
+        font-weight: 600;
+      }
+      #s6-search svg {
+        width: 42px;
+        height: 42px;
+        stroke: var(--muted);
+        fill: none;
+        stroke-width: 2.4;
+      }
+      #s6-list {
+        top: 470px;
+        height: 548px;
+      }
+      #s6-list .res {
+        position: absolute;
+        left: 0;
+        right: 0;
+      }
+      .rank {
+        position: absolute;
+        right: -76px;
+        top: 50%;
+        margin-top: -28px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        background: var(--ink);
+        color: #fff;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 28px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .rank.ours {
+        background: var(--accent);
+      }
+      .swap {
+        position: relative;
+        display: inline-block;
+      }
+      .swap > span {
+        display: inline-block;
+      }
+      .swap > .nv {
+        position: absolute;
+        right: 0;
+        top: 0;
+        opacity: 0;
+        white-space: nowrap;
+      }
+
+      /* ---------- Scene 7: no work ---------- */
+      .chips {
+        position: absolute;
+        left: 108px;
+        right: 108px;
+        top: 360px;
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+      }
+      .chip {
+        height: 210px;
+        border-radius: 44px;
+        display: flex;
+        align-items: center;
+        gap: 36px;
+        padding: 0 44px;
+        opacity: 0;
+      }
+      .chip-ic {
+        flex: none;
+        width: 124px;
+        height: 124px;
+        border-radius: 50%;
+        background: var(--accent);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .chip-ic svg {
+        width: 64px;
+        height: 64px;
+        stroke: #fff;
+        fill: none;
+        stroke-width: 2;
+      }
+      .chip-txt {
+        text-wrap: balance;
+        font-family: var(--display);
+        font-size: 56px;
+        font-weight: 700;
+        line-height: 1.12;
+      }
+
+      /* ---------- Scene 8: hand-off ---------- */
+      .handoff {
+        position: absolute;
+        left: 108px;
+        right: 108px;
+        top: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .portrait {
+        position: relative;
+        width: 500px;
+        height: 500px;
+      }
+      .portrait img {
+        position: absolute;
+        left: 30px;
+        top: 30px;
+        width: 440px;
+        height: 440px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .portrait svg {
+        position: absolute;
+        inset: 0;
+        width: 500px;
+        height: 500px;
+      }
+      .rec {
+        position: absolute;
+        right: 30px;
+        bottom: 40px;
+        height: 64px;
+        padding: 0 24px;
+        border-radius: 32px;
+        background: var(--ink);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-family: "JetBrains Mono", monospace;
+        font-size: 26px;
+        font-weight: 700;
+        direction: ltr;
+      }
+      .rec i {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #e5484d;
+      }
+      .ho-title {
+        margin-top: 56px;
+        font-family: var(--display);
+        font-size: 104px;
+        font-weight: 800;
+        line-height: 1.08;
+      }
+      .ho-title .w {
+        display: inline-block;
+      }
+      .ho-name {
+        margin-top: 26px;
+        font-size: 44px;
+        font-weight: 700;
+        color: var(--muted);
+      }
+      .ho-name b {
+        color: var(--ink);
+      }
+      .ho-rule {
+        margin-top: 40px;
+        width: 220px;
+        height: 6px;
+        border-radius: 3px;
+        background: var(--accent);
+        transform-origin: 50% 50%;
+      }
+
+      /* ---------- Finger and tap ripples ---------- */
+      #finger {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 132px;
+        height: 132px;
+        opacity: 0;
+        z-index: 60;
+        filter: drop-shadow(0 10px 14px rgba(5, 25, 10, 0.4));
+      }
+      #finger svg {
+        width: 100%;
+        height: 100%;
+      }
+      .ripple {
+        position: absolute;
+        width: 110px;
+        height: 110px;
+        margin: -55px 0 0 -55px;
+        border-radius: 50%;
+        border: 6px solid var(--accent);
+        background: rgba(0, 115, 41, 0.2);
+        opacity: 0;
+        z-index: 59;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="55" data-width="1080" data-height="1920">
+      <!-- Persistent background -->
+      <div id="bg" data-layout-allow-overflow>
+        <div id="bg-dots"></div>
+        <div class="glow" id="glow-a"></div>
+        <div class="glow" id="glow-b"></div>
+      </div>
+
+      <!-- Persistent top bar: wordmark, chapter, progress -->
+      <div id="topbar">
+        <div class="wordmark">EZ<b>.</b>Path<b>.</b>AI</div>
+        <div id="chap" data-layout-allow-overlap>
+          <div class="chap-item" id="ch1"><span class="chap-num">01</span><span class="chap-lbl">החיפוש</span></div>
+          <div class="chap-item" id="ch2"><span class="chap-num">02</span><span class="chap-lbl">המספרים</span></div>
+          <div class="chap-item" id="ch3"><span class="chap-num">03</span><span class="chap-lbl">הפער</span></div>
+          <div class="chap-item" id="ch4"><span class="chap-num">04</span><span class="chap-lbl">איך זה עובד</span></div>
+          <div class="chap-item" id="ch5"><span class="chap-num">05</span><span class="chap-lbl">משוב</span></div>
+          <div class="chap-item" id="ch6"><span class="chap-num">06</span><span class="chap-lbl">התוצאה</span></div>
+          <div class="chap-item" id="ch7"><span class="chap-num">07</span><span class="chap-lbl">בלי מאמץ</span></div>
+        </div>
+      </div>
+      <div id="prog"><div id="prog-fill"></div></div>
+
+      <!-- Scene 1: the search (0 to 5.4) -->
+      <section id="s1" class="scene clip" dir="rtl" lang="he" data-start="0" data-duration="5.5" data-track-index="1">
+        <div id="s1-search" class="card">
+          <i class="ic" data-icon="search"></i>
+          <span class="q-text" id="q-text"></span>
+          <span class="q-caret" id="q-caret"></span>
+        </div>
+        <div id="s1-map" data-layout-allow-overflow>
+          <svg viewBox="0 0 858 394" preserveAspectRatio="none">
+            <path d="M600 0 C 640 120 760 170 858 190 L858 394 L700 394 C 690 300 620 250 560 210 C 520 150 560 60 540 0 Z" fill="#cfe4d2" />
+            <path d="M0 300 C 160 260 260 330 420 300 C 560 274 640 340 858 320" stroke="#cfdde4" stroke-width="40" fill="none" />
+            <path d="M-20 140 L 880 90" stroke="#ffffff" stroke-width="26" fill="none" />
+            <path d="M300 -20 L 380 420" stroke="#ffffff" stroke-width="26" fill="none" />
+            <path d="M-20 230 L 880 250" stroke="#ffffff" stroke-width="14" fill="none" />
+            <path d="M120 -20 L 170 420" stroke="#ffffff" stroke-width="12" fill="none" />
+            <path d="M560 -20 L 600 420" stroke="#ffffff" stroke-width="12" fill="none" />
+            <path d="M760 -20 L 700 420" stroke="#ffffff" stroke-width="10" fill="none" />
+          </svg>
+          <div class="pin" id="pin1" style="left: 232px; top: 210px"></div>
+          <div class="pin" id="pin2" style="left: 470px; top: 160px"></div>
+          <div class="pin ours" id="pin3" style="left: 690px; top: 300px"></div>
+        </div>
+        <div class="res-list" id="s1-list">
+          <div class="res card" id="r1">
+            <div>
+              <div class="res-name">מרפאת שיניים הדר</div>
+              <div class="res-row"><span class="res-rate">4.9</span><span class="stars" data-stars="5"></span><span class="res-cnt" id="r1-cnt">(312)</span></div>
+            </div>
+            <div class="res-dist">1.2 ק״מ</div>
+            <div class="res-ring" id="r1-ring"></div>
+          </div>
+          <div class="res card" id="r2">
+            <div>
+              <div class="res-name">מרפאת שיניים גל</div>
+              <div class="res-row"><span class="res-rate">4.8</span><span class="stars" data-stars="5"></span><span class="res-cnt">(187)</span></div>
+            </div>
+            <div class="res-dist">0.9 ק״מ</div>
+          </div>
+          <div class="res card" id="r3">
+            <div>
+              <div class="res-name">מרפאת שיניים נקודת חיוך</div>
+              <div class="res-row"><span class="res-rate">5.0</span><span class="stars" data-stars="5"></span><span class="res-cnt">(24)</span></div>
+            </div>
+            <div class="res-dist">0.6 ק״מ</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scene 2: three numbers (5.4 to 14.4) -->
+      <section id="s2" class="scene clip" dir="rtl" lang="he" data-start="5.3" data-duration="9.2" data-track-index="2">
+        <div class="ghost" id="ghost2" aria-hidden="true" data-layout-allow-overlap>%</div>
+
+        <div class="stat" id="st1">
+          <div class="st-eyebrow"><span>01/03</span><i></i></div>
+          <div class="st-fig"><bdi dir="ltr">#1</bdi></div>
+          <div class="st-text"><span class="w">הדבר</span> <span class="w">הראשון</span> <span class="w">שמטופלים</span> <span class="w">בודקים</span> <span class="w">כשהם</span> <span class="w">בוחרים</span> <span class="w">רופא:</span> <span class="w hl">ביקורות</span> <span class="w hl">ודירוגים.</span></div>
+          <div class="st-sub">עוד לפני המלצה של רופא אחר.</div>
+          <div class="st-src"><i></i><div>מקור: <bdi dir="ltr">Press Ganey</bdi></div><div><bdi dir="ltr">Consumer Experience Trends in Healthcare, 2023</bdi></div></div>
+        </div>
+
+        <div class="stat" id="st2">
+          <div class="st-eyebrow"><span>02/03</span><i></i></div>
+          <div class="st-fig"><bdi dir="ltr"><span id="st2-n">0</span>%</bdi></div>
+          <div class="st-text"><span class="w">לא</span> <span class="w">ישקלו</span> <span class="w">רופא</span> <span class="w">עם</span> <span class="w">דירוג</span> <span class="w hl">מתחת</span> <span class="w hl">ל-4</span> <span class="w hl">כוכבים.</span></div>
+          <div class="st-vis">
+            <div class="big-stars" id="bigstars"></div>
+            <div class="bs-line" id="bs-line"></div>
+            <div class="bs-lbl" id="bs-lbl">הרף המינימלי</div>
+          </div>
+          <div class="st-src"><i></i><div>מקור: <bdi dir="ltr">Press Ganey</bdi></div><div><bdi dir="ltr">The State of HX, 2024</bdi></div></div>
+        </div>
+
+        <div class="stat" id="st3">
+          <div class="st-eyebrow"><span>03/03</span><i></i></div>
+          <div class="st-fig"><bdi dir="ltr"><span id="st3-n">0</span>%</bdi></div>
+          <div class="st-text"><span class="w">לא</span> <span class="w">מתייחסים</span> <span class="w">לביקורות</span> <span class="w">שנכתבו</span> <span class="w hl">לפני</span> <span class="w hl">יותר</span> <span class="w hl">משנה.</span></div>
+          <div class="st-vis old-list">
+            <div class="old card" id="old1"><span>★★★★★ "טיפול מעולה"</span><span class="when">לפני 3 שנים</span><i class="strike"></i></div>
+            <div class="old card" id="old2"><span>★★★★★ "ממליצה בחום"</span><span class="when">לפני שנתיים</span><i class="strike"></i></div>
+          </div>
+          <div class="st-src"><i></i><div>מקור: <bdi dir="ltr">Press Ganey</bdi></div><div><bdi dir="ltr">Consumer Experience Trends in Healthcare, 2023</bdi></div></div>
+        </div>
+      </section>
+
+      <!-- Scene 3: patients vs reviews (14.4 to 19) -->
+      <section id="s3" class="scene clip" dir="rtl" lang="he" data-start="14.3" data-duration="4.8" data-track-index="1">
+        <div class="gap-col" id="gap-a">
+          <div class="gap-lbl">מטופלים החודש</div>
+          <div class="gap-num"><bdi dir="ltr" id="gap-a-n">0</bdi></div>
+          <div class="pgrid" id="pgrid-a"></div>
+        </div>
+        <div id="gap-rule"></div>
+        <div class="gap-col" id="gap-b">
+          <div class="gap-lbl">ביקורות חדשות</div>
+          <div class="gap-num"><bdi dir="ltr" id="gap-b-n">0</bdi></div>
+          <div class="pgrid" id="pgrid-b"></div>
+        </div>
+      </section>
+
+      <!-- Scenes 4 and 5: the phone (19 to 37.8) -->
+      <section id="s45" class="scene clip" dir="rtl" lang="he" data-start="18.9" data-duration="19" data-track-index="2">
+        <div id="phone">
+          <div class="ph-body"></div>
+          <div class="ph-screen" id="ph-screen">
+            <div class="ph-island"></div>
+
+            <!-- Lock screen with the notification -->
+            <div class="scr" id="scr-lock" data-layout-allow-overlap>
+              <div class="status">
+                <span></span>
+                <span class="sys"><span class="sig"><i style="height: 8px"></i><i style="height: 12px"></i><i style="height: 16px"></i><i style="height: 21px"></i></span><span class="batt"><i></i></span></span>
+              </div>
+              <div class="lk-time">17:42</div>
+              <div class="lk-date">יום שלישי, 14 באוקטובר</div>
+              <div class="notif" id="notif">
+                <div class="nt-app"><i class="ic" data-icon="message-circle"></i></div>
+                <div style="flex: 1">
+                  <div class="nt-top"><span class="nt-name">מרפאת שיניים נקודת חיוך</span><span class="nt-when">עכשיו</span></div>
+                  <div class="nt-msg">היי נועה, תודה שהגעת היום<img class="emo" src="assets/emoji/pray.svg" alt="" /> איך היה הטיפול?</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Chat with Noa -->
+            <div class="scr scr-chat" id="scr-chat" data-layout-allow-overlap>
+              <div class="status">
+                <span>17:42</span>
+                <span class="sys"><span class="sig"><i style="height: 8px"></i><i style="height: 12px"></i><i style="height: 16px"></i><i style="height: 21px"></i></span><span class="batt"><i></i></span></span>
+              </div>
+              <div class="chat-head">
+                <i class="ic back" data-icon="arrow-right"></i>
+                <div class="clinic-av" data-logo></div>
+                <div>
+                  <div class="ch-name">מרפאת שיניים נקודת חיוך</div>
+                  <div class="ch-sub">חשבון עסקי</div>
+                </div>
+              </div>
+              <div class="chat-body" id="chat-body">
+                <div class="chat-scroll" id="chat-scroll">
+                  <div class="date-chip">היום</div>
+                  <div class="msg-in" id="msg1">
+                    <div class="bubble">
+                      <p>היי נועה<img class="emo" src="assets/emoji/wave.svg" alt="" /> תודה שהגעת היום למרפאה!</p>
+                      <p>רצינו לשאול, איך היה הטיפול?</p>
+                      <div class="meta">17:42</div>
+                    </div>
+                    <div class="qr-list">
+                      <div class="qr" id="qr1"><i class="ic" data-icon="reply"></i><span>היה מעולה!</span></div>
+                      <div class="qr" id="qr2"><i class="ic" data-icon="reply"></i><span>היה בסדר</span></div>
+                      <div class="qr" id="qr3"><i class="ic" data-icon="reply"></i><span>היה פחות טוב</span></div>
+                    </div>
+                  </div>
+                  <div class="msg-out" id="reply1">
+                    <div class="bubble">
+                      <p>היה מעולה!</p>
+                      <div class="meta">17:43<i class="ic" data-icon="check-check"></i></div>
+                    </div>
+                  </div>
+                  <div class="slot">
+                    <div class="typing" id="typing"><i></i><i></i><i></i></div>
+                    <div class="msg-in" id="msg2">
+                      <div class="bubble">
+                        <p>איזה כיף לשמוע<img class="emo" src="assets/emoji/pray-2.svg" alt="" /></p>
+                        <p>אם יש לך רגע, ביקורת קצרה בגוגל תעזור לנו מאוד:</p>
+                        <p><span class="link" id="the-link"><span class="link-hl" id="link-hl"></span><bdi dir="ltr">clinic.link/aB3xK9Q</bdi></span></p>
+                        <div class="meta">17:43</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="chat-input">
+                <div class="ci-field">הודעה</div>
+                <div class="ci-mic"><i class="ic" data-icon="mic"></i></div>
+              </div>
+              <div class="scr-dim" id="chat-dim"></div>
+            </div>
+
+            <!-- Review window -->
+            <div class="scr" id="scr-review" data-layout-allow-overlap data-layout-allow-overflow>
+              <div class="status">
+                <span>17:43</span>
+                <span class="sys"><span class="sig"><i style="height: 8px"></i><i style="height: 12px"></i><i style="height: 16px"></i><i style="height: 21px"></i></span><span class="batt"><i></i></span></span>
+              </div>
+              <div class="rv-top"><i class="ic" data-icon="x"></i></div>
+              <div class="rv-head">
+                <div class="clinic-av" data-logo></div>
+                <div class="rv-name">מרפאת שיניים נקודת חיוך</div>
+                <div class="rv-sub"><i class="ic" data-icon="star"></i><span>ביקורות בגוגל</span></div>
+              </div>
+              <div class="rv-user">
+                <div class="rv-av">נ</div>
+                <div>
+                  <div class="rv-uname">נועה</div>
+                  <div class="rv-upub">פרסום באופן ציבורי</div>
+                </div>
+              </div>
+              <div class="rv-stars" id="rv-stars"></div>
+              <div class="rv-field"><div class="caret" id="caret"></div></div>
+              <div class="rv-post" id="rv-post">פרסום</div>
+              <div class="rv-done" id="rv-done" data-layout-allow-overlap>
+                <div class="done-check" id="done-check"><i class="ic" data-icon="check"></i></div>
+                <div class="done-txt" id="done-txt">תודה! הביקורת פורסמה</div>
+                <div class="done-stars" id="done-stars"></div>
+              </div>
+            </div>
+
+            <!-- Chat with Dani (the unhappy branch) -->
+            <div class="scr scr-chat" id="scr-chat2" data-layout-allow-overlap>
+              <div class="status">
+                <span>18:05</span>
+                <span class="sys"><span class="sig"><i style="height: 8px"></i><i style="height: 12px"></i><i style="height: 16px"></i><i style="height: 21px"></i></span><span class="batt"><i></i></span></span>
+              </div>
+              <div class="chat-head">
+                <i class="ic back" data-icon="arrow-right"></i>
+                <div class="clinic-av" data-logo></div>
+                <div>
+                  <div class="ch-name">מרפאת שיניים נקודת חיוך</div>
+                  <div class="ch-sub">חשבון עסקי</div>
+                </div>
+              </div>
+              <div class="chat-body">
+                <div class="chat-scroll">
+                  <div class="date-chip">היום</div>
+                  <div class="msg-in" id="d-msg1" style="opacity: 1">
+                    <div class="bubble">
+                      <p>היי דני<img class="emo" src="assets/emoji/wave-2.svg" alt="" /> תודה שהגעת היום למרפאה!</p>
+                      <p>רצינו לשאול, איך היה הטיפול?</p>
+                      <div class="meta">18:05</div>
+                    </div>
+                    <div class="qr-list">
+                      <div class="qr" style="opacity: 1"><i class="ic" data-icon="reply"></i><span>היה מעולה!</span></div>
+                      <div class="qr" style="opacity: 1"><i class="ic" data-icon="reply"></i><span>היה בסדר</span></div>
+                      <div class="qr" id="d-qr3" style="opacity: 1"><i class="ic" data-icon="reply"></i><span>היה פחות טוב</span></div>
+                    </div>
+                  </div>
+                  <div class="msg-out" id="d-reply">
+                    <div class="bubble">
+                      <p>היה פחות טוב</p>
+                      <div class="meta">18:06<i class="ic" data-icon="check-check"></i></div>
+                    </div>
+                  </div>
+                  <div class="msg-in" id="d-msg2">
+                    <div class="bubble">
+                      <p>תודה שסיפרת לנו, דני. נחזור אליך עוד היום.</p>
+                      <div class="meta">18:06</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="chat-input">
+                <div class="ci-field">הודעה</div>
+                <div class="ci-mic"><i class="ic" data-icon="mic"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Email to the clinic owner -->
+        <div id="mail" class="card">
+          <div class="ml-top">
+            <div class="ml-ic"><i class="ic" data-icon="mail"></i></div>
+            <div>
+              <div class="ml-title">משוב חדש ממטופל</div>
+              <div class="ml-when">אל: בעל המרפאה · עכשיו</div>
+            </div>
+          </div>
+          <div class="ml-rule"></div>
+          <div class="ml-who">דני כ. · טיפול שורש</div>
+          <div class="ml-quote">"חיכיתי 40 דקות בקבלה."</div>
+          <div class="ml-btn" id="ml-btn">
+            <i class="ic" data-icon="phone"></i><span>להתקשר לדני</span>
+            <div class="b2" id="ml-btn2"><i class="ic" data-icon="check"></i><span>דיברתם, הכול סודר</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scene 6: growth and ranking (37.8 to 45) -->
+      <section id="s6" class="scene clip" dir="rtl" lang="he" data-start="37.7" data-duration="7.4" data-track-index="1">
+        <div id="pcard" class="card">
+          <div class="pc-head">
+            <div class="clinic-av" data-logo></div>
+            <div>
+              <div class="pc-name">מרפאת שיניים נקודת חיוך</div>
+              <div class="pc-tag">ביקורות בגוגל</div>
+            </div>
+            <div class="pc-month" id="pc-month"></div>
+          </div>
+          <div class="pc-body">
+            <div class="pc-rate">4.9</div>
+            <div>
+              <div class="stars pc-stars" data-stars="5"></div>
+              <div class="pc-count"><bdi dir="ltr" id="pc-cnt">24</bdi> ביקורות</div>
+            </div>
+          </div>
+        </div>
+        <div id="feed">
+          <div class="rv card" id="rv1">
+            <div class="rv-row"><div class="rv-who"><i style="background: #7a5cc4">מ</i>מיכל ר.</div><span class="rv-new">לפני יומיים</span></div>
+            <div class="rv-txt"><span class="stars" data-stars="5"></span><span>"צוות מקסים, הסבירו הכול"</span></div>
+          </div>
+          <div class="rv card" id="rv2">
+            <div class="rv-row"><div class="rv-who"><i style="background: #a8521f">א</i>איתי ש.</div><span class="rv-new">לפני 4 ימים</span></div>
+            <div class="rv-txt"><span class="stars" data-stars="5"></span><span>"בלי כאב בכלל, ממליץ"</span></div>
+          </div>
+          <div class="rv card" id="rv3">
+            <div class="rv-row"><div class="rv-who"><i style="background: #2d7fc2">י</i>יעל ב.</div><span class="rv-new">לפני שבוע</span></div>
+            <div class="rv-txt"><span class="stars" data-stars="5"></span><span>"מקצועיים ונעימים"</span></div>
+          </div>
+        </div>
+
+        <div id="s6-search" class="card"><i class="ic" data-icon="search"></i><span>רופא שיניים קרוב אליי</span></div>
+        <div class="res-list" id="s6-list" data-layout-allow-overlap>
+          <div class="res card" id="k1" style="top: 0">
+            <div>
+              <div class="res-name">מרפאת שיניים הדר</div>
+              <div class="res-row"><span class="res-rate">4.9</span><span class="stars" data-stars="5"></span><span class="res-cnt">(312)</span></div>
+            </div>
+            <div class="res-dist">1.2 ק״מ</div>
+          </div>
+          <div class="res card" id="k2" style="top: 190px">
+            <div>
+              <div class="res-name">מרפאת שיניים גל</div>
+              <div class="res-row"><span class="res-rate">4.8</span><span class="stars" data-stars="5"></span><span class="res-cnt">(187)</span></div>
+            </div>
+            <div class="res-dist">0.9 ק״מ</div>
+          </div>
+          <div class="res card" id="k3" style="top: 380px">
+            <div>
+              <div class="res-name">מרפאת שיניים נקודת חיוך</div>
+              <div class="res-row">
+                <span class="res-rate swap"><span class="ov" id="k3-r0">5.0</span><span class="nv" id="k3-r1">4.9</span></span>
+                <span class="stars" data-stars="5"></span>
+                <span class="res-cnt swap"><span class="ov" id="k3-c0">(24)</span><span class="nv" id="k3-c1">(486)</span></span>
+              </div>
+            </div>
+            <div class="res-dist">0.6 ק״מ</div>
+            <div class="res-ring" id="k3-ring"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scene 7: nothing to do (45 to 50.2) -->
+      <section id="s7" class="scene clip" dir="rtl" lang="he" data-start="44.9" data-duration="5.4" data-track-index="2">
+        <div class="chips">
+          <div class="chip card" id="chip1">
+            <div class="chip-ic"><i class="ic" data-icon="phone"></i></div>
+            <div class="chip-txt">מהמספר הקיים של המרפאה</div>
+          </div>
+          <div class="chip card" id="chip2">
+            <div class="chip-ic"><i class="ic" data-icon="coffee"></i></div>
+            <div class="chip-txt">אפס עבודה לצוות</div>
+          </div>
+          <div class="chip card" id="chip3">
+            <div class="chip-ic"><i class="ic" data-icon="settings"></i></div>
+            <div class="chip-txt">אנחנו מחברים ומנהלים הכול</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Scene 8: hand-off to Bnaya (50.2 to 55) -->
+      <section id="s8" class="scene clip" dir="rtl" lang="he" data-start="50.1" data-duration="4.9" data-track-index="1">
+        <div class="handoff">
+          <div class="portrait" id="portrait">
+            <img src="assets/img/bnaya.jpg" alt="" id="por-img" />
+            <svg viewBox="0 0 500 500"><circle id="por-ring" cx="250" cy="250" r="240" fill="none" stroke="#007329" stroke-width="8" stroke-linecap="round" transform="rotate(-90 250 250)" /></svg>
+            <div class="rec" id="rec"><i id="rec-dot"></i>REC</div>
+          </div>
+          <div class="ho-title" id="ho-title"><span class="w">רגע,</span> <span class="w">כמה</span> <span class="w">מילים</span> <span class="w hl">ממני</span></div>
+          <div class="ho-name" id="ho-name"><b>בניה</b> · מייסד EZ.Path.AI</div>
+          <div class="ho-rule" id="ho-rule"></div>
+        </div>
+      </section>
+
+      <!-- Captions, one track -->
+      <div class="cap clip" id="cap1" data-start="0.9" data-duration="4.3" data-track-index="5">
+        <div class="cap-inner" dir="rtl" lang="he">מטופל חדש בוחר לפי <span class="hl">מה שהוא רואה בגוגל.</span></div>
+      </div>
+      <div class="cap clip" id="cap2" data-start="14.8" data-duration="4" data-track-index="5">
+        <div class="cap-inner" dir="rtl" lang="he">המטופלים מרוצים. <span class="hl">הם פשוט לא כותבים.</span></div>
+      </div>
+      <div class="cap clip" id="cap3" data-start="19.4" data-duration="4.1" data-track-index="5">
+        <div class="cap-inner" dir="rtl" lang="he">אחרי כל ביקור, הודעה <span class="hl">מהמספר של המרפאה.</span></div>
+      </div>
+      <div class="cap clip" id="cap4" data-start="23.6" data-duration="2.9" data-track-index="5">
+        <div class="cap-inner" dir="rtl" lang="he">מי שמרוצה מקבל <span class="hl">קישור אישי.</span></div>
+      </div>
+      <div class="cap clip" id="cap5" data-start="26.6" data-duration="4.6" data-track-index="5">
+        <div class="cap-inner" dir="rtl" lang="he">ובלחיצה אחת, <span class="hl">ביקורת בגוגל.</span></div>
+      </div>
+      <div class="cap clip" id="cap6" data-start="31.6" data-duration="3.3" data-track-index="5">
+        <div class="cap-inner" dir="rtl" lang="he">ומי שלא מרוצה? <span class="hl">אתם שומעים ראשונים.</span></div>
+      </div>
+      <div class="cap clip" id="cap7" data-start="35" data-duration="2.7" data-track-index="5">
+        <div class="cap-inner" dir="rtl" lang="he">ומספיקים <span class="hl">לסדר את זה בזמן.</span></div>
+      </div>
+      <div class="cap clip" id="cap8" data-start="38" data-duration="3.5" data-track-index="5">
+        <div class="cap-inner" dir="rtl" lang="he">ביקורות טריות. <span class="hl">כל חודש.</span></div>
+      </div>
+      <div class="cap clip" id="cap9" data-start="41.7" data-duration="3.2" data-track-index="5">
+        <div class="cap-inner" dir="rtl" lang="he">והמרפאה <span class="hl">עולה בחיפוש.</span></div>
+      </div>
+      <div class="cap clip" id="cap10" data-start="45.3" data-duration="4.7" data-track-index="5">
+        <div class="cap-inner" dir="rtl" lang="he">ואתם? <span class="hl">לא צריכים לעשות כלום.</span></div>
+      </div>
+
+      <!-- Finger and tap ripples (persistent overlay) -->
+      <div id="finger"></div>
+      <div class="ripple" id="rp1"></div>
+      <div class="ripple" id="rp2"></div>
+      <div class="ripple" id="rp3"></div>
+      <div class="ripple" id="rp4"></div>
+      <div class="ripple" id="rp5"></div>
+      <div class="ripple" id="rp6"></div>
+      <div class="ripple" id="rp7"></div>
+      <div class="ripple" id="rp8"></div>
+
+      <!-- Audio. Track 10: music. Track 11: UI sounds. -->
+      <audio id="music" src="assets/audio/music.mp3" data-start="0" data-duration="55" data-track-index="10" data-volume="1"></audio>
+      <audio id="sfx-tap-1" src="assets/audio/click-soft.mp3" data-start="4.05" data-duration="0.37" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-pop-1" src="assets/audio/pop.mp3" data-start="20.05" data-duration="0.72" data-track-index="11" data-volume="0.24"></audio>
+      <audio id="sfx-tap-2" src="assets/audio/click-soft.mp3" data-start="21.6" data-duration="0.37" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-tap-3" src="assets/audio/click-soft.mp3" data-start="23.5" data-duration="0.37" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-pop-2" src="assets/audio/pop.mp3" data-start="25.0" data-duration="0.72" data-track-index="11" data-volume="0.2"></audio>
+      <audio id="sfx-tap-4" src="assets/audio/click-soft.mp3" data-start="26.5" data-duration="0.37" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-tap-5" src="assets/audio/click-soft.mp3" data-start="28.2" data-duration="0.37" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-tap-6" src="assets/audio/click-soft.mp3" data-start="29.6" data-duration="0.37" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-pop-3" src="assets/audio/pop.mp3" data-start="29.85" data-duration="0.72" data-track-index="12" data-volume="0.22"></audio>
+      <audio id="sfx-tap-7" src="assets/audio/click-soft.mp3" data-start="32.4" data-duration="0.37" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-pop-4" src="assets/audio/pop.mp3" data-start="34.0" data-duration="0.72" data-track-index="11" data-volume="0.22"></audio>
+      <audio id="sfx-tap-8" src="assets/audio/click-soft.mp3" data-start="35.9" data-duration="0.37" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-pop-5" src="assets/audio/pop.mp3" data-start="39.0" data-duration="0.72" data-track-index="11" data-volume="0.16"></audio>
+      <audio id="sfx-pop-6" src="assets/audio/pop.mp3" data-start="39.6" data-duration="0.72" data-track-index="12" data-volume="0.16"></audio>
+      <audio id="sfx-pop-7" src="assets/audio/pop.mp3" data-start="40.2" data-duration="0.72" data-track-index="11" data-volume="0.16"></audio>
+      <audio id="sfx-pop-8" src="assets/audio/pop.mp3" data-start="45.45" data-duration="0.72" data-track-index="11" data-volume="0.18"></audio>
+      <audio id="sfx-pop-9" src="assets/audio/pop.mp3" data-start="46.35" data-duration="0.72" data-track-index="11" data-volume="0.18"></audio>
+      <audio id="sfx-pop-10" src="assets/audio/pop.mp3" data-start="47.25" data-duration="0.72" data-track-index="11" data-volume="0.18"></audio>
+    </div>
+
+    <script>
+      (function () {
+        const ICONS = {
+          star: '<path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.123 2.123 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.123 2.123 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.122 2.122 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.122 2.122 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.122 2.122 0 0 0 1.597-1.16z"/>',
+          search: '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+          "arrow-right": '<path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>',
+          "check-check": '<path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/>',
+          reply: '<path d="M20 18v-2a4 4 0 0 0-4-4H4"/><path d="m9 17-5-5 5-5"/>',
+          mic: '<path d="M12 19v3"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><rect x="9" y="2" width="6" height="13" rx="3"/>',
+          "message-circle": '<path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/>',
+          phone: '<path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/>',
+          settings: '<path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915"/><circle cx="12" cy="12" r="3"/>',
+          coffee: '<path d="M10 2v2"/><path d="M14 2v2"/><path d="M16 8a1 1 0 0 1 1 1v8a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V9a1 1 0 0 1 1-1h14a4 4 0 1 1 0 8h-1"/><path d="M6 2v2"/>',
+          mail: '<rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>',
+          check: '<path d="M20 6 9 17l-5-5"/>',
+          x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+        };
+        const svg = (name, cls) =>
+          '<svg viewBox="0 0 24 24"' + (cls ? ' class="' + cls + '"' : "") + ' stroke-linecap="round" stroke-linejoin="round">' + ICONS[name] + "</svg>";
+        const STAR = '<svg viewBox="0 0 24 24">' + ICONS.star + "</svg>";
+
+        // Clinic mark: a smile and a dot ("נקודת חיוך"). Invented, not a real logo.
+        const LOGO =
+          '<svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="24" fill="#007329"/><path d="M13.5 25.5 Q24 37 34.5 25.5" stroke="#fff" stroke-width="4.2" fill="none" stroke-linecap="round"/><circle cx="24" cy="15.5" r="3.6" fill="#fff"/></svg>';
+        // Hand with a pointing index finger. Fingertip sits at (8, 2) in the 24 unit box.
+        const FINGER =
+          '<svg viewBox="0 0 24 24"><path d="M6 14 V4 a2 2 0 0 1 4 0 V9 a2 2 0 0 1 4 0 v1 a2 2 0 0 1 4 0 v1 a2 2 0 0 1 4 0 v3 a8 8 0 0 1 -8 8 h-2 c-2.8 0 -4.5 -0.86 -5.99 -2.34 l-3.6 -3.6 a2 2 0 0 1 2.83 -2.82 L6 14 Z" fill="#fdfefd" stroke="#141a15" stroke-width="1.15" stroke-linejoin="round"/><path d="M10 9.4 V12.2 M14 10.4 V12.6 M18 11.4 V13" stroke="#141a15" stroke-width="0.9" stroke-linecap="round" fill="none" opacity="0.55"/></svg>';
+        const PIN =
+          '<svg viewBox="0 0 64 84"><path class="pin-body" d="M32 82 C 32 82 4 50 4 30 A 28 28 0 0 1 60 30 C 60 50 32 82 32 82 Z"/><circle cx="32" cy="30" r="11" fill="#fdfefd"/></svg>';
+
+        const root = document.getElementById("root");
+        const $ = (id) => document.getElementById(id);
+
+        // ---------------- Build repeated DOM ----------------
+        document.querySelectorAll("i.ic[data-icon]").forEach((el) => {
+          el.outerHTML = svg(el.getAttribute("data-icon"), el.className.replace("ic", "").trim());
+        });
+        document.querySelectorAll("[data-logo]").forEach((el) => (el.innerHTML = LOGO));
+        document.querySelectorAll("[data-stars]").forEach((el) => {
+          let h = "";
+          for (let i = 0; i < +el.getAttribute("data-stars"); i++) h += STAR;
+          el.innerHTML = h;
+        });
+        document.querySelectorAll(".pin").forEach((el) => (el.innerHTML = PIN));
+        $("finger").innerHTML = FINGER;
+
+        let rv = "";
+        for (let i = 0; i < 5; i++) rv += '<div class="rs" id="rs' + i + '">' + svg("star", "rs-off") + svg("star", "rs-on") + "</div>";
+        $("rv-stars").innerHTML = rv;
+        $("done-stars").innerHTML = STAR + STAR + STAR + STAR + STAR;
+
+        let bs = "";
+        for (let i = 0; i < 5; i++) bs += '<div class="bs" id="bs' + i + '">' + svg("star", "off") + svg("star", "on") + "</div>";
+        $("bigstars").innerHTML = bs;
+
+        // Month ticker on the profile card
+        const MONTHS = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני"];
+        $("pc-month").innerHTML = MONTHS.map((m, i) => '<div class="pm" id="pm' + i + '">' + m + "</div>").join("");
+
+        // Patient dots: 14 x 10 grid, filled in a diagonal wave
+        function gridHTML(prefix, cls) {
+          let h = "";
+          for (let r = 0; r < 10; r++)
+            for (let c = 0; c < 14; c++) h += '<div class="pd ' + cls + '" id="' + prefix + (r * 14 + c) + '" style="right:' + c * 28 + "px;top:" + r * 28 + 'px"></div>';
+          return h;
+        }
+        $("pgrid-a").innerHTML = gridHTML("pa", "on");
+        $("pgrid-b").innerHTML = gridHTML("pb", "off");
+
+        // ---------------- Layout helpers ----------------
+        function pos(el) {
+          let x = 0,
+            y = 0,
+            e = el;
+          while (e && e !== root) {
+            x += e.offsetLeft;
+            y += e.offsetTop;
+            e = e.offsetParent;
+          }
+          return { x: x, y: y, w: el.offsetWidth, h: el.offsetHeight, cx: x + el.offsetWidth / 2, cy: y + el.offsetHeight / 2 };
+        }
+        const TIP_X = 132 * (8 / 24),
+          TIP_Y = 132 * (2 / 24);
+
+        function build() {
+          const tl = gsap.timeline({ paused: true });
+
+          // Measure before any tween touches transforms
+          const chatBody = $("chat-body"),
+            chatScroll = $("chat-scroll");
+          const overflow = Math.max(0, chatScroll.offsetHeight - chatBody.offsetHeight);
+          const scrollBy = overflow > 0 ? overflow + 10 : 0;
+          const P = {
+            r1: pos($("r1")),
+            notif: pos($("notif")),
+            qr1: pos($("qr1")),
+            link: pos($("the-link")),
+            star5: pos($("rs4")),
+            post: pos($("rv-post")),
+            dqr3: pos($("d-qr3")),
+            mlbtn: pos($("ml-btn")),
+          };
+          P.link.cy -= scrollBy;
+
+          // Phone in scene 5 is scaled and moved: map its native points to the frame
+          const PH_C = { x: 188 + 352, y: 168 + 640 };
+          const PH5 = { s: 0.64, x: 252, y: 60 };
+          const inPhone5 = (p) => ({ cx: PH_C.x + (p.cx - PH_C.x) * PH5.s + PH5.x, cy: PH_C.y + (p.cy - PH_C.y) * PH5.s + PH5.y });
+
+          const fingerTo = (p, dx, dy) => ({ x: p.cx - TIP_X + (dx || 0), y: p.cy - TIP_Y + (dy || 0) });
+          function tap(t, rippleId, p) {
+            const r = $(rippleId);
+            r.style.left = p.cx + "px";
+            r.style.top = p.cy + "px";
+            tl.to("#finger", { scale: 0.88, duration: 0.11, ease: "power2.in", transformOrigin: "33% 8%" }, t);
+            tl.to("#finger", { scale: 1, duration: 0.2, ease: "power2.out", transformOrigin: "33% 8%" }, t + 0.11);
+            tl.fromTo(r, { opacity: 0, scale: 0.25 }, { opacity: 0.9, scale: 0.55, duration: 0.08, ease: "none" }, t + 0.05);
+            tl.to(r, { opacity: 0, scale: 1.7, duration: 0.5, ease: "power2.out" }, t + 0.13);
+          }
+          function fingerIn(t, p, fromDx, fromDy, d) {
+            const f = fingerTo(p);
+            tl.fromTo("#finger", { x: f.x + fromDx, y: f.y + fromDy, opacity: 0, scale: 1 }, { x: f.x, y: f.y, opacity: 1, duration: d || 0.8, ease: "power3.out" }, t);
+          }
+          function fingerMove(t, p, d) {
+            const f = fingerTo(p);
+            tl.to("#finger", { x: f.x, y: f.y, duration: d || 0.7, ease: "power3.inOut" }, t);
+          }
+          function fingerOut(t, dx, dy) {
+            tl.to("#finger", { x: "+=" + dx, y: "+=" + dy, opacity: 0, duration: 0.45, ease: "power2.in" }, t);
+          }
+          function pop(sel, t, opts) {
+            const o = opts || {};
+            tl.fromTo(
+              sel,
+              { opacity: 0, scale: o.from || 0.86, y: o.y === undefined ? 18 : o.y },
+              { opacity: 1, scale: 1, y: 0, duration: o.d || 0.42, ease: o.ease || "back.out(1.6)" },
+              t,
+            );
+          }
+          function capIn(id, t, tOut) {
+            const el = "#" + id + " .cap-inner";
+            tl.fromTo(el, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, t);
+            tl.fromTo("#" + id + " .hl", { backgroundSize: "0% 30px" }, { backgroundSize: "100% 30px", duration: 0.45, ease: "power2.inOut" }, t + 0.4);
+            tl.to(el, { opacity: 0, y: -18, duration: 0.28, ease: "power2.in" }, tOut);
+          }
+          function counter(id, from, to, t, d, ease) {
+            const o = { v: from };
+            tl.fromTo(o, { v: from }, { v: to, duration: d, ease: ease || "power2.out", onUpdate: () => ($(id).textContent = Math.round(o.v)) }, t);
+          }
+          function chapter(id, tIn, tOut) {
+            tl.fromTo("#" + id, { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, tIn);
+            if (tOut) tl.to("#" + id, { opacity: 0, y: -26, duration: 0.3, ease: "power2.in" }, tOut);
+          }
+
+          // ---------------- Persistent layers ----------------
+          tl.fromTo("#prog-fill", { scaleX: 0 }, { scaleX: 1, duration: 55, ease: "none" }, 0);
+          tl.fromTo("#bg-dots", { x: 0, y: 0 }, { x: 40, y: 80, duration: 55, ease: "none" }, 0);
+          tl.fromTo("#glow-a", { x: 0, y: 0 }, { x: 180, y: 160, duration: 27.5, ease: "sine.inOut" }, 0);
+          tl.to("#glow-a", { x: 60, y: 300, duration: 27.5, ease: "sine.inOut" }, 27.5);
+          tl.fromTo("#glow-b", { x: 0, y: 0 }, { x: -240, y: -180, duration: 27.5, ease: "sine.inOut" }, 0);
+          tl.to("#glow-b", { x: -80, y: -420, duration: 27.5, ease: "sine.inOut" }, 27.5);
+          tl.fromTo("#topbar", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 0.05);
+          chapter("ch1", 0.2, 5.15);
+          chapter("ch2", 5.5, 14.15);
+          chapter("ch3", 14.5, 18.75);
+          chapter("ch4", 19.1, 31.25);
+          chapter("ch5", 31.55, 37.55);
+          chapter("ch6", 37.9, 44.75);
+          chapter("ch7", 45.1, 49.9);
+          tl.to("#topbar", { opacity: 0, duration: 0.4, ease: "power1.in" }, 50.1);
+          tl.to("#prog", { opacity: 0, duration: 0.4, ease: "power1.in" }, 50.1);
+
+          // ---------------- Scene 1: the search (0 to 5.4) ----------------
+          tl.fromTo("#s1-search", { opacity: 0, y: -50, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "power3.out" }, 0.15);
+          const Q = "רופא שיניים קרוב אליי";
+          const qi = { v: 0 };
+          tl.fromTo(qi, { v: 0 }, { v: Q.length, duration: 1.15, ease: "none", onUpdate: () => ($("q-text").textContent = Q.slice(0, Math.round(qi.v))) }, 0.55);
+          for (let t = 1.9, on = false; t < 5.4; t += 0.45, on = !on) tl.set("#q-caret", { opacity: on ? 1 : 0 }, t);
+          tl.fromTo("#s1-map", { opacity: 0, y: 40, clipPath: "inset(0% 0% 100% 0% round 40px)" }, { opacity: 1, y: 0, clipPath: "inset(0% 0% 0% 0% round 40px)", duration: 0.8, ease: "power3.out" }, 1.0);
+          ["#pin1", "#pin2", "#pin3"].forEach((s, i) => {
+            tl.fromTo(s, { opacity: 0, y: -70, scale: 0.4 }, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: "back.out(2.2)" }, 1.55 + i * 0.14);
+          });
+          ["#r1", "#r2", "#r3"].forEach((s, i) => {
+            tl.fromTo(s, { opacity: 0, x: -90 }, { opacity: 1, x: 0, duration: 0.55, ease: "power3.out" }, 1.85 + i * 0.13);
+          });
+          capIn("cap1", 0.95, 4.9);
+          // the review count is what decides
+          tl.to("#r1-cnt", { backgroundColor: "#d0eed5", color: "#004c1a", scale: 1.18, duration: 0.3, ease: "back.out(2)" }, 2.9);
+          tl.to("#r1-cnt", { scale: 1, duration: 0.3, ease: "power2.out" }, 3.2);
+          fingerIn(3.15, P.r1, 360, 300, 0.85);
+          tap(4.05, "rp1", P.r1);
+          tl.to("#r1", { scale: 0.98, duration: 0.1, ease: "power2.in" }, 4.1);
+          tl.to("#r1", { scale: 1, duration: 0.25, ease: "power2.out" }, 4.2);
+          tl.fromTo("#r1-ring", { opacity: 0, scale: 1.04 }, { opacity: 1, scale: 1, duration: 0.3, ease: "power2.out" }, 4.15);
+          tl.to("#pin1", { scale: 1.35, duration: 0.3, ease: "back.out(3)" }, 4.15);
+          fingerOut(4.45, 260, 200);
+          // exit
+          tl.to(["#s1-search", "#s1-map"], { opacity: 0, y: -80, duration: 0.4, ease: "power2.in", stagger: 0.05 }, 4.95);
+          tl.to(["#r1", "#r2", "#r3"], { opacity: 0, y: -80, duration: 0.4, ease: "power2.in", stagger: 0.05 }, 5.0);
+
+          // ---------------- Scene 2: three numbers (5.4 to 14.4) ----------------
+          tl.fromTo("#ghost2", { opacity: 0, rotation: -6, y: 60 }, { opacity: 1, rotation: 0, y: 0, duration: 1.2, ease: "power3.out" }, 8.6);
+          tl.to("#ghost2", { rotation: 5, y: -70, duration: 4.1, ease: "sine.inOut" }, 9.85);
+          tl.to("#ghost2", { opacity: 0, duration: 0.4, ease: "power1.in" }, 13.9);
+
+          function statIn(id, t) {
+            const s = "#" + id;
+            tl.fromTo(s + " .st-eyebrow", { opacity: 0, x: 60 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, t);
+            tl.fromTo(s + " .st-eyebrow i", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "power2.inOut" }, t + 0.1);
+            tl.fromTo(s + " .st-fig", { opacity: 0, scale: 0.6, y: 40 }, { opacity: 1, scale: 1, y: 0, duration: 0.6, ease: "back.out(1.7)" }, t + 0.1);
+            tl.fromTo(s + " .st-text .w", { opacity: 0, y: 70, rotation: 4 }, { opacity: 1, y: 0, rotation: 0, duration: 0.45, ease: "power4.out", stagger: 0.045 }, t + 0.35);
+            tl.fromTo(s + " .st-src", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, t + 0.7);
+            tl.fromTo(s + " .st-src i", { scaleX: 0 }, { scaleX: 1, duration: 0.7, ease: "power2.inOut" }, t + 0.6);
+          }
+          function statOut(id, t) {
+            tl.to("#" + id, { opacity: 0, y: -110, duration: 0.38, ease: "power3.in" }, t);
+          }
+          // stat 1
+          statIn("st1", 5.5);
+          tl.fromTo("#st1 .st-sub", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.45, ease: "power3.out" }, 6.55);
+          tl.to("#st1 .st-fig", { scale: 1.06, duration: 0.25, ease: "power2.out" }, 6.9);
+          tl.to("#st1 .st-fig", { scale: 1, duration: 0.4, ease: "power2.inOut" }, 7.15);
+          statOut("st1", 8.4);
+          // stat 2
+          statIn("st2", 8.55);
+          counter("st2-n", 0, 84, 8.65, 0.9, "power3.out");
+          for (let i = 0; i < 5; i++) {
+            tl.fromTo("#bs" + i, { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(2.2)" }, 8.95 + i * 0.07);
+            if (i < 4) tl.fromTo("#bs" + i + " .on", { opacity: 0 }, { opacity: 1, duration: 0.2, ease: "none" }, 9.5 + i * 0.12);
+          }
+          tl.fromTo("#bs4", { opacity: 1 }, { opacity: 0.45, duration: 0.3, ease: "power1.out", immediateRender: false }, 10.1);
+          tl.fromTo("#bs-line", { scaleX: 0 }, { scaleX: 1, duration: 0.55, ease: "power2.inOut" }, 9.95);
+          tl.fromTo("#bs-lbl", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, 10.3);
+          statOut("st2", 11.35);
+          // stat 3
+          statIn("st3", 11.5);
+          counter("st3-n", 0, 65, 11.6, 0.9, "power3.out");
+          ["#old1", "#old2"].forEach((s, i) => {
+            tl.fromTo(s, { opacity: 0, x: 80 }, { opacity: 1, x: 0, duration: 0.45, ease: "power3.out" }, 12.0 + i * 0.12);
+            tl.fromTo(s + " .strike", { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: "power2.inOut" }, 12.65 + i * 0.18);
+            tl.to(s, { opacity: 0.38, duration: 0.35, ease: "power1.out" }, 12.85 + i * 0.18);
+          });
+          statOut("st3", 14.05);
+
+          // ---------------- Scene 3: the gap (14.4 to 19) ----------------
+          tl.fromTo("#gap-a", { opacity: 0, x: 80 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, 14.4);
+          tl.fromTo("#gap-b", { opacity: 0, x: -80 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, 14.55);
+          tl.fromTo("#gap-rule", { scaleY: 0 }, { scaleY: 1, duration: 0.6, ease: "power2.inOut" }, 14.45);
+          counter("gap-a-n", 0, 140, 14.6, 1.7, "power2.out");
+          for (let i = 0; i < 140; i++) {
+            const r = Math.floor(i / 14),
+              c = i % 14;
+            tl.fromTo("#pa" + i, { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(2.5)" }, 14.65 + (r + c) * 0.055);
+          }
+          tl.fromTo("#pgrid-b", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, 14.7);
+          tl.fromTo("#gap-b .gap-num", { scale: 1 }, { scale: 1.16, duration: 0.25, ease: "power2.out", transformOrigin: "100% 60%" }, 16.6);
+          tl.to("#gap-b .gap-num", { scale: 1, duration: 0.45, ease: "power2.inOut" }, 16.85);
+          tl.to("#gap-a .gap-num", { y: -6, duration: 2, ease: "sine.inOut" }, 16.4);
+          capIn("cap2", 14.85, 18.5);
+          tl.to(["#gap-a", "#gap-b"], { opacity: 0, y: -60, duration: 0.38, ease: "power2.in", stagger: 0.05 }, 18.6);
+          tl.to("#gap-rule", { opacity: 0, duration: 0.3, ease: "power1.in" }, 18.6);
+
+          // ---------------- Scene 4: one message after each visit (19 to 31.4) ----------------
+          tl.fromTo("#phone", { y: 1500, rotation: -5, scale: 0.96 }, { y: 0, rotation: 0, scale: 1, duration: 0.95, ease: "power3.out" }, 18.95);
+          tl.fromTo(".lk-time", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 19.4);
+          tl.fromTo(".lk-date", { opacity: 0 }, { opacity: 0.9, duration: 0.4, ease: "power1.out" }, 19.55);
+          tl.fromTo("#notif", { opacity: 0, y: -60, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "back.out(1.7)" }, 20.0);
+          capIn("cap3", 19.45, 23.25);
+          fingerIn(20.75, P.notif, 360, 380, 0.8);
+          tap(21.6, "rp2", P.notif);
+          tl.to("#notif", { scale: 0.97, duration: 0.1, ease: "power2.in" }, 21.65);
+          fingerOut(21.85, 300, 200);
+          // open the chat from the notification
+          tl.fromTo("#scr-chat", { opacity: 0, scale: 0.9, y: -120 }, { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "power3.out" }, 21.8);
+          tl.to("#scr-lock", { opacity: 0, duration: 0.35, ease: "power1.in" }, 21.85);
+          pop("#msg1", 22.15, { from: 0.8, d: 0.42 });
+          ["#qr1", "#qr2", "#qr3"].forEach((s, i) => {
+            tl.fromTo(s, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, 22.45 + i * 0.1);
+          });
+          fingerIn(22.75, P.qr1, 380, 160, 0.75);
+          tap(23.5, "rp3", P.qr1);
+          tl.to("#qr1", { backgroundColor: "#d0eed5", duration: 0.12, ease: "none" }, 23.58);
+          tl.to("#qr1", { backgroundColor: "#ffffff", duration: 0.45, ease: "power1.out" }, 24.0);
+          pop("#reply1", 23.7, { from: 0.8, d: 0.38 });
+          fingerOut(23.85, 320, 100);
+          tl.fromTo("#typing", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.22, ease: "power2.out" }, 24.15);
+          tl.fromTo("#typing i", { y: 0 }, { y: -9, duration: 0.2, ease: "sine.inOut", stagger: { each: 0.1, repeat: 1, yoyo: true } }, 24.2);
+          tl.to("#typing", { opacity: 0, duration: 0.1, ease: "none" }, 24.9);
+          if (scrollBy > 0) tl.to("#chat-scroll", { y: -scrollBy, duration: 0.4, ease: "power2.inOut" }, 24.85);
+          pop("#msg2", 25.0, { from: 0.8, d: 0.42 });
+          capIn("cap4", 23.65, 26.3);
+          tl.to("#link-hl", { opacity: 1, duration: 0.3, ease: "power1.out" }, 25.6);
+          tl.to("#the-link", { scale: 1.07, duration: 0.25, ease: "power2.out" }, 25.6);
+          tl.to("#the-link", { scale: 1, duration: 0.4, ease: "power2.inOut" }, 25.85);
+          fingerIn(25.75, P.link, 360, 220, 0.7);
+          tap(26.5, "rp4", P.link);
+          capIn("cap5", 26.65, 30.95);
+          tl.to("#finger", { opacity: 0, duration: 0.2, ease: "power1.in" }, 26.7);
+          tl.fromTo("#scr-review", { opacity: 1, x: -704 }, { opacity: 1, x: 0, duration: 0.6, ease: "power3.inOut", immediateRender: false }, 26.65);
+          tl.set("#scr-review", { opacity: 0, x: -704 }, 0);
+          tl.to("#scr-chat", { x: 200, duration: 0.6, ease: "power3.inOut" }, 26.65);
+          tl.to("#chat-dim", { opacity: 0.35, duration: 0.6, ease: "power1.inOut" }, 26.65);
+          tl.set("#scr-chat", { opacity: 0 }, 27.3);
+          for (let t = 27.3, on = false; t < 29.6; t += 0.45, on = !on) tl.set("#caret", { opacity: on ? 1 : 0 }, t);
+          fingerIn(27.4, P.star5, 380, 260, 0.75);
+          tap(28.2, "rp5", P.star5);
+          for (let i = 0; i < 5; i++) {
+            tl.fromTo("#rs" + i + " .rs-on", { opacity: 0, scale: 0.4, transformOrigin: "50% 50%" }, { opacity: 1, scale: 1, duration: 0.32, ease: "back.out(2.6)" }, 28.3 + i * 0.11);
+          }
+          tl.to("#rv-post", { backgroundColor: "#007329", color: "#ffffff", duration: 0.3, ease: "power1.out" }, 28.95);
+          fingerMove(28.95, P.post, 0.6);
+          tap(29.6, "rp6", P.post);
+          tl.to("#rv-post", { scale: 0.96, duration: 0.1, ease: "power2.in" }, 29.65);
+          tl.to("#rv-post", { scale: 1, duration: 0.2, ease: "power2.out" }, 29.77);
+          fingerOut(29.85, 300, -60);
+          tl.to("#rv-done", { opacity: 1, duration: 0.25, ease: "power1.out" }, 29.85);
+          pop("#done-check", 29.9, { from: 0.3, y: 0, d: 0.5, ease: "back.out(2.2)" });
+          tl.fromTo("#done-txt", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 30.1);
+          tl.fromTo("#done-stars svg", { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2)", stagger: 0.06 }, 30.2);
+
+          // ---------------- Scene 5: the unhappy patient (31.4 to 37.8) ----------------
+          tl.to("#phone", { x: PH5.x, y: PH5.y, scale: PH5.s, duration: 0.75, ease: "power3.inOut" }, 31.05);
+          tl.fromTo("#scr-chat2", { opacity: 1, y: 1300 }, { opacity: 1, y: 0, duration: 0.55, ease: "power3.out", immediateRender: false }, 31.3);
+          tl.set("#scr-chat2", { opacity: 0, y: 1300 }, 0);
+          tl.set("#scr-review", { opacity: 0 }, 31.86);
+          capIn("cap6", 31.65, 34.6);
+          const dq = inPhone5(P.dqr3);
+          fingerIn(31.85, dq, 300, 260, 0.6);
+          tap(32.4, "rp7", dq);
+          tl.to("#d-qr3", { backgroundColor: "#d0eed5", duration: 0.12, ease: "none" }, 32.48);
+          tl.to("#d-qr3", { backgroundColor: "#ffffff", duration: 0.4, ease: "power1.out" }, 32.8);
+          fingerOut(32.65, 260, 160);
+          pop("#d-reply", 32.6, { from: 0.8, d: 0.38 });
+          pop("#d-msg2", 33.3, { from: 0.8, d: 0.4 });
+          // the email flies out of the phone to the owner
+          tl.fromTo(
+            "#mail",
+            { opacity: 0, x: 380, y: 160, scale: 0.35, rotation: 8 },
+            { opacity: 1, x: 0, y: 0, scale: 1, rotation: 0, duration: 0.75, ease: "power3.out" },
+            33.95,
+          );
+          tl.fromTo("#mail .ml-quote", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 34.5);
+          tl.fromTo("#ml-btn", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, 34.75);
+          capIn("cap7", 35.05, 37.35);
+          fingerIn(35.2, P.mlbtn, -260, 320, 0.65);
+          tap(35.9, "rp8", P.mlbtn);
+          tl.to("#ml-btn", { scale: 0.96, duration: 0.1, ease: "power2.in" }, 35.95);
+          tl.to("#ml-btn", { scale: 1, duration: 0.2, ease: "power2.out" }, 36.07);
+          tl.to("#ml-btn2", { opacity: 1, duration: 0.3, ease: "power1.out" }, 36.1);
+          tl.to(["#ml-btn > svg", "#ml-btn > span"], { opacity: 0, duration: 0.2, ease: "power1.in" }, 36.1);
+          fingerOut(36.25, -220, 180);
+          tl.to("#mail", { y: -12, duration: 1.2, ease: "sine.inOut" }, 36.2);
+          // exit
+          tl.to("#mail", { opacity: 0, x: -120, duration: 0.4, ease: "power2.in" }, 37.35);
+          tl.to("#phone", { opacity: 0, x: PH5.x + 200, duration: 0.4, ease: "power2.in" }, 37.4);
+
+          // ---------------- Scene 6: growth and ranking (37.8 to 45) ----------------
+          tl.fromTo("#pcard", { opacity: 0, y: 70, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "power3.out" }, 37.8);
+          capIn("cap8", 38.05, 41.3);
+          counter("pc-cnt", 24, 486, 38.4, 3.0, "sine.inOut");
+          for (let i = 0; i < 6; i++) {
+            const t = 38.4 + i * 0.5;
+            tl.fromTo("#pm" + i, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.2, ease: "power2.out" }, t);
+            if (i < 5) tl.to("#pm" + i, { opacity: 0, y: -30, duration: 0.2, ease: "power2.in" }, t + 0.42);
+          }
+          ["#rv1", "#rv2", "#rv3"].forEach((s, i) => {
+            tl.fromTo(s, { opacity: 0, y: -50, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "back.out(1.6)" }, 39.0 + i * 0.6);
+          });
+          tl.to("#pc-cnt", { scale: 1.2, duration: 0.2, ease: "power2.out" }, 41.4);
+          tl.to("#pc-cnt", { scale: 1, duration: 0.3, ease: "power2.inOut" }, 41.6);
+          tl.to(["#pcard", "#rv1", "#rv2", "#rv3"], { opacity: 0, y: -80, duration: 0.35, ease: "power2.in", stagger: 0.04 }, 41.45);
+          // the same search as the start, now the clinic climbs
+          tl.fromTo("#s6-search", { opacity: 0, y: -40 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 41.75);
+          ["#k1", "#k2", "#k3"].forEach((s, i) => {
+            tl.fromTo(s, { opacity: 0, x: -80 }, { opacity: 1, x: 0, duration: 0.45, ease: "power3.out" }, 41.9 + i * 0.1);
+          });
+          capIn("cap9", 41.75, 44.65);
+          tl.to(["#k3-r0", "#k3-c0"], { opacity: 0, y: -24, duration: 0.2, ease: "power2.in" }, 42.55);
+          tl.fromTo(["#k3-r1", "#k3-c1"], { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.25, ease: "power2.out" }, 42.7);
+          tl.to("#k3", { y: -380, duration: 0.75, ease: "power3.inOut" }, 43.0);
+          tl.to("#k1", { y: 190, duration: 0.75, ease: "power3.inOut" }, 43.0);
+          tl.to("#k2", { y: 190, duration: 0.75, ease: "power3.inOut" }, 43.0);
+          tl.to("#k3", { scale: 1.03, duration: 0.3, ease: "power2.out" }, 43.0);
+          tl.to("#k3", { scale: 1, duration: 0.35, ease: "power2.inOut" }, 43.45);
+          tl.fromTo("#k3-ring", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power1.out" }, 43.6);
+          tl.to(["#s6-search", "#k3", "#k1", "#k2"], { opacity: 0, y: "-=70", duration: 0.35, ease: "power2.in", stagger: 0.04 }, 44.7);
+
+          // ---------------- Scene 7: nothing to do (45 to 50.2) ----------------
+          [
+            ["#chip1", 120, "power3.out"],
+            ["#chip2", -120, "expo.out"],
+            ["#chip3", 120, "back.out(1.4)"],
+          ].forEach(([s, dx, ease], i) => {
+            const t = 45.4 + i * 0.9;
+            tl.fromTo(s, { opacity: 0, x: dx, rotation: dx > 0 ? 2 : -2 }, { opacity: 1, x: 0, rotation: 0, duration: 0.6, ease: ease }, t);
+            tl.fromTo(s + " .chip-ic", { scale: 0.3, rotation: -40 }, { scale: 1, rotation: 0, duration: 0.55, ease: "back.out(2.2)" }, t + 0.1);
+          });
+          capIn("cap10", 45.35, 49.75);
+          tl.to(".chips", { y: -16, duration: 4, ease: "sine.inOut" }, 45.6);
+          tl.to(".chip", { opacity: 0, y: -40, duration: 0.35, ease: "power2.in", stagger: 0.06 }, 49.75);
+
+          // ---------------- Scene 8: hand-off (50.2 to 55) ----------------
+          tl.fromTo("#portrait", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.7, ease: "back.out(1.6)" }, 50.25);
+          const ring = $("por-ring");
+          const RL = 2 * Math.PI * 240;
+          ring.setAttribute("stroke-dasharray", RL);
+          tl.fromTo(ring, { attr: { "stroke-dashoffset": RL } }, { attr: { "stroke-dashoffset": 0 }, duration: 1.1, ease: "power2.inOut" }, 50.45);
+          tl.fromTo("#rec", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, 51.2);
+          for (let t = 51.6, on = false; t < 55; t += 0.5, on = !on) tl.set("#rec-dot", { opacity: on ? 1 : 0.2 }, t);
+          tl.fromTo("#ho-title .w", { opacity: 0, y: 80 }, { opacity: 1, y: 0, duration: 0.5, ease: "power4.out", stagger: 0.09 }, 50.75);
+          tl.fromTo("#ho-name", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 51.45);
+          tl.fromTo("#ho-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: "power2.inOut" }, 51.6);
+          tl.to("#portrait", { scale: 1.04, duration: 3.2, ease: "sine.inOut" }, 51.0);
+          tl.to("#por-img", { scale: 1.06, duration: 3.6, ease: "none" }, 51.0);
+
+          window.__timelines["main"] = tl;
+          if (typeof window.__hfForceTimelineRebind === "function") window.__hfForceTimelineRebind();
+        }
+
+        Promise.all([
+          document.fonts.load('800 74px "Frank Ruhl Libre"', "אבגד"),
+          document.fonts.load('800 74px "Frank Ruhl Libre"', "0123%#"),
+          document.fonts.load('700 40px "Assistant"', "אבגד"),
+          document.fonts.load('300 176px "Assistant"', "0123:"),
+          document.fonts.load('700 30px "JetBrains Mono"', "EZ.Path0123"),
+        ])
+          .then(() => document.fonts.ready)
+          .then(build, build);
+      })();
+    </script>
+  </body>
+</html>
