@@ -10,6 +10,9 @@
  * map square given by its center ("32.0765,34.7845"), searched with a location restriction so squares
  * don't overlap. A square that hits Google's 60-result limit is split into four smaller ones.
  *
+ * A second list (menu "הוסף מרפאות עם 5 עד 14 ביקורות") rechecks mobile clinics already looked at and
+ * adds those with 5 to 14 reviews under a title row.
+ *
  * Setup (once): Project Settings > Script properties > add PLACES_KEY, then run `setup`.
  */
 
@@ -21,6 +24,10 @@ const QUEUE = '_תור';    // mobile clinics found beyond today's quota, used f
 const PER_TAB = 40;             // new clinics per tab per run
 const MIN_REVIEWS = 15;         // only clinics with 15 to 70 Google reviews (inclusive)
 const MAX_REVIEWS = 70;
+// Second list (owner's request): mobile clinics already looked at that have 5 to 14 reviews.
+const FEW_MIN = 5;
+const FEW_MAX = 14;
+const FEW_LABEL = 'מרפאות עם 5 עד 14 ביקורות';
 // No cap on searches (owner's choice): a run searches until both tabs have 40 or the areas run out.
 // Google bills about $35 per 1,000 searches beyond the first 1,000 free each month.
 const MAX_RUN_MS = 5 * 60 * 1000; // Apps Script kills a run at 6 minutes; stop before that and save
@@ -39,12 +46,15 @@ const FIELDS = [
   'places.websiteUri', 'places.rating', 'places.userRatingCount', 'places.formattedAddress',
   'places.googleMapsUri', 'places.businessStatus', 'places.types', 'places.addressComponents', 'nextPageToken',
 ].join(',');
+// The same fields for Place Details (one place per request, no "places." prefix).
+const DETAIL_FIELDS = FIELDS.split(',').filter((f) => f.startsWith('places.')).map((f) => f.slice(7)).join(',');
 
 // ---------- entry points ----------
 
 function onOpen() {
   SpreadsheetApp.getUi().createMenu('לידים')
     .addItem('מלא עכשיו', 'fillNow')
+    .addItem('הוסף מרפאות עם 5 עד 14 ביקורות', 'addFewReviews')
     .addItem('התקנה (פעם אחת)', 'setup')
     .addToUi();
 }
@@ -71,6 +81,95 @@ function dailyRun() {
 function fillNow() {
   const r = fill_();
   SpreadsheetApp.getActive().toast(`נוספו ${r.added[0]} לעסקי ו-${r.added[1]} למאובטח. ${r.message}`, 'לידים', 10);
+}
+
+/**
+ * Goes back over the mobile clinics in "_נסרקו" that never made the list, asks Google for their current
+ * review count, and adds the ones with 5 to 14 reviews to both tabs under a separator row. Each clinic
+ * is asked about once (its count is saved in "_נסרקו" column G), so running it again only continues.
+ */
+function addFewReviews() {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(30000)) return toast_('ריצה אחרת כבר פועלת');
+  try {
+    const r = fewLocked_();
+    toast_(`נוספו ${r.added[0]} לעסקי ו-${r.added[1]} למאובטח. ${r.message}`);
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function toast_(msg) {
+  SpreadsheetApp.getActive().toast(msg, 'לידים', 10);
+}
+
+function fewLocked_() {
+  const ss = SpreadsheetApp.getActive();
+  const key = PropertiesService.getScriptProperties().getProperty('PLACES_KEY');
+  if (!key) return status_({ added: [0, 0], message: 'חסר PLACES_KEY בהגדרות הסקריפט' });
+  const tabs = TABS.map((n) => ss.getSheetByName(n));
+  const seenSheet = ss.getSheetByName(SEEN);
+
+  const knownPhones = new Set();
+  tabs.forEach((t) => columnValues_(t, 3).forEach((v) => { const k = phoneKey_(v); if (k) knownPhones.add(k); }));
+  const last = seenSheet.getLastRow();
+  if (last < 2) return status_({ added: [0, 0], message: 'אין מרפאות לבדוק' });
+  seenSheet.getRange(1, 7).setValue('ביקורות (בדיקה חוזרת)');
+  const seen = seenSheet.getRange(2, 1, last - 1, 7).getValues();
+  const todo = [];
+  seen.forEach((row, i) => {
+    if (row[3] === 'נייד' && row[6] === '' && row[0] && !knownPhones.has(phoneKey_(row[2]))) todo.push(i);
+  });
+
+  const buckets = [[], []];
+  const started = Date.now();
+  let message = '';
+  let checked = 0;
+  for (let b = 0; b < todo.length; b += 50) {
+    if (Date.now() - started > MAX_RUN_MS) { message = 'נעצר אחרי 5 דקות. לחץ שוב כדי להמשיך'; break; }
+    const batch = todo.slice(b, b + 50);
+    const responses = UrlFetchApp.fetchAll(batch.map((i) => ({
+      url: 'https://places.googleapis.com/v1/places/' + encodeURIComponent(seen[i][0]) + '?languageCode=he&regionCode=IL',
+      headers: { 'X-Goog-Api-Key': key, 'X-Goog-FieldMask': DETAIL_FIELDS },
+      muteHttpExceptions: true,
+    })));
+    let failed = '';
+    responses.forEach((res, j) => {
+      const i = batch[j];
+      const json = JSON.parse(res.getContentText() || '{}');
+      if (res.getResponseCode() !== 200) {
+        if (res.getResponseCode() === 404) seen[i][6] = 'לא נמצא';
+        else failed = (json.error && json.error.message) || 'HTTP ' + res.getResponseCode();
+        return;
+      }
+      const lead = toLead_(json);
+      seen[i][6] = lead.reviews === '' ? 0 : lead.reviews;
+      checked++;
+      const n = Number(lead.reviews || 0);
+      if (lead.kind !== 'נייד' || n < FEW_MIN || n > FEW_MAX || knownPhones.has(lead.key)) return;
+      knownPhones.add(lead.key);
+      buckets[buckets[0].length <= buckets[1].length ? 0 : 1].push(lead);
+    });
+    if (failed) { message = 'שגיאה מגוגל: ' + failed; break; }
+  }
+  seenSheet.getRange(2, 7, seen.length, 1).setValues(seen.map((row) => [row[6]]));
+
+  const day = new Date();
+  buckets.forEach((leads, i) => {
+    if (!leads.length) return;
+    appendLeads_(tabs[i], [labelRow_(FEW_LABEL)].concat(leads.map((l) => leadRow_(l, day))));
+  });
+  const added = [buckets[0].length, buckets[1].length];
+  const left = todo.length - checked;
+  if (!message) message = left > 0 ? `נשארו ${left} לבדיקה. לחץ שוב כדי להמשיך` : `נבדקו כל ${todo.length} המרפאות עם נייד`;
+  return status_({ added, message });
+}
+
+/** A separator row with a title in the name column, e.g. before the 5 to 14 reviews list. */
+function labelRow_(text) {
+  const row = new Array(NCOLS).fill('');
+  row[1] = text;
+  return row;
 }
 
 /** Manual entry of a phone that already exists anywhere in the two tabs: flag it right away. */
