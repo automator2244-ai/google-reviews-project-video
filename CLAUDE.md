@@ -6,6 +6,7 @@
 ## חלקים בריפו
 - `leads/`: גיליון הלידים [לידים רופאי שיניים](https://docs.google.com/spreadsheets/d/13bRjc6ezK3SAYv4YQFW8SEUj3FYZdTM-Frg3Hlb_xS8/edit) (מזהה `13bRjc6ezK3SAYv4YQFW8SEUj3FYZdTM-Frg3Hlb_xS8`). Apps Script (`leads/leads.gs`) ממלא אותו כל א' עד ה' ב-07:00 מ-Google Places: רק נייד, רק 15 עד 70 ביקורות, בלי תקרת חיפושים (לבקשת בניה). לשוניות "עסקי" ו"מאובטח", טלפון בעמודה C, סטטוס בעמודה E. פרטים ב-`leads/README.md`.
 - `google-reviews-demo/`: סרטון התבנית (55 שניות, HyperFrames). הקובץ המוכן: `google-reviews-demo/out/google-reviews-demo-full.mp4`. יש לו CLAUDE.md משלו.
+- `youtube-transcripts/`: כלי שמוריד תמלולים מערוצי יוטיוב. רץ על המחשב של בניה (Windows, `yt @channel`), לאט כדי לא להיחסם, ומעלה לבד ל-GitHub. מהענן יוטיוב חוסם תמלולים, אז לא מורידים מכאן. פרטים ב-`youtube-transcripts/README.md`.
 - `video-links/`: השירות על `go.ezpath-ai.com`. כל עסק מקבל קישור אישי לדף עם הסרטון שלו, ובדשבורד (`/admin`) רואים מי נכנס, מי ניגן ועד איפה צפה. פרטים ב-`video-links/README.md`.
 
 ## כשבניה שולח הקלטה אישית לעסק
@@ -28,3 +29,9 @@
 - הדשבורד פתוח בלי סיסמה, לבקשת בניה. `IP_SALT` מוגדר כסוד ב-Cloudflare, לא בקוד.
 - מיגרציה חדשה ב-`video-links/migrations/`: מריצים אותה על D1 דרך חיבור Cloudflare ומוסיפים שורה ל-`d1_migrations` עם שם הקובץ.
 - שינוי קוד ב-`video-links/`: בודקים מקומית (`npm run dev`, `publish.sh --local`, `scripts/smoke.sh`), ואז commit ו-push.
+
+## כשבניה שואל שאלה על ערוץ יוטיוב
+1. `git pull` על הענף הראשי כדי לקבל את התמלולים האחרונים, ו-`python3 youtube-transcripts/search.py --list` כדי לראות אילו ערוצים יש.
+2. מחפשים בכמה ניסוחים באנגלית (הערוצים באנגלית): `python3 youtube-transcripts/search.py "query" --channel <folder> -n 20`. כשצריך הקשר רחב, קוראים את קובץ ה-md המלא של הסרטון.
+3. עונים בעברית, רק לפי מה שכתוב בתמלולים, עם הפניה לכל טענה: שם הסרטון וקישור לדקה (`&t=<שניות>s`, ש-`search.py` מדפיס). אם אין בתמלולים תשובה, אומרים את זה.
+4. אם הערוץ עוד לא ירד, אומרים לבניה להריץ `yt @channel` במחשב.
