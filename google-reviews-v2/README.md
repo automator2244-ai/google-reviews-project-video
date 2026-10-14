@@ -47,3 +47,17 @@ npx hyperframes@0.8.140 render -c research-photos.html -q delivery -o out/rp-raw
 npx hyperframes@0.8.140 render -c research-illustrated.html -q delivery -o out/ri-raw.mp4
 # ואז דחיסה: ffmpeg -i out/rp-raw.mp4 -c:v libx264 -preset slow -crf 21 -pix_fmt yuv420p -c:a aac -b:a 192k -movflags +faststart out/research-photos-35s.mp4
 ```
+
+## חמשת הסרטונים (אוקטובר 2026)
+
+התסריטים, הקריאה השנייה והמקורות: `SCRIPTS-5.md`. סגנון בסיס משותף (גופנים, סמל, כפתור טלפון): `ez-shared.css`.
+
+| קובץ מקור | קובץ מוכן | סגנון | מוזיקה |
+|---|---|---|---|
+| `v5-1-experiment.html` | `out/v5-1-experiment-15s.mp4` | טיפוגרפיה על רקע כהה | Backbeat |
+| `v5-2-not-writing.html` | `out/v5-2-not-writing-30s.mp4` | בלוקים צבעוניים | City Sunshine |
+| `v5-3-allowed.html` | `out/v5-3-allowed-20s.mp4` | איורים על שמנת וירוק עמוק | Happy Whistling Ukulele |
+| `v5-4-week.html` | `out/v5-4-week-40s.mp4` | תמונות, יומן שבועי | Lovely Piano Song |
+| `v5-5-myth.html` | `out/v5-5-myth-25s.mp4` | כרטיסי מיתוס ועובדה | Funkeriffic |
+
+לכל סרטון יש תמונת שער (`out/<שם>-cover.jpg`). הפקה: `npx hyperframes@0.8.140 render -c <קובץ> -q delivery -o out/raw.mp4`, ואחר כך דחיסה ב-ffmpeg (crf 21) כמו בסרטוני המחקר.

@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="he" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>הם פשוט לא כותבים</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <link rel="stylesheet" href="ez-shared.css" />
+    <style>
+      /* Poster blocks: one flat color per finding, wiped in from the right */
+      :root {
+        --coral: #e5574a;
+        --sun: #ffc93c;
+        --green: #007329;
+        --sky: #bfe0f5;
+        --paper: #f4f8f5;
+        --ink: #141a15;
+        --cream: #fff6e8;
+      }
+      html,
+      body,
+      #root {
+        background: var(--coral);
+        color: var(--ink);
+      }
+      .panel {
+        position: absolute;
+        inset: 0;
+        direction: rtl;
+      }
+      .lbl {
+        position: absolute;
+        right: 90px;
+        top: 330px;
+        display: flex;
+        align-items: center;
+        gap: 18px;
+        font-family: var(--mono);
+        font-size: 32px;
+        font-weight: 700;
+        direction: ltr;
+      }
+      .lbl i {
+        display: block;
+        width: 90px;
+        height: 5px;
+        border-radius: 3px;
+        background: currentColor;
+        transform-origin: 0 50%;
+      }
+      .num {
+        position: absolute;
+        right: 80px;
+        top: 390px;
+        font-family: var(--display);
+        font-size: 340px;
+        font-weight: 800;
+        line-height: 1;
+        direction: ltr;
+        transform-origin: 100% 70%;
+      }
+      .txt {
+        position: absolute;
+        left: 90px;
+        right: 90px;
+        top: 760px;
+        font-family: var(--display);
+        font-size: 72px;
+        font-weight: 800;
+        line-height: 1.14;
+        text-wrap: balance;
+      }
+      .src {
+        position: absolute;
+        left: 90px;
+        right: 90px;
+        top: 1400px;
+        opacity: 0.8;
+      }
+      .wm-small {
+        position: absolute;
+        right: 90px;
+        top: 180px;
+        font-size: 32px;
+        z-index: 30;
+        color: var(--ink);
+      }
+      .wm-small b {
+        color: inherit;
+      }
+
+      /* intro */
+      #p0 .big {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        top: 420px;
+        font-family: var(--display);
+        font-size: 128px;
+        font-weight: 800;
+        line-height: 1.04;
+        color: var(--cream);
+      }
+      #p0 .big .k {
+        color: var(--ink);
+      }
+      #p0-stars {
+        position: absolute;
+        right: 90px;
+        top: 1080px;
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        direction: ltr;
+      }
+      #p0-stars span {
+        font-size: 96px;
+        line-height: 1;
+        color: var(--cream);
+      }
+      #p0-stars b {
+        font-family: var(--mono);
+        font-size: 60px;
+        color: var(--ink);
+        margin-left: 18px;
+      }
+
+      /* 57: dot grid */
+      #grid {
+        position: absolute;
+        right: 90px;
+        top: 1010px;
+        width: 560px;
+        height: 330px;
+      }
+      .d {
+        position: absolute;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: var(--ink);
+      }
+      #grid-key {
+        position: absolute;
+        left: 90px;
+        top: 1030px;
+        width: 300px;
+        font-size: 34px;
+        font-weight: 700;
+        line-height: 1.3;
+      }
+      #grid-key i {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        margin-left: 10px;
+        vertical-align: -3px;
+      }
+
+      /* 74: switch */
+      #p2 {
+        color: #fdfefd;
+      }
+      #sw {
+        position: absolute;
+        right: 90px;
+        top: 1060px;
+        display: flex;
+        align-items: center;
+        gap: 30px;
+        direction: rtl;
+      }
+      #sw-track {
+        position: relative;
+        width: 250px;
+        height: 130px;
+        border-radius: 65px;
+        background: rgba(255, 255, 255, 0.22);
+      }
+      #sw-on {
+        position: absolute;
+        inset: 0;
+        border-radius: 65px;
+        background: var(--sun);
+        opacity: 0;
+      }
+      #sw-knob {
+        position: absolute;
+        right: 12px;
+        top: 12px;
+        width: 106px;
+        height: 106px;
+        border-radius: 50%;
+        background: #fdfefd;
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+      }
+      #sw-lbl {
+        font-family: var(--display);
+        font-size: 64px;
+        font-weight: 800;
+      }
+
+      /* 47: 24h dial */
+      #dial {
+        position: absolute;
+        right: 90px;
+        top: 1000px;
+        width: 340px;
+        height: 340px;
+      }
+      #dial-lbl {
+        position: absolute;
+        right: 470px;
+        top: 1080px;
+        font-family: var(--display);
+        font-size: 70px;
+        font-weight: 800;
+        line-height: 1.05;
+      }
+      #dial-lbl small {
+        display: block;
+        font-family: var(--body);
+        font-size: 34px;
+        font-weight: 700;
+        opacity: 0.75;
+      }
+
+      /* end */
+      #p4 .big {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        top: 380px;
+        font-family: var(--display);
+        font-size: 104px;
+        font-weight: 800;
+        line-height: 1.08;
+      }
+      #p4 .big .g {
+        color: var(--green);
+      }
+      #p4-wm {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 1010px;
+        text-align: center;
+        font-size: 66px;
+      }
+      #p4-call {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 1150px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="v5-2" data-start="0" data-duration="30" data-width="1080" data-height="1920">
+      <!-- 0 to 4.5: question -->
+      <section class="panel clip" id="p0" dir="rtl" lang="he" data-start="0" data-duration="5.2" data-track-index="1" style="background: var(--coral)">
+        <div class="big" id="p0-h"><span class="w">למה</span> <span class="w">למרפאה</span> <span class="w">טובה</span> <span class="w">יש</span> <span class="w k">מעט</span> <span class="w k">ביקורות?</span></div>
+        <div id="p0-stars"><b>(12)</b><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+      </section>
+
+      <!-- 4.5 to 11: 57% -->
+      <section class="panel clip" id="p1" dir="rtl" lang="he" data-start="4.4" data-duration="7.3" data-track-index="2" style="background: var(--sun)">
+        <div class="lbl" id="l1">01/03<i></i></div>
+        <div class="num" id="num1"><bdi dir="ltr"><span id="n57">0</span>%</bdi></div>
+        <div class="txt" id="t1">לעיתים רחוקות או אף פעם <span style="color: #b23a2e">לא כותבים ביקורת</span> על הרופא שלהם.</div>
+        <div id="grid"></div>
+        <div id="grid-key"><div><i style="background: rgba(20, 26, 21, 0.18)"></i>לא כותבים</div><div><i style="background: #141a15"></i>כותבים</div></div>
+        <div class="src">מקור: <bdi dir="ltr">rater8, 2025</bdi>, סקר של יותר מ-1,000 מטופלים בארה״ב</div>
+      </section>
+
+      <!-- 11 to 17.5: 74% -->
+      <section class="panel clip" id="p2" dir="rtl" lang="he" data-start="10.9" data-duration="7.3" data-track-index="1" style="background: var(--green)">
+        <div class="lbl" id="l2">02/03<i></i></div>
+        <div class="num" id="num2"><bdi dir="ltr"><span id="n74">0</span>%</bdi></div>
+        <div class="txt" id="t2">יותר סביר שיכתבו, <span style="color: var(--sun)">אם הרופא יבקש.</span></div>
+        <div id="sw"><div id="sw-track"><div id="sw-on"></div><div id="sw-knob"></div></div><div id="sw-lbl">בקשה</div></div>
+        <div class="src">מקור: <bdi dir="ltr" style="color: #fdfefd">rater8, 2025</bdi>, סקר של יותר מ-1,000 מטופלים בארה״ב</div>
+      </section>
+
+      <!-- 17.5 to 24: 47% -->
+      <section class="panel clip" id="p3" dir="rtl" lang="he" data-start="17.4" data-duration="7.3" data-track-index="2" style="background: var(--sky)">
+        <div class="lbl" id="l3">03/03<i></i></div>
+        <div class="num" id="num3"><bdi dir="ltr"><span id="n47">0</span>%</bdi></div>
+        <div class="txt" id="t3">הכי סביר שיכתבו <span style="color: #1f5f99">ביממה שאחרי הביקור.</span></div>
+        <svg id="dial" viewBox="0 0 340 340">
+          <circle cx="170" cy="170" r="150" fill="#fdfefd" />
+          <circle cx="170" cy="170" r="150" fill="none" stroke="#141a15" stroke-width="10" />
+          <circle id="arc" cx="170" cy="170" r="118" fill="none" stroke="#1f5f99" stroke-width="40" transform="rotate(-90 170 170)" />
+          <line id="hand" x1="170" y1="170" x2="170" y2="54" stroke="#141a15" stroke-width="10" stroke-linecap="round" />
+          <circle cx="170" cy="170" r="16" fill="#141a15" />
+        </svg>
+        <div id="dial-lbl">24<br />שעות<small>אחרי הביקור</small></div>
+        <div class="src">מקור: <bdi dir="ltr">rater8, 2025</bdi>, סקר של יותר מ-1,000 מטופלים בארה״ב</div>
+      </section>
+
+      <!-- 24 to 30: so we ask -->
+      <section class="panel clip" id="p4" dir="rtl" lang="he" data-start="23.9" data-duration="6.1" data-track-index="1" style="background: var(--paper)">
+        <div class="big" id="p4-h"><span class="w">אז</span> <span class="w">מבקשים:</span><br /><span class="w">הודעה</span> <span class="w">אחת</span> <span class="w">בוואטסאפ,</span> <span class="w g">ביום</span> <span class="w g">הביקור.</span></div>
+        <div id="p4-wm" class="wordmark">EZ<b>.</b>Path<b>.</b>AI</div>
+        <div id="p4-call"><div class="call-pill" id="pill"><svg viewBox="0 0 24 24"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" /></svg><span>055-271-6456</span></div></div>
+      </section>
+
+      <div class="wordmark wm-small" id="wm">EZ<b>.</b>Path<b>.</b>AI</div>
+
+      <audio id="music" src="assets/audio/m5-city-sunshine.mp3" data-start="0" data-duration="30" data-track-index="10" data-volume="1"></audio>
+      <audio id="sfx-1" src="assets/audio/click-soft.mp3" data-start="4.45" data-duration="0.37" data-track-index="11" data-volume="0.3"></audio>
+      <audio id="sfx-2" src="assets/audio/click-soft.mp3" data-start="10.95" data-duration="0.37" data-track-index="11" data-volume="0.3"></audio>
+      <audio id="sfx-3" src="assets/audio/pop.mp3" data-start="13.3" data-duration="0.72" data-track-index="12" data-volume="0.2"></audio>
+      <audio id="sfx-4" src="assets/audio/click-soft.mp3" data-start="17.45" data-duration="0.37" data-track-index="11" data-volume="0.3"></audio>
+      <audio id="sfx-5" src="assets/audio/click-soft.mp3" data-start="23.95" data-duration="0.37" data-track-index="11" data-volume="0.3"></audio>
+    </div>
+
+    <script>
+      (function () {
+        const $ = (id) => document.getElementById(id);
+        let g = "";
+        for (let i = 0; i < 100; i++) g += '<div class="d" id="d' + i + '" style="right:' + (i % 20) * 28 + "px;top:" + Math.floor(i / 20) * 68 + 'px"></div>';
+        $("grid").innerHTML = g;
+
+        function build() {
+          const tl = gsap.timeline({ paused: true });
+          const words = (sel, t) => tl.fromTo(sel + " .w", { opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.42, ease: "power4.out", stagger: 0.07 }, t);
+          const wipe = (id, t) => tl.fromTo("#" + id, { clipPath: "inset(0% 0% 0% 100%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.55, ease: "power3.inOut" }, t);
+          const counter = (id, to, t) => {
+            const o = { v: 0 };
+            tl.fromTo(o, { v: 0 }, { v: to, duration: 1.1, ease: "power3.out", onUpdate: () => ($(id).textContent = Math.round(o.v)) }, t);
+          };
+          const stat = (n, t) => {
+            tl.fromTo("#l" + n, { opacity: 0, x: 60 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, t);
+            tl.fromTo("#l" + n + " i", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "power2.inOut" }, t + 0.1);
+            tl.fromTo("#num" + n, { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.55, ease: "back.out(1.7)" }, t + 0.1);
+            tl.fromTo("#t" + n, { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, t + 0.5);
+            tl.fromTo("#p" + n + " .src", { opacity: 0 }, { opacity: 0.8, duration: 0.4, ease: "none" }, t + 1.0);
+          };
+
+          tl.fromTo("#wm", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "none" }, 0);
+          tl.to("#wm", { opacity: 0, duration: 0.3, ease: "none" }, 23.9);
+          tl.set("#wm", { color: "#fdfefd" }, 11.2);
+          tl.set("#wm", { color: "#141a15" }, 17.7);
+
+          // 0: the question, from frame one
+          words("#p0-h", 0.05);
+          tl.fromTo("#p0-stars", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 1.4);
+          tl.fromTo("#p0-stars b", { scale: 1 }, { scale: 1.25, duration: 0.25, ease: "power2.out", yoyo: true, repeat: 1 }, 2.4);
+
+          // 57%
+          wipe("p1", 4.45);
+          stat(1, 4.9);
+          counter("n57", 57, 5.0);
+          for (let i = 0; i < 100; i++) tl.fromTo("#d" + i, { scale: 0 }, { scale: 1, duration: 0.2, ease: "back.out(2)" }, 5.6 + (i % 20) * 0.02 + Math.floor(i / 20) * 0.05);
+          for (let i = 0; i < 57; i++) tl.to("#d" + i, { backgroundColor: "rgba(20,26,21,0.18)", duration: 0.2, ease: "none" }, 7.0 + i * 0.012);
+          tl.fromTo("#grid-key", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "none" }, 7.4);
+
+          // 74%
+          wipe("p2", 10.95);
+          stat(2, 11.4);
+          counter("n74", 74, 11.5);
+          tl.fromTo("#sw", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 12.4);
+          tl.fromTo("#sw-knob", { x: 0 }, { x: -120, duration: 0.35, ease: "power3.inOut" }, 13.3);
+          tl.fromTo("#sw-on", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "none" }, 13.35);
+          tl.fromTo("#num2", { scale: 1 }, { scale: 1.06, duration: 0.25, ease: "power2.out", yoyo: true, repeat: 1 }, 13.5);
+
+          // 47%
+          wipe("p3", 17.45);
+          stat(3, 17.9);
+          counter("n47", 47, 18.0);
+          const arc = $("arc");
+          const L = 2 * Math.PI * 118;
+          arc.setAttribute("stroke-dasharray", L);
+          tl.fromTo("#dial", { opacity: 0, scale: 0.7, rotation: -20 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.5, ease: "back.out(1.7)" }, 18.7);
+          tl.fromTo(arc, { attr: { "stroke-dashoffset": L } }, { attr: { "stroke-dashoffset": 0 }, duration: 2.6, ease: "power1.inOut" }, 19.2);
+          tl.fromTo("#hand", { rotation: 0, svgOrigin: "170 170" }, { rotation: 360, svgOrigin: "170 170", duration: 2.6, ease: "power1.inOut" }, 19.2);
+          tl.fromTo("#dial-lbl", { opacity: 0, x: -40 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, 19.0);
+
+          // so we ask
+          wipe("p4", 23.95);
+          words("#p4-h", 24.4);
+          tl.fromTo("#p4-wm", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 25.6);
+          tl.fromTo("#pill", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2)" }, 25.9);
+          tl.to("#pill", { scale: 1.06, duration: 0.3, ease: "power2.out", yoyo: true, repeat: 1 }, 27.4);
+
+          window.__timelines = window.__timelines || {};
+          window.__timelines["v5-2"] = tl;
+          if (typeof window.__hfForceTimelineRebind === "function") window.__hfForceTimelineRebind();
+        }
+        Promise.all([
+          document.fonts.load('800 128px "Frank Ruhl Libre"', "אבגד"),
+          document.fonts.load('800 128px "Frank Ruhl Libre"', "0123%"),
+          document.fonts.load('700 34px "Assistant"', "אבגד"),
+          document.fonts.load('700 30px "JetBrains Mono"', "EZ.Path0123/"),
+        ])
+          .then(() => document.fonts.ready)
+          .then(build, build);
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="he" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>מיתוס או עובדה</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <link rel="stylesheet" href="ez-shared.css" />
+    <style>
+      /* Game cards on graph paper: ink front with a red stamp, green back with the number */
+      :root {
+        --paper: #f6f1e7;
+        --grid: rgba(20, 26, 21, 0.07);
+        --ink: #17191a;
+        --cream: #fff8ec;
+        --red: #d93b30;
+        --green: #007329;
+        --green-2: #0a8a3a;
+        --sun: #ffd25e;
+      }
+      html,
+      body,
+      #root {
+        background: var(--paper);
+        color: var(--ink);
+      }
+      #grid {
+        position: absolute;
+        left: -60px;
+        top: -60px;
+        width: 1200px;
+        height: 2040px;
+        background-image: linear-gradient(var(--grid) 2px, transparent 2px), linear-gradient(90deg, var(--grid) 2px, transparent 2px);
+        background-size: 60px 60px;
+      }
+      #wm {
+        position: absolute;
+        right: 90px;
+        top: 180px;
+        font-size: 32px;
+        z-index: 20;
+      }
+      #count {
+        position: absolute;
+        left: 90px;
+        top: 176px;
+        font-family: var(--mono);
+        font-size: 34px;
+        font-weight: 700;
+        z-index: 20;
+      }
+      #title {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 520px;
+        text-align: center;
+        font-family: var(--display);
+        font-weight: 800;
+        direction: rtl;
+      }
+      #title .a {
+        display: block;
+        font-size: 230px;
+        line-height: 1;
+        color: var(--red);
+      }
+      #title .o {
+        display: block;
+        font-size: 90px;
+        line-height: 1.3;
+      }
+      #title .b {
+        display: block;
+        font-size: 230px;
+        line-height: 1;
+        color: var(--green);
+      }
+      .slot {
+        position: absolute;
+        left: 90px;
+        right: 90px;
+        top: 300px;
+        height: 1150px;
+        perspective: 2400px;
+      }
+      .flip {
+        position: absolute;
+        inset: 0;
+        transform-style: preserve-3d;
+      }
+      .face {
+        position: absolute;
+        inset: 0;
+        border-radius: 52px;
+        backface-visibility: hidden;
+        -webkit-backface-visibility: hidden;
+        padding: 70px 64px;
+        direction: rtl;
+        box-shadow: 0 30px 70px rgba(20, 26, 21, 0.22);
+      }
+      .front {
+        background: var(--ink);
+        color: var(--cream);
+      }
+      .back {
+        background: var(--green);
+        color: #fdfefd;
+        transform: rotateY(180deg);
+      }
+      .who {
+        font-size: 34px;
+        font-weight: 700;
+        opacity: 0.7;
+      }
+      .said {
+        margin-top: 40px;
+        font-family: var(--display);
+        font-size: 96px;
+        font-weight: 800;
+        line-height: 1.12;
+        text-wrap: balance;
+      }
+      .stamp {
+        position: absolute;
+        left: 70px;
+        bottom: 90px;
+        padding: 14px 40px;
+        border: 10px solid var(--red);
+        border-radius: 24px;
+        color: var(--red);
+        font-family: var(--display);
+        font-size: 110px;
+        font-weight: 800;
+        line-height: 1;
+        transform: rotate(-12deg);
+        opacity: 0;
+      }
+      .tag {
+        display: inline-block;
+        padding: 10px 26px;
+        border-radius: 22px;
+        background: var(--sun);
+        color: var(--ink);
+        font-size: 38px;
+        font-weight: 800;
+      }
+      .fig {
+        margin-top: 30px;
+        font-family: var(--display);
+        font-size: 300px;
+        font-weight: 800;
+        line-height: 0.95;
+        direction: ltr;
+        text-align: right;
+      }
+      .fact {
+        margin-top: 24px;
+        font-family: var(--display);
+        font-size: 68px;
+        font-weight: 800;
+        line-height: 1.14;
+        text-wrap: balance;
+      }
+      .back .src {
+        position: absolute;
+        left: 64px;
+        right: 64px;
+        bottom: 60px;
+        color: rgba(253, 254, 253, 0.82);
+      }
+      #end-h {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        top: 440px;
+        text-align: center;
+        font-family: var(--display);
+        font-size: 110px;
+        font-weight: 800;
+        line-height: 1.06;
+      }
+      #end-h .g {
+        color: var(--green);
+      }
+      #end-wm {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 900px;
+        text-align: center;
+        font-size: 66px;
+      }
+      #end-call {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 1040px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="v5-5" data-start="0" data-duration="25" data-width="1080" data-height="1920">
+      <div id="grid"></div>
+      <div id="wm" class="wordmark">EZ<b>.</b>Path<b>.</b>AI</div>
+      <div id="count" data-layout-allow-overlap><span id="cn">1</span>/3</div>
+
+      <!-- 0 to 3 -->
+      <section class="scene clip" id="s0" dir="rtl" lang="he" data-start="0" data-duration="3.2" data-track-index="1">
+        <div id="title"><span class="a" id="ta">מיתוס</span><span class="o" id="to">או</span><span class="b" id="tb">עובדה?</span></div>
+      </section>
+
+      <!-- 3 to 10: card 1 -->
+      <section class="slot clip" id="k1" dir="rtl" lang="he" data-start="3" data-duration="7.2" data-track-index="2">
+        <div class="flip" id="f1" data-layout-allow-overlap>
+          <div class="face front">
+            <div class="who">מה ששומעים מבעלי מרפאות:</div>
+            <div class="said">"מטופלים מגיעים בעיקר מהמלצה של חבר."</div>
+            <div class="stamp" id="sp1">מיתוס</div>
+          </div>
+          <div class="face back">
+            <div class="tag">עובדה</div>
+            <div class="fig"><bdi dir="ltr"><span id="n1">0</span>%</bdi></div>
+            <div class="fact">מעדיפים ביקורות אונליין על פני המלצה של חברים ומשפחה.</div>
+            <div class="src">מקור: <bdi dir="ltr" style="color: #fdfefd">rater8, 2025</bdi>, סקר של יותר מ-1,000 מטופלים בארה״ב</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10 to 16.5: card 2 -->
+      <section class="slot clip" id="k2" dir="rtl" lang="he" data-start="10" data-duration="6.7" data-track-index="1">
+        <div class="flip" id="f2" data-layout-allow-overlap>
+          <div class="face front">
+            <div class="who">מה ששומעים מבעלי מרפאות:</div>
+            <div class="said">"מספיק להם לקרוא ביקורת או שתיים."</div>
+            <div class="stamp" id="sp2">מיתוס</div>
+          </div>
+          <div class="face back">
+            <div class="tag">עובדה</div>
+            <div class="fig"><bdi dir="ltr"><span id="n2">0</span>%</bdi></div>
+            <div class="fact">קוראים לפחות 6 ביקורות לפני שמחליטים.</div>
+            <div class="src">מקור: <bdi dir="ltr" style="color: #fdfefd">rater8, 2025</bdi>, סקר של יותר מ-1,000 מטופלים בארה״ב</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 16.5 to 22: card 3 -->
+      <section class="slot clip" id="k3" dir="rtl" lang="he" data-start="16.5" data-duration="5.7" data-track-index="2">
+        <div class="flip" id="f3" data-layout-allow-overlap>
+          <div class="face front">
+            <div class="who">מה ששומעים מבעלי מרפאות:</div>
+            <div class="said">"ביקורת רעה אחת לא משנה כלום."</div>
+            <div class="stamp" id="sp3">מיתוס</div>
+          </div>
+          <div class="face back">
+            <div class="tag">עובדה</div>
+            <div class="fig"><bdi dir="ltr"><span id="n3">0</span>%</bdi></div>
+            <div class="fact">ביטלו תור או לא קבעו בגלל ביקורות שליליות.</div>
+            <div class="src">מקור: <bdi dir="ltr" style="color: #fdfefd">rater8, 2025</bdi>, סקר של יותר מ-1,000 מטופלים בארה״ב</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 22 to 25 -->
+      <section class="scene clip" id="s4" dir="rtl" lang="he" data-start="22" data-duration="3" data-track-index="1">
+        <div id="end-h"><span class="w">ביקורות</span> <span class="w">מביאות</span> <span class="w g">מטופלים.</span></div>
+        <div id="end-wm" class="wordmark">EZ<b>.</b>Path<b>.</b>AI</div>
+        <div id="end-call"><div class="call-pill" id="pill"><svg viewBox="0 0 24 24"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" /></svg><span>055-271-6456</span></div></div>
+      </section>
+
+      <audio id="music" src="assets/audio/m5-funk.mp3" data-start="0" data-duration="25" data-track-index="10" data-volume="1"></audio>
+      <audio id="sfx-1" src="assets/audio/click-soft.mp3" data-start="5.2" data-duration="0.37" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-2" src="assets/audio/click-soft.mp3" data-start="11.9" data-duration="0.37" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="sfx-3" src="assets/audio/click-soft.mp3" data-start="18.1" data-duration="0.37" data-track-index="11" data-volume="0.4"></audio>
+    </div>
+
+    <script>
+      (function () {
+        const $ = (id) => document.getElementById(id);
+        function build() {
+          const tl = gsap.timeline({ paused: true });
+          tl.fromTo("#grid", { x: 0, y: 0 }, { x: 60, y: 60, duration: 25, ease: "none" }, 0);
+          tl.fromTo("#wm", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "none" }, 0);
+          tl.to("#wm", { opacity: 0, duration: 0.3, ease: "none" }, 21.9);
+
+          // title
+          tl.fromTo("#ta", { opacity: 0, scale: 1.6, rotation: -8 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.4, ease: "back.out(2)" }, 0.05);
+          tl.fromTo("#to", { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "none" }, 0.5);
+          tl.fromTo("#tb", { opacity: 0, scale: 1.6, rotation: 8 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.4, ease: "back.out(2)" }, 0.75);
+          tl.to("#title", { scale: 1.04, duration: 0.25, ease: "power2.out", yoyo: true, repeat: 3 }, 1.4);
+          tl.to("#title", { opacity: 0, y: -80, duration: 0.3, ease: "power2.in" }, 2.85);
+
+          // the counter
+          tl.fromTo("#count", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "none" }, 3.1);
+          tl.set("#cn", { textContent: "2" }, 10.0);
+          tl.set("#cn", { textContent: "3" }, 16.5);
+          tl.to("#count", { opacity: 0, duration: 0.3, ease: "none" }, 21.9);
+
+          const card = (k, n, val, t0, tStamp, tFlip, tOut) => {
+            tl.fromTo("#" + k, { opacity: 0, y: 140, rotation: 3 }, { opacity: 1, y: 0, rotation: 0, duration: 0.5, ease: "power3.out" }, t0);
+            tl.fromTo("#sp" + n, { opacity: 0, scale: 2.4, rotation: -30 }, { opacity: 1, scale: 1, rotation: -12, duration: 0.3, ease: "power4.in" }, tStamp);
+            tl.to("#" + k, { x: 10, duration: 0.05, ease: "none", yoyo: true, repeat: 3 }, tStamp + 0.3);
+            tl.fromTo("#f" + n, { rotationY: 0 }, { rotationY: 180, duration: 0.7, ease: "power3.inOut" }, tFlip);
+            const o = { v: 0 };
+            tl.fromTo(o, { v: 0 }, { v: val, duration: 1.0, ease: "power3.out", onUpdate: () => ($("n" + n).textContent = Math.round(o.v)) }, tFlip + 0.4);
+            tl.to("#" + k, { opacity: 0, x: -300, rotation: -6, duration: 0.4, ease: "power2.in" }, tOut);
+          };
+          card("k1", 1, 61, 3.05, 5.2, 6.2, 9.75);
+          card("k2", 2, 51, 10.05, 11.9, 12.7, 16.25);
+          card("k3", 3, 40, 16.55, 18.1, 18.8, 21.75);
+
+          // end
+          tl.fromTo("#end-h .w", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.4, ease: "power4.out", stagger: 0.08 }, 22.1);
+          tl.fromTo("#end-wm", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, 22.6);
+          tl.fromTo("#pill", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(2)" }, 22.85);
+          tl.to("#pill", { scale: 1.06, duration: 0.25, ease: "power2.out", yoyo: true, repeat: 1 }, 23.8);
+
+          window.__timelines = window.__timelines || {};
+          window.__timelines["v5-5"] = tl;
+          if (typeof window.__hfForceTimelineRebind === "function") window.__hfForceTimelineRebind();
+        }
+        Promise.all([
+          document.fonts.load('800 110px "Frank Ruhl Libre"', "אבגד"),
+          document.fonts.load('800 110px "Frank Ruhl Libre"', "0123%"),
+          document.fonts.load('700 34px "Assistant"', "אבגד"),
+          document.fonts.load('700 34px "JetBrains Mono"', "EZ.Path0123/"),
+        ])
+          .then(() => document.fonts.ready)
+          .then(build, build);
+      })();
+    </script>
+  </body>
+</html>

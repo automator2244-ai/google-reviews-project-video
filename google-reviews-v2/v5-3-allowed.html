@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="he" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>מותר לבקש</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <link rel="stylesheet" href="ez-shared.css" />
+    <style>
+      /* Cream paper, deep green ink, a yellow marker and one coral warning */
+      :root {
+        --cream: #fff3df;
+        --deep: #0f3d22;
+        --deep-2: #165a33;
+        --marker: #ffd25e;
+        --coral: #e5574a;
+        --muted: #5b6b5f;
+      }
+      html,
+      body,
+      #root {
+        background: var(--cream);
+        color: var(--deep);
+      }
+      #dots {
+        position: absolute;
+        left: -40px;
+        top: -40px;
+        width: 1160px;
+        height: 2000px;
+        background-image: radial-gradient(circle, rgba(15, 61, 34, 0.1) 2.2px, rgba(15, 61, 34, 0) 2.8px);
+        background-size: 40px 40px;
+      }
+      #wm {
+        position: absolute;
+        right: 80px;
+        top: 180px;
+        font-size: 32px;
+        color: var(--deep);
+        z-index: 20;
+      }
+      .h {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        top: 320px;
+        font-family: var(--display);
+        font-size: 112px;
+        font-weight: 800;
+        line-height: 1.06;
+        text-wrap: balance;
+      }
+      .mk {
+        background-image: linear-gradient(var(--marker), var(--marker));
+        background-repeat: no-repeat;
+        background-position: right 0 bottom 10px;
+        background-size: 0% 34px;
+        padding: 0 8px;
+      }
+      .illus {
+        position: absolute;
+        left: 50%;
+      }
+      .illus img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+      .card {
+        position: absolute;
+        left: 72px;
+        right: 72px;
+        border-radius: 44px;
+        background: var(--deep);
+        color: var(--cream);
+        padding: 44px 52px;
+        direction: rtl;
+        box-shadow: 0 26px 56px rgba(15, 61, 34, 0.22);
+      }
+      .q-lbl {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        padding: 8px 20px;
+        border-radius: 20px;
+        background: var(--marker);
+        color: var(--deep);
+        font-size: 30px;
+        font-weight: 800;
+      }
+      .q {
+        margin-top: 22px;
+        font-family: var(--display);
+        font-size: 76px;
+        font-weight: 800;
+        line-height: 1.12;
+        text-wrap: balance;
+      }
+      .q .y {
+        color: var(--marker);
+      }
+      .q2 {
+        font-family: var(--display);
+        font-size: 52px;
+        font-weight: 700;
+        line-height: 1.18;
+      }
+      .q2 small {
+        display: block;
+        font-family: var(--body);
+        font-size: 30px;
+        font-weight: 700;
+        color: var(--marker);
+        margin-bottom: 8px;
+      }
+      .src {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        color: var(--muted);
+      }
+      .src bdi {
+        color: var(--deep);
+      }
+      #x {
+        position: absolute;
+        left: 50%;
+        top: 560px;
+        width: 520px;
+        height: 520px;
+        margin-left: -260px;
+      }
+      #x line {
+        stroke: var(--coral);
+        stroke-width: 34;
+        stroke-linecap: round;
+      }
+      #s3-txt {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        top: 1120px;
+        font-family: var(--display);
+        font-size: 78px;
+        font-weight: 800;
+        line-height: 1.12;
+      }
+      #end-wm {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 1150px;
+        text-align: center;
+        font-size: 64px;
+        color: var(--deep);
+      }
+      #end-call {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 1280px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="v5-3" data-start="0" data-duration="20" data-width="1080" data-height="1920">
+      <div id="dots"></div>
+      <div id="wm" class="wordmark">EZ<b>.</b>Path<b>.</b>AI</div>
+
+      <!-- 0 to 4: the question -->
+      <section id="s1" class="scene clip" dir="rtl" lang="he" data-start="0" data-duration="4.2" data-track-index="1">
+        <div class="h" id="s1-h"><span class="w">מותר</span> <span class="w">בכלל</span> <span class="w">לבקש</span> <span class="w">ממטופלים</span> <span class="w mk">ביקורת?</span></div>
+        <div class="illus" id="s1-il" style="width: 820px; margin-left: -410px; top: 760px"><img src="assets/illus/questions.svg" alt="" /></div>
+      </section>
+
+      <!-- 4 to 10.5: Google's own words -->
+      <section id="s2" class="scene clip" dir="rtl" lang="he" data-start="4" data-duration="6.7" data-track-index="2">
+        <div class="card" id="c1" style="top: 300px">
+          <div class="q-lbl">גוגל כותבת:</div>
+          <div class="q"><span class="w">"ביקורות</span> <span class="w">יכולות</span> <span class="w">לעזור</span> <span class="w">לעסק</span> <span class="w">שלכם</span> <span class="w y">לבלוט."</span></div>
+        </div>
+        <div class="card" id="c2" style="top: 780px; background: var(--deep-2)">
+          <div class="q2"><small>וגם:</small>"אפשר לבקש מלקוחות להיכנס לקישור של גוגל."</div>
+        </div>
+        <div class="illus" id="s2-il" style="width: 470px; margin-left: -235px; top: 1040px"><img src="assets/illus/feedback.svg" alt="" /></div>
+        <div class="src" id="s2-src" style="top: 1420px">מקור: <bdi dir="ltr">Google Business Profile Help, Tips to get more Google reviews</bdi></div>
+      </section>
+
+      <!-- 10.5 to 15: what is not allowed -->
+      <section id="s3" class="scene clip" dir="rtl" lang="he" data-start="10.4" data-duration="4.8" data-track-index="1">
+        <div class="h" id="s3-h"><span class="w">ומה</span> <span class="w" style="color: var(--coral)">אסור?</span></div>
+        <div class="illus" id="s3-il" style="width: 600px; margin-left: -300px; top: 560px"><img src="assets/illus/gifts.svg" alt="" /></div>
+        <svg id="x" viewBox="0 0 520 520"><line id="x1" x1="60" y1="60" x2="460" y2="460" /><line id="x2" x1="460" y1="60" x2="60" y2="460" /></svg>
+        <div id="s3-txt">הטבות והנחות <span style="color: var(--coral)">תמורת ביקורת.</span></div>
+        <div class="src" id="s3-src" style="top: 1350px">גוגל: <bdi dir="ltr">"strictly prohibited"</bdi></div>
+      </section>
+
+      <!-- 15 to 20: we only ask -->
+      <section id="s4" class="scene clip" dir="rtl" lang="he" data-start="15" data-duration="5" data-track-index="2">
+        <div class="h" id="s4-h"><span class="w">אנחנו</span> <span class="w">רק</span> <span class="w mk">שואלים.</span><br /><span class="w" style="font-size: 64px">בלי</span> <span class="w" style="font-size: 64px">הטבות,</span> <span class="w" style="font-size: 64px">בלי</span> <span class="w" style="font-size: 64px">לחץ.</span></div>
+        <div class="illus" id="s4-il" style="width: 420px; margin-left: -210px; top: 620px"><img src="assets/illus/texting.svg" alt="" /></div>
+        <div id="end-wm" class="wordmark">EZ<b>.</b>Path<b>.</b>AI</div>
+        <div id="end-call"><div class="call-pill" id="pill"><svg viewBox="0 0 24 24"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" /></svg><span>055-271-6456</span></div></div>
+      </section>
+
+      <audio id="music" src="assets/audio/m5-ukulele.mp3" data-start="0" data-duration="20" data-track-index="10" data-volume="1"></audio>
+      <audio id="sfx-1" src="assets/audio/pop.mp3" data-start="4.2" data-duration="0.72" data-track-index="11" data-volume="0.2"></audio>
+      <audio id="sfx-2" src="assets/audio/click-soft.mp3" data-start="11.6" data-duration="0.37" data-track-index="11" data-volume="0.35"></audio>
+      <audio id="sfx-3" src="assets/audio/pop.mp3" data-start="15.2" data-duration="0.72" data-track-index="11" data-volume="0.2"></audio>
+    </div>
+
+    <script>
+      (function () {
+        function build() {
+          const tl = gsap.timeline({ paused: true });
+          const words = (sel, t) => tl.fromTo(sel + " .w", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.42, ease: "power4.out", stagger: 0.07 }, t);
+          const mark = (sel, t) => tl.fromTo(sel + " .mk", { backgroundSize: "0% 34px" }, { backgroundSize: "100% 34px", duration: 0.45, ease: "power2.inOut" }, t);
+          const out = (sel, t) => tl.to(sel, { opacity: 0, y: -50, duration: 0.3, ease: "power2.in", stagger: 0.04 }, t);
+
+          tl.fromTo("#wm", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "none" }, 0);
+          tl.to("#wm", { opacity: 0, duration: 0.3, ease: "none" }, 15.0);
+          tl.fromTo("#dots", { x: 0, y: 0 }, { x: 30, y: 60, duration: 20, ease: "none" }, 0);
+
+          // 1
+          words("#s1-h", 0.05);
+          mark("#s1-h", 0.9);
+          tl.fromTo("#s1-il", { opacity: 0, y: 60, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "back.out(1.4)" }, 0.6);
+          tl.to("#s1-il", { rotation: -2, duration: 0.6, ease: "sine.inOut", yoyo: true, repeat: 3 }, 1.4);
+          out(["#s1-h", "#s1-il"], 3.85);
+
+          // 2
+          tl.fromTo("#c1", { opacity: 0, y: 70, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 0.5, ease: "power3.out" }, 4.1);
+          words("#c1", 4.4);
+          tl.fromTo("#c2", { opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 6.6);
+          tl.fromTo("#s2-il", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" }, 7.0);
+          tl.fromTo("#s2-src", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "none" }, 7.4);
+          tl.to("#s2-il", { y: -14, duration: 2.6, ease: "sine.inOut" }, 7.6);
+          out(["#c1", "#c2", "#s2-il", "#s2-src"], 10.2);
+
+          // 3
+          words("#s3-h", 10.5);
+          tl.fromTo("#s3-il", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.6)" }, 10.75);
+          tl.fromTo("#x1", { attr: { x2: 60, y2: 60 } }, { attr: { x2: 460, y2: 460 }, duration: 0.3, ease: "power2.out" }, 11.6);
+          tl.fromTo("#x2", { attr: { x2: 460, y2: 60 } }, { attr: { x2: 60, y2: 460 }, duration: 0.3, ease: "power2.out" }, 11.85);
+          tl.to("#s3-il", { opacity: 0.45, duration: 0.3, ease: "none" }, 11.9);
+          tl.fromTo("#s3-txt", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 12.1);
+          tl.fromTo("#s3-src", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "none" }, 12.5);
+          out(["#s3-h", "#s3-il", "#x", "#s3-txt", "#s3-src"], 14.75);
+
+          // 4
+          words("#s4-h", 15.1);
+          mark("#s4-h", 15.7);
+          tl.fromTo("#s4-il", { opacity: 0, x: 100 }, { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" }, 15.6);
+          tl.fromTo("#end-wm", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 16.6);
+          tl.fromTo("#pill", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2)" }, 16.9);
+          tl.to("#pill", { scale: 1.06, duration: 0.3, ease: "power2.out", yoyo: true, repeat: 1 }, 18.2);
+
+          window.__timelines = window.__timelines || {};
+          window.__timelines["v5-3"] = tl;
+          if (typeof window.__hfForceTimelineRebind === "function") window.__hfForceTimelineRebind();
+        }
+        Promise.all([
+          document.fonts.load('800 112px "Frank Ruhl Libre"', "אבגד"),
+          document.fonts.load('700 30px "Assistant"', "אבגד"),
+          document.fonts.load('700 30px "JetBrains Mono"', "EZ.Path0123"),
+        ])
+          .then(() => document.fonts.ready)
+          .then(build, build);
+      })();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="he" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>שבוע אחד במרפאה</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <link rel="stylesheet" href="ez-shared.css" />
+    <style>
+      /* Film diary: full-bleed photos, white serif captions on a dark fade, time stamps in mono */
+      :root {
+        --ink: #0e1410;
+        --white: #fdfefd;
+        --soft: rgba(253, 254, 253, 0.78);
+        --green: #3fd17a;
+        --wa: #075e3a;
+        --bubble: #ffffff;
+        --out: #d9fdd3;
+        --star: #f2a900;
+        --coral: #ff7a6b;
+      }
+      html,
+      body,
+      #root {
+        background: var(--ink);
+        color: var(--white);
+      }
+      .ph {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+      .ph img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      #fade {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(180deg, rgba(8, 14, 10, 0.6) 0%, rgba(8, 14, 10, 0) 22%, rgba(8, 14, 10, 0) 40%, rgba(8, 14, 10, 0.86) 58%, rgba(8, 14, 10, 0.93) 100%);
+      }
+      #days {
+        position: absolute;
+        right: 80px;
+        top: 180px;
+        display: flex;
+        gap: 12px;
+        direction: rtl;
+        z-index: 20;
+        padding: 10px;
+        border-radius: 40px;
+        background: rgba(8, 14, 10, 0.62);
+      }
+      .day {
+        width: 58px;
+        height: 58px;
+        border-radius: 50%;
+        border: 2px solid rgba(253, 254, 253, 0.5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        font-weight: 800;
+        color: var(--soft);
+      }
+      #wm {
+        position: absolute;
+        left: 80px;
+        top: 192px;
+        font-size: 30px;
+        color: var(--white);
+        z-index: 20;
+        top: 180px;
+        padding: 16px 26px;
+        border-radius: 40px;
+        background: rgba(8, 14, 10, 0.62);
+      }
+      #wm b {
+        color: var(--green);
+      }
+      .stamp {
+        position: absolute;
+        right: 80px;
+        top: 1120px;
+        font-family: var(--mono);
+        font-size: 36px;
+        font-weight: 700;
+        color: var(--green);
+        direction: rtl;
+        display: flex;
+        gap: 14px;
+        align-items: center;
+      }
+      .stamp i {
+        display: block;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--green);
+      }
+      .cap {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        top: 1190px;
+        font-family: var(--display);
+        font-size: 82px;
+        font-weight: 800;
+        line-height: 1.1;
+        text-wrap: balance;
+        direction: rtl;
+      }
+      .cap .g {
+        color: var(--green);
+      }
+      .cap.small {
+        font-size: 60px;
+      }
+      .src {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        top: 1440px;
+        color: var(--soft);
+        direction: rtl;
+      }
+      .src bdi {
+        color: var(--white);
+      }
+
+      /* chat */
+      .chat {
+        position: absolute;
+        left: 110px;
+        right: 110px;
+        top: 330px;
+        direction: rtl;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .from {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        font-size: 28px;
+        font-weight: 800;
+      }
+      .from i {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: var(--wa);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-style: normal;
+        font-size: 26px;
+      }
+      .bub {
+        align-self: flex-start;
+        max-width: 760px;
+        padding: 22px 28px;
+        border-radius: 28px;
+        border-top-right-radius: 8px;
+        background: var(--bubble);
+        color: #141a15;
+        font-size: 36px;
+        line-height: 1.35;
+        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.3);
+      }
+      .bub.out {
+        align-self: flex-end;
+        background: var(--out);
+        border-top-right-radius: 28px;
+        border-top-left-radius: 8px;
+      }
+      .btns {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        width: 620px;
+      }
+      .btn {
+        height: 76px;
+        border-radius: 20px;
+        background: var(--bubble);
+        color: var(--wa);
+        font-size: 32px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+      }
+      .rvc {
+        position: absolute;
+        left: 110px;
+        right: 110px;
+        top: 360px;
+        padding: 30px 36px;
+        border-radius: 32px;
+        background: var(--bubble);
+        color: #141a15;
+        direction: rtl;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+      }
+      .rvc-top {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        font-size: 34px;
+        font-weight: 800;
+      }
+      .rvc-top i {
+        width: 58px;
+        height: 58px;
+        border-radius: 50%;
+        background: #7a5cc4;
+        color: #fff;
+        font-style: normal;
+        font-size: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .rvc-top em {
+        margin-right: auto;
+        font-style: normal;
+        padding: 6px 16px;
+        border-radius: 14px;
+        background: #d0eed5;
+        color: #004c1a;
+        font-size: 26px;
+      }
+      .rvc-stars {
+        margin-top: 16px;
+        display: flex;
+        gap: 8px;
+        direction: ltr;
+        justify-content: flex-end;
+        font-size: 58px;
+        color: var(--star);
+        line-height: 1;
+      }
+      .alert {
+        position: absolute;
+        left: 110px;
+        right: 110px;
+        top: 340px;
+        padding: 30px 34px;
+        border-radius: 32px;
+        background: var(--bubble);
+        color: #141a15;
+        direction: rtl;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+        border-right: 14px solid var(--coral);
+      }
+      .alert b {
+        display: block;
+        font-size: 34px;
+        font-weight: 800;
+      }
+      .alert p {
+        margin-top: 8px;
+        font-size: 32px;
+        line-height: 1.35;
+      }
+      .alert .call {
+        margin-top: 18px;
+        height: 80px;
+        border-radius: 40px;
+        background: #007329;
+        color: #fff;
+        font-size: 32px;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .report {
+        position: absolute;
+        left: 110px;
+        right: 110px;
+        top: 330px;
+        padding: 34px 38px;
+        border-radius: 32px;
+        background: var(--bubble);
+        color: #141a15;
+        direction: rtl;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+      }
+      .rp-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 36px;
+        font-weight: 800;
+      }
+      .rp-top em {
+        font-style: normal;
+        font-size: 24px;
+        padding: 6px 14px;
+        border-radius: 12px;
+        background: #f0f2f0;
+        color: #5b625c;
+      }
+      .rp-row {
+        margin-top: 22px;
+      }
+      .rp-row div {
+        display: flex;
+        justify-content: space-between;
+        font-size: 30px;
+        font-weight: 700;
+      }
+      .rp-row div span:last-child {
+        font-family: var(--mono);
+      }
+      .rp-bar {
+        margin-top: 8px;
+        height: 22px;
+        border-radius: 11px;
+        background: #e8ece9;
+        overflow: hidden;
+      }
+      .rp-bar i {
+        display: block;
+        height: 100%;
+        border-radius: 11px;
+        background: #007329;
+        transform-origin: 100% 50%;
+      }
+
+      /* end */
+      #end {
+        position: absolute;
+        inset: 0;
+        background: #f4f8f5;
+        color: #141a15;
+        direction: rtl;
+      }
+      #end .big {
+        position: absolute;
+        left: 80px;
+        right: 80px;
+        top: 400px;
+        font-family: var(--display);
+        font-size: 104px;
+        font-weight: 800;
+        line-height: 1.08;
+        text-align: center;
+      }
+      #end .big .g {
+        color: #007329;
+      }
+      #end-wm {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 900px;
+        text-align: center;
+        font-size: 66px;
+      }
+      #end-call {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 1040px;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="v5-4" data-start="0" data-duration="40" data-width="1080" data-height="1920">
+      <div class="ph clip" id="ph1" data-start="0" data-duration="6.6" data-track-index="0"><img src="assets/img/stock/mirror-smile.jpg" alt="" style="object-position: 64% 50%" /></div>
+      <div class="ph clip" id="ph2" data-start="6" data-duration="13.6" data-track-index="1"><img src="assets/img/stock/home-phone.jpg" alt="" style="object-position: 56% 50%" /></div>
+      <div class="ph clip" id="ph3" data-start="19" data-duration="6.6" data-track-index="0"><img src="assets/img/stock/disappointed.jpg" alt="" style="object-position: 48% 40%" /></div>
+      <div class="ph clip" id="ph4" data-start="25" data-duration="6.6" data-track-index="1"><img src="assets/img/stock/dentist-talk.jpg" alt="" style="object-position: 62% 50%" /></div>
+      <div class="ph clip" id="ph5" data-start="31" data-duration="5.6" data-track-index="0"><img src="assets/img/stock/dentist-laptop.jpg" alt="" style="object-position: 50% 50%" /></div>
+      <div id="fade" class="clip" data-start="0" data-duration="36.2" data-track-index="2" data-layout-allow-overlap></div>
+
+      <div id="days"><div class="day" id="dy0">א</div><div class="day" id="dy1">ב</div><div class="day" id="dy2">ג</div><div class="day" id="dy3">ד</div><div class="day" id="dy4">ה</div></div>
+      <div id="wm" class="wordmark">EZ<b>.</b>Path<b>.</b>AI</div>
+
+      <!-- 0 to 6 -->
+      <div class="stamp clip" id="st1" data-start="0" data-duration="6.2" data-track-index="3"><i></i>יום ראשון · <bdi dir="ltr">14:00</bdi></div>
+      <div class="cap clip" id="c1" dir="rtl" lang="he" data-start="0" data-duration="6.2" data-track-index="4"><span class="w">נועה</span> <span class="w">סיימה</span> <span class="w g">טיפול.</span></div>
+
+      <!-- 6 to 13: the message -->
+      <div class="stamp clip" id="st2" data-start="6.2" data-duration="12.8" data-track-index="3"><i></i>יום ראשון · <bdi dir="ltr">17:00</bdi></div>
+      <div class="chat clip" id="chat" dir="rtl" lang="he" data-start="6.2" data-duration="7.8" data-track-index="5">
+        <div class="from" id="from"><i>ח</i>מרפאת שיניים נקודת חיוך</div>
+        <div class="bub" id="b1">היי נועה, תודה שהגעת היום. איך היה הטיפול?</div>
+        <div class="btns" id="btns"><div class="btn" id="btn1">היה מעולה!</div><div class="btn">היה בסדר</div><div class="btn">היה פחות טוב</div></div>
+        <div class="bub out" id="b2">היה מעולה!</div>
+      </div>
+      <div class="cap clip" id="c2" dir="rtl" lang="he" data-start="6.2" data-duration="6.9" data-track-index="4"><span class="w">הודעה</span> <span class="w">אחת,</span> <span class="w g">מהמספר</span> <span class="w g">של</span> <span class="w g">המרפאה.</span></div>
+
+      <!-- 13 to 19: the review, and why the same day -->
+      <div class="rvc clip" id="rvc" dir="rtl" lang="he" data-start="13.6" data-duration="5.6" data-track-index="5">
+        <div class="rvc-top"><i>נ</i>נועה ל.<em>ביקורת חדשה בגוגל</em></div>
+        <div class="rvc-stars" id="rstars"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+      </div>
+      <div class="cap small clip" id="c3" dir="rtl" lang="he" data-start="13.2" data-duration="5.9" data-track-index="4"><span class="w g">47%</span> <span class="w">הכי</span> <span class="w">סביר</span> <span class="w">שיכתבו</span> <span class="w">ביממה</span> <span class="w">שאחרי</span> <span class="w">הביקור.</span> <span class="w">לכן</span> <span class="w">ההודעה</span> <span class="w">יוצאת</span> <span class="w g">באותו</span> <span class="w g">יום.</span></div>
+      <div class="src clip" id="src3" data-start="13.6" data-duration="5.5" data-track-index="6">מקור: <bdi dir="ltr">rater8, 2025</bdi>, סקר של יותר מ-1,000 מטופלים בארה״ב</div>
+
+      <!-- 19 to 25: Dani -->
+      <div class="stamp clip" id="st3" data-start="19.2" data-duration="11.6" data-track-index="3"><i></i>יום שלישי · <bdi dir="ltr">18:10</bdi></div>
+      <div class="chat clip" id="chat2" dir="rtl" lang="he" data-start="19.4" data-duration="5.6" data-track-index="5">
+        <div class="bub out" id="d1">היה פחות טוב</div>
+      </div>
+      <div class="cap clip" id="c4" dir="rtl" lang="he" data-start="19.3" data-duration="5.6" data-track-index="4"><span class="w">דני</span> <span class="w">לא</span> <span class="w">היה</span> <span class="w" style="color: var(--coral)">מרוצה.</span></div>
+
+      <!-- 25 to 31: the owner hears first -->
+      <div class="alert clip" id="alert" dir="rtl" lang="he" data-start="25.3" data-duration="5.6" data-track-index="5">
+        <b>התראה לבעל המרפאה</b>
+        <p>דני כ. ענה "היה פחות טוב". כדאי להתקשר אליו היום.</p>
+        <div class="call" id="acall">להתקשר לדני</div>
+      </div>
+      <div class="cap small clip" id="c5" dir="rtl" lang="he" data-start="25.2" data-duration="5.7" data-track-index="4"><span class="w">בעל</span> <span class="w">המרפאה</span> <span class="w g">שומע</span> <span class="w g">ראשון,</span> <span class="w">ומתקשר</span> <span class="w">עוד</span> <span class="w">באותו</span> <span class="w">ערב.</span></div>
+
+      <!-- 31 to 36: the monthly report (example) -->
+      <div class="stamp clip" id="st4" data-start="31.2" data-duration="4.8" data-track-index="3"><i></i>סוף החודש</div>
+      <div class="report clip" id="report" dir="rtl" lang="he" data-start="31.3" data-duration="4.7" data-track-index="5">
+        <div class="rp-top">הדוח החודשי<em>דוגמה להמחשה</em></div>
+        <div class="rp-row"><div><span>קיבלו הודעה</span><span>212</span></div><div class="rp-bar"><i id="bar1"></i></div></div>
+        <div class="rp-row"><div><span>ענו</span><span>96</span></div><div class="rp-bar"><i id="bar2"></i></div></div>
+        <div class="rp-row"><div><span>כתבו ביקורת</span><span>31</span></div><div class="rp-bar"><i id="bar3"></i></div></div>
+      </div>
+      <div class="cap small clip" id="c6" dir="rtl" lang="he" data-start="31.2" data-duration="4.8" data-track-index="4"><span class="w">דוח</span> <span class="w">קצר:</span> <span class="w">כמה</span> <span class="w">קיבלו,</span> <span class="w">כמה</span> <span class="w">ענו,</span> <span class="w g">כמה</span> <span class="w g">כתבו.</span></div>
+
+      <!-- 36 to 40 -->
+      <section id="end" class="clip" dir="rtl" lang="he" data-start="36" data-duration="4" data-track-index="7">
+        <div class="big" id="end-h"><span class="w">ככה</span> <span class="w">זה</span> <span class="w">עובד</span> <span class="w">אצלכם.</span><br /><span class="w g">בלי</span> <span class="w g">עבודה</span> <span class="w g">לצוות.</span></div>
+        <div id="end-wm" class="wordmark">EZ<b>.</b>Path<b>.</b>AI</div>
+        <div id="end-call"><div class="call-pill" id="pill"><svg viewBox="0 0 24 24"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" /></svg><span>055-271-6456</span></div></div>
+      </section>
+
+      <audio id="music" src="assets/audio/m5-piano.mp3" data-start="0" data-duration="40" data-track-index="10" data-volume="1"></audio>
+      <audio id="sfx-1" src="assets/audio/pop.mp3" data-start="7.0" data-duration="0.72" data-track-index="11" data-volume="0.16"></audio>
+      <audio id="sfx-2" src="assets/audio/click-soft.mp3" data-start="10.6" data-duration="0.37" data-track-index="11" data-volume="0.3"></audio>
+      <audio id="sfx-3" src="assets/audio/pop.mp3" data-start="13.9" data-duration="0.72" data-track-index="11" data-volume="0.16"></audio>
+      <audio id="sfx-4" src="assets/audio/pop.mp3" data-start="25.6" data-duration="0.72" data-track-index="11" data-volume="0.16"></audio>
+    </div>
+
+    <script>
+      (function () {
+        function build() {
+          const tl = gsap.timeline({ paused: true });
+          const words = (sel, t, st) => tl.fromTo(sel + " .w", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out", stagger: st || 0.08 }, t);
+          const fadeOut = (sel, t) => tl.to(sel, { opacity: 0, duration: 0.35, ease: "power1.in" }, t);
+          const photo = (id, t, d, a, b) => {
+            tl.fromTo("#" + id, { opacity: 0 }, { opacity: 1, duration: 0.7, ease: "power1.inOut" }, t);
+            tl.fromTo("#" + id + " img", { scale: a }, { scale: b, duration: d, ease: "none" }, t);
+          };
+          const stamp = (id, t) => tl.fromTo("#" + id, { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.45, ease: "power3.out" }, t);
+          const day = (i, t) => {
+            tl.to(".day", { backgroundColor: "rgba(0,0,0,0)", color: "rgba(253,254,253,0.78)", borderColor: "rgba(253,254,253,0.5)", duration: 0.2, ease: "none" }, t);
+            tl.to("#dy" + i, { backgroundColor: "#3fd17a", color: "#0e1410", borderColor: "#3fd17a", duration: 0.25, ease: "power1.out" }, t + 0.05);
+          };
+
+          tl.fromTo(["#days", "#wm"], { opacity: 0 }, { opacity: 1, duration: 0.5, ease: "none" }, 0.1);
+          tl.to(["#days", "#wm"], { opacity: 0, duration: 0.3, ease: "none" }, 35.7);
+          day(0, 0.3);
+
+          // Sunday 14:00
+          tl.set("#ph1", { opacity: 1 }, 0);
+          tl.fromTo("#ph1 img", { scale: 1.02 }, { scale: 1.12, duration: 6.6, ease: "none" }, 0);
+          stamp("st1", 0.4);
+          words("#c1", 0.7);
+          fadeOut(["#st1", "#c1"], 5.8);
+
+          // 17:00 the message
+          photo("ph2", 6.0, 13.6, 1.1, 1.0);
+          stamp("st2", 6.4);
+          tl.fromTo("#from", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 6.8);
+          tl.fromTo("#b1", { opacity: 0, scale: 0.85, y: 20 }, { opacity: 1, scale: 1, y: 0, duration: 0.45, ease: "back.out(1.7)", transformOrigin: "100% 0%" }, 7.0);
+          tl.fromTo("#btns .btn", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out", stagger: 0.12 }, 7.6);
+          words("#c2", 7.4);
+          tl.to("#btn1", { backgroundColor: "#d0eed5", scale: 0.97, duration: 0.15, ease: "power2.in" }, 10.5);
+          tl.to("#btn1", { scale: 1, duration: 0.2, ease: "power2.out" }, 10.65);
+          tl.fromTo("#b2", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.7)", transformOrigin: "0% 0%" }, 10.9);
+          fadeOut(["#chat", "#c2"], 12.9);
+
+          // the review, and the 47%
+          tl.fromTo("#rvc", { opacity: 0, y: -60, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: "back.out(1.6)" }, 13.7);
+          tl.fromTo("#rstars span", { opacity: 0, scale: 0.3 }, { opacity: 1, scale: 1, duration: 0.3, ease: "back.out(2.6)", stagger: 0.1 }, 14.1);
+          words("#c3", 13.4, 0.06);
+          tl.fromTo("#src3", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "none" }, 14.6);
+          fadeOut(["#rvc", "#c3", "#src3", "#st2"], 18.7);
+
+          // Tuesday: Dani
+          photo("ph3", 19.0, 6.6, 1.0, 1.1);
+          day(2, 19.1);
+          stamp("st3", 19.4);
+          tl.fromTo("#d1", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.7)", transformOrigin: "0% 0%" }, 20.2);
+          words("#c4", 19.7);
+          fadeOut(["#chat2", "#c4"], 24.7);
+
+          // the owner hears first
+          photo("ph4", 25.0, 6.6, 1.1, 1.0);
+          tl.fromTo("#alert", { opacity: 0, y: -60 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 25.5);
+          words("#c5", 25.6, 0.07);
+          tl.to("#acall", { scale: 0.95, duration: 0.15, ease: "power2.in", yoyo: true, repeat: 1 }, 27.6);
+          tl.to("#acall", { backgroundColor: "#004c1a", duration: 0.3, ease: "none" }, 27.75);
+          fadeOut(["#alert", "#c5", "#st3"], 30.6);
+
+          // end of the month
+          photo("ph5", 31.0, 5.6, 1.0, 1.08);
+          tl.to(".day", { opacity: 0.35, duration: 0.3, ease: "none" }, 31.0);
+          stamp("st4", 31.3);
+          tl.fromTo("#report", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 31.5);
+          [["#bar1", 1], ["#bar2", 0.45], ["#bar3", 0.15]].forEach(([s, v], i) => {
+            tl.fromTo(s, { scaleX: 0 }, { scaleX: v, duration: 0.7, ease: "power2.out" }, 31.9 + i * 0.25);
+          });
+          words("#c6", 31.6, 0.06);
+          fadeOut(["#report", "#c6", "#st4"], 35.6);
+
+          // end
+          tl.fromTo("#end", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, 36.0);
+          words("#end-h", 36.2, 0.07);
+          tl.fromTo("#end-wm", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 37.0);
+          tl.fromTo("#pill", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.45, ease: "back.out(2)" }, 37.3);
+          tl.to("#pill", { scale: 1.05, duration: 0.35, ease: "power2.out", yoyo: true, repeat: 1 }, 38.4);
+
+          window.__timelines = window.__timelines || {};
+          window.__timelines["v5-4"] = tl;
+          if (typeof window.__hfForceTimelineRebind === "function") window.__hfForceTimelineRebind();
+        }
+        Promise.all([
+          document.fonts.load('800 82px "Frank Ruhl Libre"', "אבגד"),
+          document.fonts.load('800 82px "Frank Ruhl Libre"', "0123%"),
+          document.fonts.load('700 34px "Assistant"', "אבגד"),
+          document.fonts.load('700 36px "JetBrains Mono"', "EZ.Path0123:"),
+        ])
+          .then(() => document.fonts.ready)
+          .then(build, build);
+      })();
+    </script>
+  </body>
+</html>
