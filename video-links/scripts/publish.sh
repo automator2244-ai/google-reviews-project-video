@@ -15,7 +15,7 @@ Usage: scripts/publish.sh --name "שם העסק" [--phone 050...] (--personal cl
   --personal FILE   personal recording, merged with the template
   --video FILE      a finished video, uploaded as-is (only re-encoded for the web)
   --template FILE   template video (default: ../google-reviews-demo/out/google-reviews-demo-full.mp4)
-  --personal-last   put the personal part after the template (default: before it)
+  --personal-first  put the personal part before the template (default: after it)
   --sync SEC        fix voice/picture sync in the personal recording: 0.3 = voice was 0.3s late, -0.3 = early
   --brighten        brighten a dark personal recording a little
   --speed N         playback speed of the whole video (default: 1.2, 1 = original)
@@ -26,7 +26,7 @@ EOF
   exit 1
 }
 
-NAME="" PHONE="" NOTE="" PERSONAL="" VIDEO="" ID="" PERSONAL_LAST=0 LOCAL=0 SYNC=0 BRIGHTEN=0
+NAME="" PHONE="" NOTE="" PERSONAL="" VIDEO="" ID="" PERSONAL_LAST=1 LOCAL=0 SYNC=0 BRIGHTEN=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --name) NAME="$2"; shift 2 ;;
@@ -36,7 +36,8 @@ while [ $# -gt 0 ]; do
     --video) VIDEO="$2"; shift 2 ;;
     --template) TEMPLATE="$2"; shift 2 ;;
     --id) ID="$2"; shift 2 ;;
-    --personal-last) PERSONAL_LAST=1; shift ;;
+    --personal-first) PERSONAL_LAST=0; shift ;;
+    --personal-last) PERSONAL_LAST=1; shift ;; # the default; kept so old commands still work
     --speed) SPEED="$2"; shift 2 ;;
     --sync) SYNC="$2"; shift 2 ;;
     --brighten) BRIGHTEN=1; shift ;;
