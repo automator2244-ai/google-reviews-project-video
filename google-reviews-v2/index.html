@@ -623,13 +623,13 @@
       .pgrid {
         position: relative;
         margin-top: 36px;
-        width: 392px;
-        height: 280px;
+        width: 391px;
+        height: 170px;
       }
       .pd {
         position: absolute;
-        width: 20px;
-        height: 20px;
+        width: 13px;
+        height: 13px;
         border-radius: 50%;
       }
       .pd.off {
@@ -643,7 +643,7 @@
         left: 538px;
         top: 320px;
         width: 4px;
-        height: 760px;
+        height: 560px;
         border-radius: 2px;
         background: var(--rule);
         transform-origin: 50% 0%;
@@ -1772,7 +1772,7 @@
           <div class="res card" id="r1">
             <div>
               <div class="res-name">מרפאת שיניים הדר</div>
-              <div class="res-row"><span class="res-rate">4.9</span><span class="stars" data-stars="5"></span><span class="res-cnt" id="r1-cnt">(96)</span></div>
+              <div class="res-row"><span class="res-rate">4.9</span><span class="stars" data-stars="5"></span><span class="res-cnt" id="r1-cnt">(187)</span></div>
             </div>
             <div class="res-dist">1.2 ק״מ</div>
             <div class="res-ring" id="r1-ring"></div>
@@ -2062,7 +2062,7 @@
           <div class="res card" id="k1" style="top: 0">
             <div>
               <div class="res-name">מרפאת שיניים הדר</div>
-              <div class="res-row"><span class="res-rate">4.9</span><span class="stars" data-stars="5"></span><span class="res-cnt">(96)</span></div>
+              <div class="res-row"><span class="res-rate">4.9</span><span class="stars" data-stars="5"></span><span class="res-cnt">(187)</span></div>
             </div>
             <div class="res-dist">1.2 ק״מ</div>
           </div>
@@ -2244,11 +2244,11 @@
         const MONTHS = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "6 חודשים"];
         $("pc-month").innerHTML = MONTHS.map((m, i) => '<div class="pm" id="pm' + i + '">' + m + "</div>").join("");
 
-        // Patient dots: 14 x 10 grid, filled in a diagonal wave
+        // Patient dots: 23 x 10 grid, filled in a diagonal wave
         function gridHTML(prefix, cls) {
           let h = "";
           for (let r = 0; r < 10; r++)
-            for (let c = 0; c < 14; c++) h += '<div class="pd ' + cls + '" id="' + prefix + (r * 14 + c) + '" style="right:' + c * 28 + "px;top:" + r * 28 + 'px"></div>';
+            for (let c = 0; c < 23; c++) h += '<div class="pd ' + cls + '" id="' + prefix + (r * 23 + c) + '" style="right:' + c * 17 + "px;top:" + r * 17 + 'px"></div>';
           return h;
         }
         $("pgrid-a").innerHTML = gridHTML("pa", "on");
@@ -2433,11 +2433,11 @@
           tl.fromTo("#gap-a", { opacity: 0, x: 80 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, 14.4);
           tl.fromTo("#gap-b", { opacity: 0, x: -80 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, 14.55);
           tl.fromTo("#gap-rule", { scaleY: 0 }, { scaleY: 1, duration: 0.6, ease: "power2.inOut" }, 14.45);
-          counter("gap-a-n", 0, 140, 14.6, 1.7, "power2.out");
-          for (let i = 0; i < 140; i++) {
-            const r = Math.floor(i / 14),
-              c = i % 14;
-            tl.fromTo("#pa" + i, { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(2.5)" }, 14.65 + (r + c) * 0.055);
+          counter("gap-a-n", 0, 230, 14.6, 1.7, "power2.out");
+          for (let i = 0; i < 230; i++) {
+            const r = Math.floor(i / 23),
+              c = i % 23;
+            tl.fromTo("#pa" + i, { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(2.5)" }, 14.65 + (r + c) * 0.045);
           }
           tl.fromTo("#pgrid-b", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, 14.7);
           tl.fromTo("#gap-b .gap-num", { scale: 1 }, { scale: 1.16, duration: 0.25, ease: "power2.out", transformOrigin: "100% 60%" }, 16.6);
