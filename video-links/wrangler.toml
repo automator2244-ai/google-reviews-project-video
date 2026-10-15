@@ -27,7 +27,3 @@ enabled = true
 
 # Secrets (set in the Cloudflare dashboard: Worker > Settings > Variables and Secrets, never in this file):
 #   IP_SALT         random string for hashing IPs
-
-# Static images for the video page (stills beside the video on wide screens): public/side/*.jpg
-[assets]
-directory = "./public"
