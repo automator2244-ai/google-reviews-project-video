@@ -111,7 +111,8 @@ add_segment() { # file lufs [personal]
   N=$((N + 1))
 }
 
-# Thumbnail (the WhatsApp preview) always comes from the template part, never the personal recording.
+# Poster (shown on the page before the video plays) always comes from the template part, never the personal recording.
+# The WhatsApp preview image is the same for every link: public/og-v1.jpg.
 TEMPLATE_THUMB=10.6 # seconds into the template: the "65%" number
 THUMB_AT=1
 if [ -n "$VIDEO" ]; then

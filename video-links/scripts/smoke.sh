@@ -26,7 +26,8 @@ BEFORE=$(row | js 'd.clicks')
 echo "video page"
 PAGE=$(curl -s -A "$CHROME" "$BASE/v/$ID1")
 check "page has the video" 1 "$(echo "$PAGE" | grep -c "<video id=\"v\" src=\"/m/$ID1.mp4\"")"
-check "page has og:image for the preview" 1 "$(echo "$PAGE" | grep -c "og:image\" content=\"[^\"]*/m/$ID1.jpg\"")"
+check "page has og:image for the preview" 1 "$(echo "$PAGE" | grep -c "og:image\" content=\"[^\"]*/og-v1.jpg\"")"
+check "preview image is served" 200 "$(curl -s -o /dev/null -w "%{http_code}" "$BASE/og-v1.jpg")"
 check "no cookies set on /v" "" "$(curl -s -o /dev/null -D - -A "$CHROME" "$BASE/v/$ID1" | grep -i '^set-cookie' || true)"
 check "WhatsApp preview -> 200" 200 "$(status -A 'WhatsApp/2.24.20.80 A' "$BASE/v/$ID1")"
 check "facebookexternalhit -> 200" 200 "$(status -A 'facebookexternalhit/1.1' "$BASE/v/$ID1")"
