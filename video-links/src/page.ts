@@ -148,13 +148,13 @@ h1{font-size:17px;font-weight:600;margin:0;text-align:center}
 video{display:block;max-width:100%;max-height:calc(100vh - 80px);max-height:calc(100svh - 80px);aspect-ratio:9/16;background:#000;border-radius:14px}
 .stage{display:flex;justify-content:center;max-width:100%}
 .col{display:none}
-@media (min-width:900px) and (min-aspect-ratio:1/1){
+@media (min-width:760px) and (min-aspect-ratio:1/1){
 html,body{background:radial-gradient(ellipse 75% 85% at 50% 45%,#ffffff,transparent 75%),radial-gradient(circle,#dde6df 1.2px,transparent 1.6px) 0 0/24px 24px,#f6faf7;color:#141a15}
 main{padding:20px 24px;gap:14px}
 h1{font-size:20px;font-weight:700}
-.stage{--h:min(calc(100vh - 92px),900px);gap:56px;align-items:center}
+.stage{--h:min(calc(100vh - 92px),900px);gap:clamp(18px,3.5vw,56px);align-items:center}
 video{height:var(--h);max-height:none;width:auto;border-radius:18px;box-shadow:0 20px 50px rgba(20,26,21,.22)}
-.col{display:flex;width:290px}
+.col{display:flex;width:clamp(196px,21vw,290px)}
 .deco,.side{width:100%;min-height:390px;border-radius:22px;background:#fff;border:1px solid #dbe4dc;box-shadow:0 14px 40px rgba(20,26,21,.10)}
 .side{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:22px 22px}
 .side img{width:76px;height:76px;border-radius:50%;border:3px solid #007329;object-fit:cover}
@@ -178,6 +178,7 @@ video{height:var(--h);max-height:none;width:auto;border-radius:18px;box-shadow:0
 @keyframes star{0%{transform:scale(.6)}60%{transform:scale(1.18);background:#f2a900}100%{transform:scale(1);background:#f2a900}}
 @keyframes grow{to{transform:scaleY(1)}}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@media (max-width:1150px){.deco,.side{min-height:340px}.side{padding:18px 14px;gap:8px}.side img{width:62px;height:62px}.side p{font-size:15px}.btn{height:40px;font-size:13.5px;gap:6px}.btn svg{width:17px;height:17px}.score{font-size:58px}.stars i{width:23px;height:23px}.bars{height:74px;gap:7px}.bars i{width:17px}.deco p{font-size:16px}}
 @media (prefers-reduced-motion:reduce){.deco,.stars i,.bars i{animation-duration:1ms;animation-delay:0s;animation-iteration-count:1}}
 }
 `;
