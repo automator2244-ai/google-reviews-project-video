@@ -146,21 +146,40 @@ html,body{margin:0;height:100%;background:#0b0c0f;color:#e8eaed;font:15px/1.5 sy
 main{min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:12px}
 h1{font-size:17px;font-weight:600;margin:0;text-align:center}
 video{display:block;max-width:100%;max-height:calc(100vh - 80px);max-height:calc(100svh - 80px);aspect-ratio:9/16;background:#000;border-radius:14px}
-.player{display:flex;flex-direction:column;align-items:center;gap:12px;max-width:100%}
-.side{display:none}
-@media (min-width:900px) and (min-aspect-ratio:1/1){
-main{flex-direction:row;gap:56px;padding:24px}
-h1{font-size:20px}
-video{height:calc(100vh - 96px);max-height:900px;width:auto;border-radius:18px}
-.side{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;width:340px;padding:32px 28px;border-radius:22px;background:#15171c;border:1px solid #262a31}
-.side img{width:112px;height:112px;border-radius:50%;border:3px solid #22c55e;object-fit:cover}
-.who{font-size:15px;color:#9aa0a6}.who b{display:block;font-size:19px;color:#e8eaed}
-.side p{margin:4px 0 6px;font-size:21px;font-weight:700;line-height:1.35}
-.btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;height:52px;border-radius:26px;font-size:17px;font-weight:700;text-decoration:none}
-.btn svg{width:22px;height:22px;flex:none}
-.wa{background:#22c55e;color:#06210f}.call{border:1px solid #3a3f48;color:#e8eaed}
+.stage{display:flex;justify-content:center;max-width:100%}
+.col{display:none}
+@media (min-width:760px) and (min-aspect-ratio:1/1){
+html,body{background:radial-gradient(ellipse 75% 85% at 50% 45%,#ffffff,transparent 75%),radial-gradient(circle,#dde6df 1.2px,transparent 1.6px) 0 0/24px 24px,#f6faf7;color:#141a15}
+main{padding:20px 24px;gap:14px}
+h1{font-size:20px;font-weight:700}
+.stage{--h:min(calc(100vh - 92px),900px);gap:clamp(18px,3.5vw,56px);align-items:center}
+video{height:var(--h);max-height:none;width:auto;border-radius:18px;box-shadow:0 20px 50px rgba(20,26,21,.22)}
+.col{display:flex;width:clamp(196px,21vw,290px)}
+.deco,.side{width:100%;min-height:390px;border-radius:22px;background:#fff;border:1px solid #dbe4dc;box-shadow:0 14px 40px rgba(20,26,21,.10)}
+.side{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;padding:22px 22px}
+.side img{width:76px;height:76px;border-radius:50%;border:3px solid #007329;object-fit:cover}
+.who{font-size:14px;color:#4e544f;line-height:1.3}.who b{display:block;font-size:18px;color:#141a15}
+.side p{margin:2px 0 4px;font-size:18px;font-weight:700;line-height:1.35}
+.btn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;height:46px;border-radius:23px;font-size:16px;font-weight:700;text-decoration:none}
+.btn svg{width:20px;height:20px;flex:none}
+.wa{background:#007329;color:#fff}.call{border:1px solid #ccd3cd;color:#141a15}
 .num{direction:ltr;unicode-bidi:isolate}
-.site{font-size:14px;color:#9aa0a6;text-decoration:none;direction:ltr}
+.site{font-size:13px;color:#4e544f;text-decoration:none;direction:ltr}
+.deco{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:30px 26px;text-align:center;animation:float 7s ease-in-out 2.4s infinite}
+.score{font:700 76px/1 Georgia,"Times New Roman",serif;color:#141a15;direction:ltr;letter-spacing:-1px}
+.stars{display:flex;gap:6px;direction:ltr}
+.stars i{width:30px;height:30px;background:#dbe4dc;clip-path:polygon(50% 0,61.8% 35.4%,100% 38.2%,69.1% 61.8%,80.9% 100%,50% 76.4%,19.1% 100%,30.9% 61.8%,0 38.2%,38.2% 35.4%);animation:star .45s ease-out forwards}
+.stars i:nth-child(1){animation-delay:.3s}.stars i:nth-child(2){animation-delay:.45s}.stars i:nth-child(3){animation-delay:.6s}.stars i:nth-child(4){animation-delay:.75s}.stars i:nth-child(5){animation-delay:.9s}
+.bars{display:flex;align-items:flex-end;gap:9px;height:96px;direction:ltr}
+.bars i{width:22px;border-radius:6px 6px 3px 3px;background:#d0eed5;transform-origin:bottom;transform:scaleY(0);animation:grow .7s cubic-bezier(.2,.8,.2,1) forwards}
+.bars i:last-child{background:#007329}
+.bars i:nth-child(1){height:22%;animation-delay:1.1s}.bars i:nth-child(2){height:34%;animation-delay:1.2s}.bars i:nth-child(3){height:47%;animation-delay:1.3s}.bars i:nth-child(4){height:63%;animation-delay:1.4s}.bars i:nth-child(5){height:80%;animation-delay:1.5s}.bars i:nth-child(6){height:100%;animation-delay:1.6s}
+.deco p{margin:0;font-size:19px;font-weight:700;line-height:1.35}.deco p em{font-style:normal;color:#007329}
+@keyframes star{0%{transform:scale(.6)}60%{transform:scale(1.18);background:#f2a900}100%{transform:scale(1);background:#f2a900}}
+@keyframes grow{to{transform:scaleY(1)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@media (max-width:1150px){.deco,.side{min-height:340px}.side{padding:18px 14px;gap:8px}.side img{width:62px;height:62px}.side p{font-size:15px}.btn{height:40px;font-size:13.5px;gap:6px}.btn svg{width:17px;height:17px}.score{font-size:58px}.stars i{width:23px;height:23px}.bars{height:74px;gap:7px}.bars i{width:17px}.deco p{font-size:16px}}
+@media (prefers-reduced-motion:reduce){.deco,.stars i,.bars i{animation-duration:1ms;animation-delay:0s;animation-iteration-count:1}}
 }
 `;
 
@@ -168,6 +187,14 @@ const WA_ICON =
   '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2s.8 2.3 1 2.5c.1.2 1.7 2.6 4.1 3.6 1.5.7 2.1.7 2.9.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.2-.2-.4-.3z"/></svg>';
 const PHONE_ICON =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>';
+
+// Decorative card on the other side of the video (wide screens only): pure CSS, no images to load.
+const DECO = `<div class="deco" aria-hidden="true">
+<div class="score">5.0</div>
+<div class="stars"><i></i><i></i><i></i><i></i><i></i></div>
+<div class="bars"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+<p>ביקורות חדשות<br><em>כל שבוע.</em></p>
+</div>`;
 
 // Shown beside the video on wide screens only (WhatsApp Web / Desktop users); phones see just the video.
 function sideCard(name: string): string {
@@ -195,9 +222,12 @@ export function videoPage(id: string, name: string, origin: string): string {
 <meta property="og:image:width" content="540"><meta property="og:image:height" content="960">
 <meta name="twitter:card" content="summary_large_image">
 <style>${VIDEO_STYLE}</style></head><body><main>
-<div class="player"><h1>${title}</h1>
-<video id="v" src="/m/${id}.mp4" poster="/m/${id}.jpg" controls playsinline preload="metadata"></video></div>
-${sideCard(name)}
+<h1>${title}</h1>
+<div class="stage">
+<div class="col">${DECO}</div>
+<video id="v" src="/m/${id}.mp4" poster="/m/${id}.jpg" controls playsinline preload="metadata"></video>
+<div class="col">${sideCard(name)}</div>
+</div>
 </main>
 <script>
 (function(){var v=document.getElementById('v'),sent={},url='/e/${id}';

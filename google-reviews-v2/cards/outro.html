@@ -53,7 +53,8 @@
         --muted: #4e544f;
         --ink: #141a15;
         --accent: #007329;
-        --accent-soft: #d0eed5;
+        --accent-deep: #004c1a;
+        --wa: #1faa53;
       }
       * {
         margin: 0;
@@ -94,17 +95,17 @@
       }
       #glow {
         position: absolute;
-        width: 1500px;
-        height: 1500px;
-        left: -210px;
-        top: 160px;
+        width: 1400px;
+        height: 1400px;
+        left: -160px;
+        top: 560px;
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(0, 115, 41, 0.16) 0%, rgba(0, 115, 41, 0) 62%);
+        background: radial-gradient(circle, rgba(0, 115, 41, 0.2) 0%, rgba(0, 115, 41, 0) 60%);
       }
-      .end {
+      .card {
         position: absolute;
-        left: 108px;
-        right: 108px;
+        left: 96px;
+        right: 96px;
         top: 400px;
         display: flex;
         flex-direction: column;
@@ -112,120 +113,202 @@
         text-align: center;
         direction: rtl;
       }
+      .who {
+        display: flex;
+        align-items: center;
+        gap: 26px;
+        direction: rtl;
+      }
       .portrait {
         position: relative;
-        width: 300px;
-        height: 300px;
+        width: 196px;
+        height: 196px;
+        flex: none;
       }
       .portrait img {
         position: absolute;
-        left: 20px;
-        top: 20px;
-        width: 260px;
-        height: 260px;
+        left: 14px;
+        top: 14px;
+        width: 168px;
+        height: 168px;
         border-radius: 50%;
         object-fit: cover;
       }
       .portrait svg {
         position: absolute;
         inset: 0;
-        width: 300px;
-        height: 300px;
+        width: 196px;
+        height: 196px;
+      }
+      .who-txt {
+        text-align: right;
+      }
+      .who-name {
+        font-family: "Frank Ruhl Libre", serif;
+        font-size: 64px;
+        font-weight: 800;
+        line-height: 1.05;
       }
       .wordmark {
-        margin-top: 40px;
+        margin-top: 6px;
         font-family: "JetBrains Mono", monospace;
-        font-size: 58px;
+        font-size: 36px;
         font-weight: 700;
         direction: ltr;
-        letter-spacing: -1px;
+        text-align: right;
       }
       .wordmark b {
         color: var(--accent);
       }
-      .rule {
-        margin-top: 44px;
-        width: 220px;
-        height: 6px;
-        border-radius: 3px;
-        background: var(--accent);
-      }
       .q {
-        margin-top: 50px;
+        margin-top: 70px;
         font-family: "Frank Ruhl Libre", serif;
-        font-size: 92px;
+        font-size: 98px;
         font-weight: 800;
-        line-height: 1.12;
+        line-height: 1.1;
         text-wrap: balance;
+      }
+      .q .w {
+        display: inline-block;
       }
       .q .hl {
         color: var(--accent);
       }
       .call {
-        margin-top: 26px;
-        font-size: 48px;
+        margin-top: 24px;
+        font-size: 46px;
         font-weight: 700;
         color: var(--muted);
       }
-      .contact {
-        margin-top: 70px;
-        height: 132px;
-        padding: 0 56px;
-        border-radius: 66px;
-        background: var(--accent);
+      .cta-wrap {
+        position: relative;
+        margin-top: 84px;
+        width: 880px;
+        height: 190px;
+      }
+      .ring {
+        position: absolute;
+        inset: 0;
+        border-radius: 95px;
+        border: 9px solid var(--wa);
+        opacity: 0;
+      }
+      .cta {
+        position: absolute;
+        inset: 0;
+        border-radius: 95px;
+        background: var(--wa);
         color: #fdfefd;
         display: flex;
         align-items: center;
-        gap: 22px;
-        box-shadow: 0 22px 44px rgba(0, 80, 30, 0.22);
+        justify-content: center;
+        gap: 24px;
+        box-shadow: 0 24px 50px rgba(0, 90, 35, 0.3);
       }
-      .contact svg {
-        width: 56px;
-        height: 56px;
-        stroke: #fdfefd;
+      .cta svg {
+        width: 72px;
+        height: 72px;
+        fill: #fdfefd;
+        flex: none;
+      }
+      .cta span {
+        font-size: 62px;
+        font-weight: 800;
+      }
+      .phone {
+        margin-top: 34px;
+        height: 120px;
+        padding: 0 48px;
+        border-radius: 60px;
+        border: 4px solid var(--accent);
+        background: #fdfefd;
+        color: var(--accent-deep);
+        display: flex;
+        align-items: center;
+        gap: 20px;
+      }
+      .phone svg {
+        width: 50px;
+        height: 50px;
+        stroke: var(--accent-deep);
         fill: none;
         stroke-width: 2.2;
+        flex: none;
       }
-      .contact span {
+      .phone .lbl {
+        font-size: 40px;
+        font-weight: 700;
+      }
+      .phone .num {
         font-family: "JetBrains Mono", monospace;
-        font-size: 60px;
+        font-size: 50px;
         font-weight: 700;
         direction: ltr;
       }
       .site {
-        margin-top: 34px;
+        margin-top: 40px;
         font-family: "JetBrains Mono", monospace;
-        font-size: 36px;
+        font-size: 34px;
         font-weight: 700;
         color: var(--muted);
         direction: ltr;
       }
+      #finger {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 150px;
+        height: 150px;
+        opacity: 0;
+        z-index: 10;
+        filter: drop-shadow(0 10px 14px rgba(5, 25, 10, 0.35));
+      }
+      #finger svg {
+        width: 100%;
+        height: 100%;
+      }
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="outro" data-start="0" data-duration="4.6" data-width="1080" data-height="1920">
+    <div id="root" data-composition-id="outro" data-start="0" data-duration="7" data-width="1080" data-height="1920">
       <div id="bg" data-layout-allow-overflow>
         <div id="bg-dots"></div>
         <div id="glow"></div>
       </div>
-      <section id="card" class="clip" data-start="0" data-duration="4.6" data-track-index="1" style="position: absolute; inset: 0">
-        <div class="end">
-          <div class="portrait" id="portrait">
-            <img src="assets/img/bnaya.jpg" alt="" />
-            <svg viewBox="0 0 300 300"><circle id="ring" cx="150" cy="150" r="144" fill="none" stroke="#007329" stroke-width="6" stroke-linecap="round" transform="rotate(-90 150 150)" /></svg>
+      <section id="card" class="clip" data-start="0" data-duration="7" data-track-index="1" style="position: absolute; inset: 0">
+        <div class="card">
+          <div class="who" id="who">
+            <div class="portrait">
+              <img src="assets/img/bnaya.jpg" alt="" />
+              <svg viewBox="0 0 196 196"><circle id="ring" cx="98" cy="98" r="93" fill="none" stroke="#007329" stroke-width="6" stroke-linecap="round" transform="rotate(-90 98 98)" /></svg>
+            </div>
+            <div class="who-txt">
+              <div class="who-name">בניה</div>
+              <div class="wordmark">EZ<b>.</b>Path<b>.</b>AI</div>
+            </div>
           </div>
-          <div class="wordmark" id="wordmark">EZ<b>.</b>Path<b>.</b>AI</div>
-          <div class="rule" id="rule"></div>
-          <div class="q" id="q">רוצים לראות איך זה יעבוד <span class="hl">אצלכם?</span></div>
+          <div class="q" id="q"><span class="w">רוצים</span> <span class="w">לראות</span> <span class="w">איך</span> <span class="w">זה</span> <span class="w">יעבוד</span> <span class="w hl">אצלכם?</span></div>
           <div class="call" id="call">שיחה של 15 דקות, ואני אראה לכם.</div>
-          <div class="contact" id="contact">
+          <div class="cta-wrap" id="cta-wrap" data-layout-allow-overlap>
+            <div class="ring" id="ring1"></div>
+            <div class="ring" id="ring2"></div>
+            <div class="ring" id="ring3"></div>
+            <div class="cta" id="cta">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2s.8 2.3 1 2.5c.1.2 1.7 2.6 4.1 3.6 1.5.7 2.1.7 2.9.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.2-.2-.4-.3z" /></svg>
+              <span>שלחו לי הודעה</span>
+            </div>
+          </div>
+          <div class="phone" id="phone">
             <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384" /></svg>
-            <span id="contact-txt">055-271-6456</span>
+            <span class="lbl">או התקשרו:</span>
+            <span class="num" id="contact-txt">055-271-6456</span>
           </div>
           <div class="site" id="site">ezpath-ai.com</div>
         </div>
       </section>
-      <audio id="music" src="assets/audio/music-outro.mp3" data-start="0" data-duration="4.6" data-track-index="10" data-volume="1"></audio>
+      <div id="finger"></div>
+      <audio id="music" src="assets/audio/music-outro.mp3" data-start="0" data-duration="7" data-track-index="10" data-volume="1"></audio>
+      <audio id="sfx-tap" src="assets/audio/click-soft.mp3" data-start="3.05" data-duration="0.37" data-track-index="11" data-volume="0.35"></audio>
     </div>
     <script>
       (function () {
@@ -237,31 +320,74 @@
         }
         if (vars.contact) document.getElementById("contact-txt").textContent = vars.contact;
 
+        // Hand with a pointing index finger. Fingertip sits at (8, 2) in the 24 unit box.
+        document.getElementById("finger").innerHTML =
+          '<svg viewBox="0 0 24 24"><path d="M6 14 V4 a2 2 0 0 1 4 0 V9 a2 2 0 0 1 4 0 v1 a2 2 0 0 1 4 0 v1 a2 2 0 0 1 4 0 v3 a8 8 0 0 1 -8 8 h-2 c-2.8 0 -4.5 -0.86 -5.99 -2.34 l-3.6 -3.6 a2 2 0 0 1 2.83 -2.82 L6 14 Z" fill="#fdfefd" stroke="#141a15" stroke-width="1.15" stroke-linejoin="round"/><path d="M10 9.4 V12.2 M14 10.4 V12.6 M18 11.4 V13" stroke="#141a15" stroke-width="0.9" stroke-linecap="round" fill="none" opacity="0.55"/></svg>';
+
         function build() {
           const tl = gsap.timeline({ paused: true });
+          const root = document.getElementById("root");
+          function pos(el) {
+            let x = 0,
+              y = 0,
+              e = el;
+            while (e && e !== root) {
+              x += e.offsetLeft;
+              y += e.offsetTop;
+              e = e.offsetParent;
+            }
+            return { cx: x + el.offsetWidth / 2, cy: y + el.offsetHeight / 2, w: el.offsetWidth };
+          }
+          const cta = pos(document.getElementById("cta-wrap"));
+          // fingertip a bit left of the button centre (on the text), 150px box, tip at (8/24, 2/24)
+          const fx = cta.cx - 150 * (8 / 24) - 120,
+            fy = cta.cy - 150 * (2 / 24) + 6;
+
           const ring = document.getElementById("ring");
-          const RL = 2 * Math.PI * 144;
+          const RL = 2 * Math.PI * 93;
           ring.setAttribute("stroke-dasharray", RL);
-          tl.fromTo("#bg-dots", { x: 0, y: 0 }, { x: 10, y: 24, duration: 4.6, ease: "none" }, 0);
-          tl.fromTo("#glow", { scale: 0.9 }, { scale: 1.05, duration: 4.6, ease: "sine.inOut" }, 0);
-          tl.fromTo("#portrait", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.55, ease: "back.out(1.7)" }, 0.05);
-          tl.fromTo(ring, { attr: { "stroke-dashoffset": RL } }, { attr: { "stroke-dashoffset": 0 }, duration: 0.9, ease: "power2.inOut" }, 0.15);
-          tl.fromTo("#wordmark", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 0.25);
-          tl.fromTo("#rule", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "power2.inOut" }, 0.4);
-          tl.fromTo("#q", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.5, ease: "power4.out" }, 0.45);
-          tl.fromTo("#call", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 0.75);
-          tl.fromTo("#contact", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)" }, 1.0);
-          tl.fromTo("#site", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, 1.3);
-          tl.to("#contact", { scale: 1.05, duration: 0.35, ease: "power2.out" }, 2.1);
-          tl.to("#contact", { scale: 1, duration: 0.5, ease: "power2.inOut" }, 2.45);
-          tl.to(".end", { y: -12, duration: 3.4, ease: "sine.inOut" }, 1.0);
+
+          tl.fromTo("#bg-dots", { x: 0, y: 0 }, { x: 14, y: 30, duration: 7, ease: "none" }, 0);
+          tl.fromTo("#glow", { scale: 0.9, opacity: 0.7 }, { scale: 1.08, opacity: 1, duration: 3.5, ease: "sine.inOut", yoyo: true, repeat: 1 }, 0);
+
+          // entrance
+          tl.fromTo("#who", { opacity: 0, y: -40 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" }, 0.05);
+          tl.fromTo(ring, { attr: { "stroke-dashoffset": RL } }, { attr: { "stroke-dashoffset": 0 }, duration: 0.8, ease: "power2.inOut" }, 0.1);
+          tl.fromTo("#q .w", { opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.45, ease: "power4.out", stagger: 0.06 }, 0.25);
+          tl.fromTo("#call", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 0.7);
+          tl.fromTo("#cta", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.55, ease: "back.out(2.2)" }, 0.9);
+          tl.fromTo("#phone", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 1.15);
+          tl.fromTo("#site", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, 1.35);
+
+          // the call to action pulses on the beat (about 117 bpm: one pulse every two beats)
+          const BEAT2 = 1.02;
+          for (let i = 0; i < 5; i++) {
+            const t = 1.6 + i * BEAT2;
+            tl.fromTo("#cta", { scale: 1 }, { scale: 1.06, duration: 0.16, ease: "power2.out", immediateRender: false }, t);
+            tl.to("#cta", { scale: 1, duration: 0.5, ease: "power2.inOut" }, t + 0.16);
+            const r = "#ring" + ((i % 3) + 1);
+            tl.fromTo(r, { opacity: 1, scaleX: 1, scaleY: 1 }, { opacity: 0, scaleX: 1.16, scaleY: 1.6, duration: 1.0, ease: "power2.out", immediateRender: false }, t);
+          }
+          // the phone number gets a gentle nudge too
+          tl.fromTo("#phone", { scale: 1 }, { scale: 1.04, duration: 0.18, ease: "power2.out", yoyo: true, repeat: 1, immediateRender: false }, 4.7);
+
+          // a finger taps the button once
+          tl.fromTo("#finger", { x: fx + 260, y: fy + 260, opacity: 0, scale: 1 }, { x: fx, y: fy, opacity: 1, duration: 0.7, ease: "power3.out" }, 2.3);
+          tl.to("#finger", { scale: 0.88, duration: 0.11, ease: "power2.in", transformOrigin: "33% 8%" }, 3.02);
+          tl.to("#finger", { scale: 1, duration: 0.2, ease: "power2.out", transformOrigin: "33% 8%" }, 3.13);
+          tl.to("#cta", { backgroundColor: "#168a42", duration: 0.12, ease: "none" }, 3.05);
+          tl.to("#cta", { backgroundColor: "#1faa53", duration: 0.4, ease: "power1.out" }, 3.3);
+          tl.to("#finger", { x: fx + 240, y: fy + 200, opacity: 0, duration: 0.5, ease: "power2.in" }, 3.55);
+
+          tl.to(".card", { y: -10, duration: 5, ease: "sine.inOut" }, 1.6);
+
           window.__timelines["outro"] = tl;
           if (typeof window.__hfForceTimelineRebind === "function") window.__hfForceTimelineRebind();
         }
         Promise.all([
-          document.fonts.load('800 92px "Frank Ruhl Libre"', "אבגד"),
+          document.fonts.load('800 98px "Frank Ruhl Libre"', "אבגד"),
           document.fonts.load('700 48px "Assistant"', "אבגד"),
-          document.fonts.load('700 60px "JetBrains Mono"', "EZ.Path0123-"),
+          document.fonts.load('700 50px "JetBrains Mono"', "EZ.Path0123-"),
         ])
           .then(() => document.fonts.ready)
           .then(build, build);
