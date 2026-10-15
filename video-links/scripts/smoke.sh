@@ -25,7 +25,9 @@ BEFORE=$(row | js 'd.clicks')
 
 echo "video page"
 PAGE=$(curl -s -A "$CHROME" "$BASE/v/$ID1")
-check "page has the video" 1 "$(echo "$PAGE" | grep -c "<video id=\"v\" src=\"/m/$ID1.mp4\"")"
+# Own video (/m/{id}) or a shared one (/s/{key}), whichever the page plays
+MEDIA=$(echo "$PAGE" | grep -o '<video id="v" src="/[ms]/[A-Za-z0-9_-]*' | sed 's/.*src="//')
+check "page has the video" 1 "$(echo "$MEDIA" | grep -cE "^/(m/$ID1|s/[A-Za-z0-9_-]+)$")"
 check "page has og:image for the preview" 1 "$(echo "$PAGE" | grep -c "og:image\" content=\"[^\"]*/og-v1.jpg\"")"
 check "preview image is served" 200 "$(curl -s -o /dev/null -w "%{http_code}" "$BASE/og-v1.jpg")"
 check "no cookies set on /v" "" "$(curl -s -o /dev/null -D - -A "$CHROME" "$BASE/v/$ID1" | grep -i '^set-cookie' || true)"
@@ -35,11 +37,11 @@ check "HEAD -> 200" 200 "$(status -I -A "$CHROME" "$BASE/v/$ID1")"
 check "prefetch -> 200" 200 "$(status -A "$CHROME" -H 'Sec-Purpose: prefetch' "$BASE/v/$ID1")"
 
 echo "media"
-check "thumbnail" "200 image/jpeg" "$(curl -s -o /dev/null -w '%{http_code} %{content_type}' "$BASE/m/$ID1.jpg")"
-check "video full" "200 video/mp4" "$(curl -s -o /dev/null -w '%{http_code} %{content_type}' "$BASE/m/$ID1.mp4")"
-check "video range (iPhone)" "206 100" "$(curl -s -o /dev/null -w '%{http_code} %{size_download}' -H 'Range: bytes=0-99' "$BASE/m/$ID1.mp4")"
-check "video range has Content-Range" 1 "$(curl -s -o /dev/null -D - -H 'Range: bytes=100-199' "$BASE/m/$ID1.mp4" | grep -ci '^content-range: bytes 100-199/')"
-check "video suffix range" "206 50" "$(curl -s -o /dev/null -w '%{http_code} %{size_download}' -H 'Range: bytes=-50' "$BASE/m/$ID1.mp4")"
+check "thumbnail" "200 image/jpeg" "$(curl -s -o /dev/null -w '%{http_code} %{content_type}' "$BASE$MEDIA.jpg")"
+check "video full" "200 video/mp4" "$(curl -s -o /dev/null -w '%{http_code} %{content_type}' "$BASE$MEDIA.mp4")"
+check "video range (iPhone)" "206 100" "$(curl -s -o /dev/null -w '%{http_code} %{size_download}' -H 'Range: bytes=0-99' "$BASE$MEDIA.mp4")"
+check "video range has Content-Range" 1 "$(curl -s -o /dev/null -D - -H 'Range: bytes=100-199' "$BASE$MEDIA.mp4" | grep -ci '^content-range: bytes 100-199/')"
+check "video suffix range" "206 50" "$(curl -s -o /dev/null -w '%{http_code} %{size_download}' -H 'Range: bytes=-50' "$BASE$MEDIA.mp4")"
 check "missing media -> 404" 404 "$(status "$BASE/m/nothere.mp4")"
 
 echo "upload is locked"
@@ -47,6 +49,7 @@ TOK=$(cat "out/$ID1/token" 2>/dev/null || echo none)
 up() { status -X PUT -H 'Content-Type: image/jpeg' --data-binary 'x' "$@"; }
 check "no pass -> 401" 401 "$(up "$BASE/upload/$ID1.jpg")"
 check "wrong pass -> 401" 401 "$(up -H 'Authorization: Bearer wrong' "$BASE/upload/$ID1.jpg")"
+check "shared upload, wrong pass -> 401" 401 "$(up -H 'Authorization: Bearer wrong' "$BASE/upload-shared/smoke-test.jpg")"
 check "pass of another id -> 401" 401 "$(up -H "Authorization: Bearer $TOK" "$BASE/upload/someoneelse.jpg")"
 check "GET /upload -> 404" 404 "$(status "$BASE/upload/$ID1.jpg")"
 npx wrangler d1 execute ezpath-loom-tracker --local --command "UPDATE upload_tokens SET expires_at = 1" >/dev/null 2>&1

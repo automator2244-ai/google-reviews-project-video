@@ -106,6 +106,24 @@ scripts/publish.sh --local --name "בדיקה" --phone 0501234567 --personal cli
 scripts/smoke.sh <id שהודפס>   # בודק גם שההעלאה נעולה
 ```
 
+## סרטון משותף לכמה קישורים
+
+רוב הקישורים מקבלים את אותו סרטון, ולכן הוא עולה פעם אחת ל-R2 (`shared/<key>.mp4` ו-`.jpg`), וכל נמען מצביע אליו דרך העמודה `video_key`. הדף מנגן מ-`/s/<key>.mp4`, והמעקב נשאר לפי הנמען (`/e/<id>`).
+
+```bash
+# פעם אחת לכל גרסה של הסרטון:
+scripts/publish-shared.sh unified-v1 ../google-reviews-v2/out/final-unified.mp4 --thumb-at 12.9
+#   מריצים את out/shared-unified-v1/register.sql על D1, ואז:
+scripts/publish-shared.sh unified-v1 --upload
+
+# כל עסק (בלי קידוד ובלי העלאה, הקישור חי ברגע שה-SQL רץ):
+scripts/publish.sh --shared unified-v1 --name "ד״ר ..." --phone 05...
+#   מריצים את out/<id>/register.sql על D1, ואז:
+scripts/link.sh <id>
+```
+
+כשהסרטון משתנה, מעלים אותו בשם חדש (`unified-v2`) ולא דורסים את הקיים, כי דפדפנים שומרים סרטון במטמון יום שלם. אחר כך מעבירים את כולם בפעולה אחת: `UPDATE recipients SET video_key='unified-v2' WHERE video_key='unified-v1';`
+
 ## תמונת התצוגה בוואטסאפ
 
 כל הקישורים מקבלים אותה תמונת תצוגה: `public/og-v1.jpg` (1200x630, התמונה של בניה, 5.0, כוכבים ו"ביקורות חדשות כל שבוע"). המקור שלה הוא `og/preview.html`: משנים אותו, מצלמים ב-1200x630 ושומרים בשם חדש (`og-v2.jpg` וכן הלאה, כדי שוואטסאפ לא יציג תמונה ישנה מהמטמון), ומעדכנים את השם ב-`src/page.ts`. התמונה שבתוך הדף לפני שמנגנים (`/m/<id>.jpg`) נשארת פריים מהסרטון.

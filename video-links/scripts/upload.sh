@@ -19,12 +19,4 @@ echo "Uploading..."
 put thumb.jpg image/jpeg
 put video.mp4 video/mp4 # last: this one makes the page live
 
-NAME=$(cat "$OUT/name") PHONE=$(cat "$OUT/phone")
-LINK="$BASE/v/$ID"
-echo
-echo "Done: $NAME"
-echo "  Link:      $LINK"
-if [ -n "$PHONE" ]; then
-  MSG=$(node -e 'console.log(encodeURIComponent(process.argv[1]))' "היי $NAME, הכנתי לך סרטון קצר במיוחד בשבילך: $LINK")
-  echo "  WhatsApp:  https://wa.me/$PHONE?text=$MSG"
-fi
+exec scripts/link.sh "$ID" "$BASE"

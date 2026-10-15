@@ -209,7 +209,8 @@ function sideCard(name: string): string {
 </aside>`;
 }
 
-export function videoPage(id: string, name: string, origin: string): string {
+export function videoPage(id: string, name: string, origin: string, videoKey: string | null = null): string {
+  const media = videoKey && /^[A-Za-z0-9_-]{1,64}$/.test(videoKey) ? `/s/${videoKey}` : `/m/${id}`;
   const title = escapeHtml(`סרטון הסבר עבור ${name}`);
   // One branded preview image for every link (public/og-v1.jpg); /m/{id}.jpg stays the video poster.
   const thumb = `${origin}/og-v1.jpg`;
@@ -226,7 +227,7 @@ export function videoPage(id: string, name: string, origin: string): string {
 <h1>${title}</h1>
 <div class="stage">
 <div class="col">${DECO}</div>
-<video id="v" src="/m/${id}.mp4" poster="/m/${id}.jpg" controls playsinline preload="metadata"></video>
+<video id="v" src="${media}.mp4" poster="${media}.jpg" controls playsinline preload="metadata"></video>
 <div class="col">${sideCard(name)}</div>
 </div>
 </main>

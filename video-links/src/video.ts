@@ -8,20 +8,21 @@ const PROGRESS = new Set([0, 25, 50, 75, 100]);
 interface Recipient {
   name: string;
   video_at: string | null;
+  video_key: string | null; // set = plays the shared video shared/{video_key}.mp4 instead of its own
 }
 
 // GET/HEAD /v/{id}: the personal video page. Every visit is logged; bots and previews are flagged, not counted.
 export async function handleView(req: Request, env: Env, ctx: ExecutionContext, id: string, origin: string): Promise<Response> {
   let r: Recipient | null = null;
   try {
-    r = await env.DB.prepare("SELECT name, video_at FROM recipients WHERE id = ?").bind(id).first<Recipient>();
+    r = await env.DB.prepare("SELECT name, video_at, video_key FROM recipients WHERE id = ?").bind(id).first<Recipient>();
   } catch (err) {
     console.error("recipient lookup failed", err);
   }
   if (!r?.video_at) return html(unavailablePage(), 404);
 
   ctx.waitUntil(logClick(req, env, id).catch((err) => console.error("click log failed", err)));
-  return html(videoPage(id, r.name, origin));
+  return html(videoPage(id, r.name, origin, r.video_key));
 }
 
 async function logClick(req: Request, env: Env, id: string): Promise<void> {
@@ -51,9 +52,9 @@ export async function handleEvent(req: Request, env: Env, ctx: ExecutionContext,
 
 const TYPES = { mp4: "video/mp4", jpg: "image/jpeg" } as const;
 
-// GET/HEAD /m/{id}.mp4|jpg: streams from R2 with Range support (iOS Safari will not play video without it).
-export async function handleMedia(req: Request, env: Env, id: string, ext: keyof typeof TYPES): Promise<Response> {
-  const key = `videos/${id}.${ext}`;
+// GET/HEAD /m/{id}.mp4|jpg (videos/{id}.*) and /s/{key}.mp4|jpg (shared/{key}.*): streams from R2 with
+// Range support (iOS Safari will not play video without it).
+export async function handleMedia(req: Request, env: Env, key: string, ext: keyof typeof TYPES): Promise<Response> {
   let obj: R2Object | R2ObjectBody | null;
   try {
     obj = req.method === "HEAD" ? await env.VIDEOS.head(key) : await env.VIDEOS.get(key, { range: req.headers });
@@ -90,7 +91,8 @@ const MAX_UPLOAD = 100 * 1024 * 1024;
 
 // PUT /upload/{id}.mp4|jpg with "Authorization: Bearer <pass>". The pass is created with the recipient
 // (publish.sh -> register.sql) and is valid for an hour. Uploading the mp4 makes the page live.
-export async function handleUpload(req: Request, env: Env, id: string, ext: keyof typeof TYPES): Promise<Response> {
+// PUT /upload-shared/{key}.mp4|jpg uploads a shared video (publish-shared.sh); its pass belongs to "shared:{key}".
+export async function handleUpload(req: Request, env: Env, id: string, ext: keyof typeof TYPES, shared = false): Promise<Response> {
   const pass = (req.headers.get("authorization") ?? "").replace(/^Bearer\s+/i, "");
   const size = Number(req.headers.get("content-length"));
   if (!pass || !req.body) return new Response("Unauthorized", { status: 401 });
@@ -98,13 +100,13 @@ export async function handleUpload(req: Request, env: Env, id: string, ext: keyo
 
   const now = Date.now();
   const ok = await env.DB.prepare("SELECT 1 FROM upload_tokens WHERE token_hash = ? AND recipient_id = ? AND expires_at > ?")
-    .bind(await sha256Hex(pass), id, now)
+    .bind(await sha256Hex(pass), shared ? `shared:${id}` : id, now)
     .first();
   if (!ok) return new Response("Unauthorized", { status: 401 });
 
-  await env.VIDEOS.put(`videos/${id}.${ext}`, req.body, { httpMetadata: { contentType: TYPES[ext] } });
+  await env.VIDEOS.put(`${shared ? "shared" : "videos"}/${id}.${ext}`, req.body, { httpMetadata: { contentType: TYPES[ext] } });
   const done = [env.DB.prepare("DELETE FROM upload_tokens WHERE expires_at <= ?").bind(now)];
-  if (ext === "mp4") done.push(env.DB.prepare("UPDATE recipients SET video_at = ? WHERE id = ?").bind(new Date().toISOString(), id));
+  if (ext === "mp4" && !shared) done.push(env.DB.prepare("UPDATE recipients SET video_at = ? WHERE id = ?").bind(new Date().toISOString(), id));
   await env.DB.batch(done);
   return new Response(null, { status: 204 });
 }
