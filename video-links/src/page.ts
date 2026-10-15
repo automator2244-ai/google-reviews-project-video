@@ -211,7 +211,8 @@ function sideCard(name: string): string {
 
 export function videoPage(id: string, name: string, origin: string): string {
   const title = escapeHtml(`סרטון הסבר עבור ${name}`);
-  const thumb = `${origin}/m/${id}.jpg`;
+  // One branded preview image for every link (public/og-v1.jpg); /m/{id}.jpg stays the video poster.
+  const thumb = `${origin}/og-v1.jpg`;
   return `<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
 <title>${title}</title>
@@ -219,7 +220,7 @@ export function videoPage(id: string, name: string, origin: string): string {
 <meta property="og:description" content="סרטון קצר שהוכן במיוחד בשבילך">
 <meta property="og:url" content="${origin}/v/${id}">
 <meta property="og:image" content="${thumb}"><meta property="og:image:type" content="image/jpeg">
-<meta property="og:image:width" content="540"><meta property="og:image:height" content="960">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <style>${VIDEO_STYLE}</style></head><body><main>
 <h1>${title}</h1>

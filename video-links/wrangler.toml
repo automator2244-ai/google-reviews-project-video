@@ -27,3 +27,7 @@ enabled = true
 
 # Secrets (set in the Cloudflare dashboard: Worker > Settings > Variables and Secrets, never in this file):
 #   IP_SALT         random string for hashing IPs
+
+# Static files: the link-preview image for WhatsApp (public/og-v1.jpg, made from og/preview.html)
+[assets]
+directory = "./public"
