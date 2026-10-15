@@ -22,6 +22,7 @@ Usage: scripts/publish.sh --name "שם העסק" [--phone 050...] (--personal cl
   --sync SEC        fix voice/picture sync in the personal recording: 0.3 = voice was 0.3s late, -0.3 = early
   --brighten        brighten a dark personal recording a little
   --speed N         playback speed of the whole video (default: 1.2, 1 = original)
+  --thumb-at SEC    take the WhatsApp preview image at this second of the finished video
   --note TEXT       free-text note (shows up in the CSV export)
   --id ID           replace the video of an existing recipient
   --local           register and upload to the local `wrangler dev` right away
@@ -29,7 +30,7 @@ EOF
   exit 1
 }
 
-NAME="" PHONE="" NOTE="" PERSONAL="" VIDEO="" ID="" PERSONAL_LAST=1 NO_OUTRO=0 LOCAL=0 SYNC=0 BRIGHTEN=0
+NAME="" PHONE="" NOTE="" PERSONAL="" VIDEO="" ID="" THUMB_SET="" PERSONAL_LAST=1 NO_OUTRO=0 LOCAL=0 SYNC=0 BRIGHTEN=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --name) NAME="$2"; shift 2 ;;
@@ -44,6 +45,7 @@ while [ $# -gt 0 ]; do
     --personal-first) PERSONAL_LAST=0; shift ;;
     --personal-last) PERSONAL_LAST=1; shift ;; # the default; kept so old commands still work
     --speed) SPEED="$2"; shift 2 ;;
+    --thumb-at) THUMB_SET="$2"; shift 2 ;;
     --sync) SYNC="$2"; shift 2 ;;
     --brighten) BRIGHTEN=1; shift ;;
     --local) LOCAL=1; shift ;;
@@ -110,7 +112,7 @@ add_segment() { # file lufs [personal]
 }
 
 # Thumbnail (the WhatsApp preview) always comes from the template part, never the personal recording.
-TEMPLATE_THUMB=10.6 # seconds into the template: the "84%" number
+TEMPLATE_THUMB=10.6 # seconds into the template: the "65%" number
 THUMB_AT=1
 if [ -n "$VIDEO" ]; then
   add_segment "$VIDEO" -16
@@ -123,6 +125,7 @@ else
   add_segment "$TEMPLATE" -20
   THUMB_AT=$(awk "BEGIN{print ($(duration "$PERSONAL") + $TEMPLATE_THUMB) / $SPEED}")
 fi
+[ -z "$THUMB_SET" ] || THUMB_AT="$THUMB_SET"
 if [ -z "$VIDEO" ] && [ "$NO_OUTRO" = 0 ]; then
   add_segment "$OUTRO" -20
 fi
