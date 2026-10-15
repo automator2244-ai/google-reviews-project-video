@@ -149,7 +149,7 @@ video{display:block;max-width:100%;max-height:calc(100vh - 80px);max-height:calc
 .stage{display:flex;justify-content:center;max-width:100%}
 .col{display:none}
 @media (min-width:900px) and (min-aspect-ratio:1/1){
-html,body{background:radial-gradient(ellipse 55% 65% at 50% 45%,#e1f0e4,transparent 70%),radial-gradient(circle,#d3ddd5 1.2px,transparent 1.6px) 0 0/24px 24px,#f4f8f5;color:#141a15}
+html,body{background:radial-gradient(ellipse 75% 85% at 50% 45%,#ffffff,transparent 75%),radial-gradient(circle,#dde6df 1.2px,transparent 1.6px) 0 0/24px 24px,#f6faf7;color:#141a15}
 main{padding:20px 24px;gap:14px}
 h1{font-size:20px;font-weight:700}
 .stage{--h:min(calc(100vh - 92px),900px);gap:56px;align-items:center}
@@ -189,10 +189,10 @@ const PHONE_ICON =
 
 // Decorative card on the other side of the video (wide screens only): pure CSS, no images to load.
 const DECO = `<div class="deco" aria-hidden="true">
-<div class="score">4.9</div>
+<div class="score">5.0</div>
 <div class="stars"><i></i><i></i><i></i><i></i><i></i></div>
 <div class="bars"><i></i><i></i><i></i><i></i><i></i><i></i></div>
-<p>ביקורות טריות.<br><em>כל חודש.</em></p>
+<p>ביקורות חדשות<br><em>כל שבוע.</em></p>
 </div>`;
 
 // Shown beside the video on wide screens only (WhatsApp Web / Desktop users); phones see just the video.
