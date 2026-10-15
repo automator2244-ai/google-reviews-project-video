@@ -23,7 +23,6 @@ length: 55s
 | בסרטון | המקור |
 |---|---|
 | ביקורות ודירוגים הם הדבר הראשון שמטופלים בודקים, לפני המלצה של רופא אחר | Press Ganey, Consumer Experience Trends in Healthcare 2023 (סקר של 1,000 מטופלים). https://www.pressganey.com/resources/blog/healthcare-provider-reviews-drive-patient-choice/ |
-| 84% לא ישקלו רופא עם דירוג מתחת ל-4 כוכבים | Press Ganey, The State of HX 2024. https://www.pressganey.com/state-of-hx/ |
 | 65% לא מתייחסים לביקורות שנכתבו לפני יותר משנה (במקור 64.8%) | Press Ganey, Consumer Experience Trends in Healthcare 2023 |
 
 נתונים נוספים שנבדקו ולא נכנסו: JAMA 2014 (Hanauer ועמיתיו): 35% בחרו רופא בגלל דירוג טוב ו-37% ויתרו בגלל דירוג רע. Software Advice: 71% מתחילים חיפוש רופא בביקורות.
