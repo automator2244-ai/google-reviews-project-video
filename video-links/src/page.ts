@@ -210,7 +210,7 @@ function sideCard(name: string): string {
 }
 
 export function videoPage(id: string, name: string, origin: string): string {
-  const title = escapeHtml(`סרטון אישי עבור ${name}`);
+  const title = escapeHtml(`סרטון הסבר עבור ${name}`);
   const thumb = `${origin}/m/${id}.jpg`;
   return `<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
