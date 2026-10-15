@@ -6,10 +6,18 @@
 
 ## חלקים בריפו
 - `leads/`: גיליון הלידים [לידים רופאי שיניים](https://docs.google.com/spreadsheets/d/13bRjc6ezK3SAYv4YQFW8SEUj3FYZdTM-Frg3Hlb_xS8/edit) (מזהה `13bRjc6ezK3SAYv4YQFW8SEUj3FYZdTM-Frg3Hlb_xS8`). Apps Script (`leads/leads.gs`) ממלא אותו כל א' עד ה' ב-07:00 מ-Google Places: רק נייד, רק 15 עד 70 ביקורות, בלי תקרת חיפושים (לבקשת בניה). לשוניות "עסקי" ו"מאובטח", טלפון בעמודה C, סטטוס בעמודה E. פרטים ב-`leads/README.md`.
-- `google-reviews-v2/`: סרטון התבנית הנוכחי (55 שניות, HyperFrames, בשפת העיצוב של EZ.Path.AI), אחיד לכל המרפאות. הקובץ המוכן: `google-reviews-v2/out/google-reviews-v2-full.mp4`, וכרטיס הסיום שבא אחרי ההקלטה של בניה: `google-reviews-v2/out/outro.mp4`. התסריט, הנתונים והמקורות שלהם ב-`google-reviews-v2/BRIEF.md`.
+- `google-reviews-v2/`: סרטון התבנית הנוכחי (52 שניות, HyperFrames, בשפת העיצוב של EZ.Path.AI), אחיד לכל המרפאות. הקובץ המוכן: `google-reviews-v2/out/google-reviews-v2-full.mp4`, וכרטיס הסיום שבא אחרי ההקלטה של בניה: `google-reviews-v2/out/outro.mp4`. התסריט, הנתונים והמקורות שלהם ב-`google-reviews-v2/BRIEF.md`. הסרטון המאוחד שבניה אישר (אנימציה, החלק שלו עם כתוביות וכרטיס סיום, 1:43): `google-reviews-v2/out/final-unified.mp4`.
 - `google-reviews-demo/`: סרטון התבנית הקודם (גרסה 1, נשאר לתיעוד).
 - `youtube-transcripts/`: כלי שמוריד תמלולים מערוצי יוטיוב. רץ על הטלפון של בניה (Termux בתיקייה המאובטחת, `yt @channel`) או על Windows, לאט כדי לא להיחסם, ומעלה לבד ל-GitHub. מהענן יוטיוב חוסם תמלולים, אז לא מורידים מכאן. פרטים ב-`youtube-transcripts/README.md`.
 - `video-links/`: השירות על `go.ezpath-ai.com`. כל עסק מקבל קישור אישי לדף עם הסרטון שלו, ובדשבורד (`/admin`) רואים מי נכנס, מי ניגן ועד איפה צפה. פרטים ב-`video-links/README.md`.
+
+## כשבניה מבקש קישור לעסק (בלי הקלטה חדשה)
+1. מוצאים את העסק בגיליון הלידים (שתי הלשוניות) ולוקחים משם את הטלפון. בשם בדף משתמשים בשם קצר ונקי (למשל "ד״ר שולמית ויסמן"), לא בשם הארוך מגוגל.
+2. מתוך `video-links/`:
+   ```bash
+   scripts/publish.sh --name "ד״ר ..." --phone 05... --video ../google-reviews-v2/out/final-unified.mp4 --speed 1 --thumb-at 12.9
+   ```
+3. ממשיכים משלב 5 שבסעיף הבא (בדיקה, D1, `upload.sh`, גיליון). תמונת התצוגה בוואטסאפ זהה לכל הקישורים (`video-links/public/og-v1.jpg`), והכותרת היא "סרטון הסבר עבור <שם>".
 
 ## כשבניה שולח הקלטה אישית לעסק
 1. מקבלים את הקובץ: קובץ מצורף בשיחה, או מ-Google Drive דרך החיבור.
