@@ -12,7 +12,9 @@ SPEED=1.2 # whole video plays faster; pitch stays natural
 
 usage() {
   cat <<'EOF'
-Usage: scripts/publish.sh --name "שם העסק" [--phone 050...] (--personal clip.mp4 | --video ready.mp4) [options]
+Usage: scripts/publish.sh --name "שם העסק" [--phone 050...] (--shared KEY | --personal clip.mp4 | --video ready.mp4) [options]
+  --shared KEY      link to a shared video already uploaded with publish-shared.sh (no encoding, no upload;
+                    the link is live once register.sql runs). With --id it moves an existing recipient to KEY.
   --personal FILE   personal recording, merged with the template
   --video FILE      a finished video, uploaded as-is (only re-encoded for the web)
   --template FILE   template video (default: ../google-reviews-v2/out/google-reviews-v2-full.mp4)
@@ -30,7 +32,7 @@ EOF
   exit 1
 }
 
-NAME="" PHONE="" NOTE="" PERSONAL="" VIDEO="" ID="" THUMB_SET="" PERSONAL_LAST=1 NO_OUTRO=0 LOCAL=0 SYNC=0 BRIGHTEN=0
+NAME="" PHONE="" NOTE="" PERSONAL="" VIDEO="" SHARED="" ID="" THUMB_SET="" PERSONAL_LAST=1 NO_OUTRO=0 LOCAL=0 SYNC=0 BRIGHTEN=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --name) NAME="$2"; shift 2 ;;
@@ -38,6 +40,7 @@ while [ $# -gt 0 ]; do
     --note) NOTE="$2"; shift 2 ;;
     --personal) PERSONAL="$2"; shift 2 ;;
     --video) VIDEO="$2"; shift 2 ;;
+    --shared) SHARED="$2"; shift 2 ;;
     --template) TEMPLATE="$2"; shift 2 ;;
     --outro) OUTRO="$2"; shift 2 ;;
     --no-outro) NO_OUTRO=1; shift ;;
@@ -53,12 +56,6 @@ while [ $# -gt 0 ]; do
   esac
 done
 [ -n "$NAME" ] || usage
-awk "BEGIN{exit !($SPEED >= 0.5 && $SPEED <= 2)}" 2>/dev/null || { echo "--speed must be between 0.5 and 2" >&2; exit 1; }
-awk "BEGIN{exit !($SYNC >= -2 && $SYNC <= 2)}" 2>/dev/null || { echo "--sync must be between -2 and 2 seconds" >&2; exit 1; }
-[ -n "$PERSONAL" ] || [ -n "$VIDEO" ] || usage
-for f in "$PERSONAL" "$VIDEO"; do [ -z "$f" ] || [ -f "$f" ] || { echo "File not found: $f" >&2; exit 1; }; done
-[ -n "$VIDEO" ] || [ -f "$TEMPLATE" ] || { echo "Template not found: $TEMPLATE" >&2; exit 1; }
-[ -n "$VIDEO" ] || [ "$NO_OUTRO" = 1 ] || [ -f "$OUTRO" ] || { echo "End card not found: $OUTRO (or pass --no-outro)" >&2; exit 1; }
 
 # 050-123-4567 / +972 50... / 00972... -> 972501234567
 if [ -n "$PHONE" ]; then
@@ -71,6 +68,36 @@ if [ -z "$ID" ]; then
   ID=$(node -e "const a='abcdefghijkmnpqrstuvwxyz23456789';console.log([...crypto.getRandomValues(new Uint8Array(8))].map(b=>a[b&31]).join(''))")
 fi
 [[ "$ID" =~ ^[A-Za-z0-9_-]{1,64}$ ]] || { echo "Invalid id" >&2; exit 1; }
+
+q() { if [ -n "$1" ]; then printf "'%s'" "${1//\'/\'\'}"; else printf 'NULL'; fi; }
+
+# --shared: the recipient points at a shared video, nothing to encode or upload.
+if [ -n "$SHARED" ]; then
+  [[ "$SHARED" =~ ^[A-Za-z0-9_-]{1,64}$ ]] || { echo "Invalid --shared key" >&2; exit 1; }
+  OUT="out/$ID"; mkdir -p "$OUT"
+  NOW=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
+  cat > "$OUT/register.sql" <<SQL
+INSERT INTO recipients (id, name, phone, note, created_at, video_key, video_at)
+VALUES ($(q "$ID"), $(q "$NAME"), $(q "$PHONE"), $(q "$NOTE"), '$NOW', $(q "$SHARED"), '$NOW')
+ON CONFLICT(id) DO UPDATE SET video_key = excluded.video_key, video_at = excluded.video_at;
+SQL
+  printf '%s' "$NAME" > "$OUT/name"
+  printf '%s' "$PHONE" > "$OUT/phone"
+  if [ "$LOCAL" = 1 ]; then
+    log=$(npx wrangler d1 execute "$DB" --local --yes --file "$OUT/register.sql" 2>&1) || { echo "$log" >&2; exit 1; }
+    exec scripts/link.sh "$ID" "http://127.0.0.1:8787"
+  fi
+  echo "Built: $OUT (shared video: $SHARED)"
+  echo "Next: run $OUT/register.sql on D1 database $DB (Cloudflare connector), then: scripts/link.sh $ID"
+  exit 0
+fi
+
+awk "BEGIN{exit !($SPEED >= 0.5 && $SPEED <= 2)}" 2>/dev/null || { echo "--speed must be between 0.5 and 2" >&2; exit 1; }
+awk "BEGIN{exit !($SYNC >= -2 && $SYNC <= 2)}" 2>/dev/null || { echo "--sync must be between -2 and 2 seconds" >&2; exit 1; }
+[ -n "$PERSONAL" ] || [ -n "$VIDEO" ] || usage
+for f in "$PERSONAL" "$VIDEO"; do [ -z "$f" ] || [ -f "$f" ] || { echo "File not found: $f" >&2; exit 1; }; done
+[ -n "$VIDEO" ] || [ -f "$TEMPLATE" ] || { echo "Template not found: $TEMPLATE" >&2; exit 1; }
+[ -n "$VIDEO" ] || [ "$NO_OUTRO" = 1 ] || [ -f "$OUTRO" ] || { echo "End card not found: $OUTRO (or pass --no-outro)" >&2; exit 1; }
 
 OUT="out/$ID"
 mkdir -p "$OUT"
@@ -144,7 +171,6 @@ TOKEN=$(openssl rand -hex 32)
 printf '%s' "$TOKEN" > "$OUT/token"
 EXPIRES=$(( ($(date +%s) + 3600) * 1000 ))
 
-q() { if [ -n "$1" ]; then printf "'%s'" "${1//\'/\'\'}"; else printf 'NULL'; fi; }
 cat > "$OUT/register.sql" <<SQL
 INSERT INTO recipients (id, name, phone, note, created_at)
 VALUES ($(q "$ID"), $(q "$NAME"), $(q "$PHONE"), $(q "$NOTE"), '$(date -u +%Y-%m-%dT%H:%M:%S.000Z)')
