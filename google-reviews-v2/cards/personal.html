@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="he" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>החלק של בניה עם כתוביות</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      @font-face {
+        font-family: "Assistant";
+        src: url("assets/fonts/assistant-hebrew.woff2") format("woff2");
+        font-weight: 200 800;
+        font-display: block;
+        unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+      }
+      @font-face {
+        font-family: "Assistant";
+        src: url("assets/fonts/assistant-latin.woff2") format("woff2");
+        font-weight: 200 800;
+        font-display: block;
+        unicode-range: U+0000-00FF, U+2000-206F;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: #141a15;
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #141a15;
+        font-family: "Assistant", sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      #pv {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      #caps {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+      }
+      .cl {
+        position: absolute;
+        left: 90px;
+        right: 90px;
+        top: 300px;
+        display: flex;
+        justify-content: center;
+        direction: rtl;
+        opacity: 0;
+      }
+      .cl span.box {
+        display: inline-block;
+        max-width: 900px;
+        padding: 14px 34px 18px;
+        border-radius: 28px;
+        background: rgba(253, 254, 253, 0.96);
+        box-shadow: 0 14px 34px rgba(5, 20, 10, 0.28);
+        color: #141a15;
+        font-size: 58px;
+        font-weight: 800;
+        line-height: 1.24;
+        text-align: center;
+        text-wrap: balance;
+      }
+      .cl b {
+        font-weight: 800;
+        color: #007329;
+      }
+      .cl bdi {
+        unicode-bidi: isolate;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="personal" data-start="0" data-duration="53" data-width="1080" data-height="1920">
+      <video id="pv" class="clip" src="assets/video/personal.mp4" data-start="0" data-duration="53" data-has-audio="true" data-track-index="0"></video>
+      <div id="caps" class="clip" data-start="0" data-duration="53" data-track-index="1" data-track-kind="captions" data-layout-allow-overlap></div>
+    </div>
+    <script>
+      (function () {
+        // [start, end, text] in seconds of this clip; [..] marks words shown in the accent colour
+        const CAPS = [[0.032, 1.002, "היי, כאן בניה."], [1.002, 2.278, "ראיתם עכשיו בקצרה איך זה עובד?"], [2.278, 3.202, "רציתי להגיד עוד כמה מילים."], [3.202, 4.094, "כשאני אחפש רופא שיניים,"], [4.094, 5.802, "אני אכנס לגוגל ובודק מי נמצא באזור שלי,"], [5.802, 6.971, "למי שיש יותר ביקורות טובות."], [6.971, 7.74, "אליו אני מתקשר."], [7.74, 8.325, "אני לא לבד."], [8.325, 10.063, "לפי [Press Ganey], חברת המחקר הגדולה בארצות הברית"], [10.063, 10.878, "לחוויית מטופלים,"], [10.878, 11.509, "ביקורות באינטרנט"], [11.509, 12.494, "הן [השיקול מספר אחת]"], [12.494, 13.232, "בבחירת רופא."], [13.232, 14.417, "עוד לפני המלצה של רופא אחר."], [14.417, 15.232, "ושוב ושוב אני רואה"], [15.232, 16.155, "מרפאות טובות,"], [16.155, 17.094, "שמגיעות אליהן עשרות"], [17.094, 18.478, "ואפילו מאות מטופלים כל חודש,"], [18.478, 19.155, "ובגוגל יש להן"], [19.155, 20.463, "רק [כמה עשרות ביקורות],"], [20.463, 21.278, "חלקן מלפני חודשיים"], [21.278, 22.109, "ואפילו חצי שנה."], [22.109, 23.202, "אז בניתי [מערכת פשוטה],"], [23.202, 24.617, "שמעכשיו אחרי כל ביקור,"], [24.617, 25.448, "המטופל שלכם מקבל"], [25.448, 26.494, "הודעה קצרה [בוואטסאפ]"], [26.494, 27.586, "מהמספר של המרפאה,"], [27.586, 28.355, "והיא שואלת איך היה."], [28.355, 29.094, "מי שיצא מרוצה,"], [29.094, 30.248, "מגיע [בלחיצה אחת]"], [30.248, 31.14, "לכתוב ביקורת בגוגל."], [31.14, 31.832, "ככה כל חודש"], [31.832, 32.878, "נכנסות [ביקורות חדשות],"], [32.878, 33.74, "המרפאה עולה בחיפושים,"], [33.74, 34.678, "ויותר אנשים מתקשרים."], [34.678, 35.709, "אם משהו לא היה בסדר,"], [35.709, 37.263, "אתם שומעים על זה [ראשונים], ישר למייל."], [37.263, 38.048, "אפשר להרים אליו טלפון"], [38.048, 40.017, "ולסדר זה לפני שהמטופל הולך לרופא אחר."], [40.017, 41.278, "גם המטופלים מרגישים את ההבדל."], [41.278, 42.54, "שאלו אותם, הקשיבו להם,"], [42.54, 43.171, "[אכפת מהם]."], [43.171, 44.186, "ואתם [לא צריכים לעשות כלום]."], [44.186, 45.155, "אני מחבר ומנהל את הכול,"], [45.155, 45.909, "והמערכת עובדת לבד"], [45.909, 46.602, "מאחורי הקלעים."], [46.602, 47.463, "אם זה נשמע לכם רלוונטי,"], [47.463, 48.402, "תענו לי פה [בוואטסאפ],"], [48.402, 49.078, "או [תתקשרו]."], [49.078, 50.063, "נקבע שיחה של [רבע שעה],"], [50.063, 50.755, "שבה אסביר לכם"], [50.755, 51.955, "על איך זה יעבוד אצלכם,"], [51.955, 52.95, "ונענה על כל השאלות שיהיו."]];
+        const esc = (s) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+        const fmt = (s) =>
+          esc(s)
+            .replace(/\[([^\]]+)\]/g, "<b>$1</b>")
+            .replace(/([A-Za-z][A-Za-z ]*[A-Za-z])/g, '<bdi dir="ltr">$1</bdi>');
+        const host = document.getElementById("caps");
+        host.innerHTML = CAPS.map((c, i) => '<div class="cl" id="c' + i + '"><span class="box">' + fmt(c[2]) + "</span></div>").join("");
+
+        function build() {
+          const tl = gsap.timeline({ paused: true });
+          CAPS.forEach((c, i) => {
+            const el = "#c" + i;
+            tl.fromTo(el, { opacity: 0, y: -14, scale: 0.97 }, { opacity: 1, y: 0, scale: 1, duration: 0.12, ease: "power2.out" }, c[0]);
+            tl.set(el, { opacity: 0 }, c[1]);
+          });
+          window.__timelines["personal"] = tl;
+          if (typeof window.__hfForceTimelineRebind === "function") window.__hfForceTimelineRebind();
+        }
+        Promise.all([document.fonts.load('800 58px "Assistant"', "אבגד"), document.fonts.load('800 58px "Assistant"', "Press")])
+          .then(() => document.fonts.ready)
+          .then(build, build);
+      })();
+    </script>
+  </body>
+</html>
