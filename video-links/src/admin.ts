@@ -1,5 +1,6 @@
 import { dashboardPage } from "./page";
 import { type Env, html, json, notFound } from "./util";
+import { ID_RE } from "./video";
 
 interface StatRow {
   id: string;
@@ -8,6 +9,7 @@ interface StatRow {
   note: string | null;
   created_at: string;
   video_at: string | null;
+  irrelevant_at: string | null;
   clicks: number;
   first_click: string | null;
   last_click: string | null;
@@ -27,12 +29,30 @@ export async function handleAdmin(req: Request, env: Env, url: URL): Promise<Res
     case "GET /admin/export.csv":
       return exportCsv(env, url.origin);
   }
+  const mark = path.match(/^\/admin\/api\/irrelevant\/([^/]+)$/);
+  if (mark && req.method === "POST" && ID_RE.test(mark[1])) return setIrrelevant(req, env, mark[1]);
   return notFound();
+}
+
+// Body {"irrelevant": true|false}. Requiring JSON keeps other sites from posting here with a plain form.
+async function setIrrelevant(req: Request, env: Env, id: string): Promise<Response> {
+  if (!(req.headers.get("Content-Type") || "").startsWith("application/json")) return json({ error: "json only" }, 415);
+  let body: { irrelevant?: unknown };
+  try {
+    body = await req.json();
+  } catch {
+    return json({ error: "bad json" }, 400);
+  }
+  if (typeof body.irrelevant !== "boolean") return json({ error: "irrelevant must be true or false" }, 400);
+  const at = body.irrelevant ? new Date().toISOString() : null;
+  const res = await env.DB.prepare("UPDATE recipients SET irrelevant_at = ? WHERE id = ?").bind(at, id).run();
+  if (!res.meta.changes) return json({ error: "not found" }, 404);
+  return json({ id, irrelevant_at: at });
 }
 
 async function stats(env: Env): Promise<StatRow[]> {
   const { results } = await env.DB.prepare(
-    `SELECT r.id, r.name, r.phone, r.note, r.created_at, r.video_at,
+    `SELECT r.id, r.name, r.phone, r.note, r.created_at, r.video_at, r.irrelevant_at,
             COUNT(c.id) AS clicks, MIN(c.clicked_at) AS first_click, MAX(c.clicked_at) AS last_click,
             (SELECT c2.country FROM clicks c2 WHERE c2.recipient_id = r.id AND c2.is_bot = 0
               ORDER BY c2.clicked_at DESC LIMIT 1) AS country,
@@ -67,10 +87,10 @@ async function exportCsv(env: Env, origin: string): Promise<Response> {
   const rows = await stats(env);
   const fmt = (iso: string | null) => (iso ? ilTime.format(new Date(iso)) : "");
   const lines = [
-    ["שם", "מזהה", "טלפון", "הערה", "קישור", "כניסות", "צפייה", "כניסה ראשונה", "כניסה אחרונה", "מדינה"],
+    ["שם", "מזהה", "טלפון", "הערה", "קישור", "כניסות", "צפייה", "כניסה ראשונה", "כניסה אחרונה", "מדינה", "לא רלוונטי"],
     ...rows.map((r) => [
       r.name, r.id, r.phone, r.note, `${origin}/v/${r.id}`, r.clicks, watchedLabel(r.watched),
-      fmt(r.first_click), fmt(r.last_click), r.country,
+      fmt(r.first_click), fmt(r.last_click), r.country, r.irrelevant_at ? "כן" : "",
     ]),
   ];
   const csv = "﻿" + lines.map((l) => l.map(csvCell).join(",")).join("\r\n");

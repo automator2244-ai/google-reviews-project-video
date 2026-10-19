@@ -28,10 +28,12 @@ th{color:var(--muted);font-weight:600;white-space:nowrap}th[data-key]{cursor:poi
 td.num{font-variant-numeric:tabular-nums;font-weight:700}
 .mono{font-family:ui-monospace,Menlo,Consolas,monospace;direction:ltr;unicode-bidi:embed;font-size:13px}
 tr.idle td{color:var(--idle)}tr.idle td.num{font-weight:400}
+tr.off td{color:var(--idle)}tr.off td.num{font-weight:400}tr.off .acts>:not(.mark),tr.off .tag.ok{opacity:.45}td.mark{text-align:center}.mark input{width:20px;height:20px;margin:0;cursor:pointer;accent-color:var(--accent)}
+label.mark{display:none;align-items:center;gap:5px;margin:0;font-weight:400;font-size:13px;color:var(--muted);white-space:nowrap;cursor:pointer}label.mark input{width:17px;height:17px}
 .tag{display:inline-block;white-space:nowrap;margin-top:2px;background:var(--tag);color:var(--muted);border-radius:999px;padding:1px 8px;font-size:12px;margin-inline-start:6px}
-.tag.ok{color:var(--ok)}.acts{display:flex;gap:6px;margin-top:6px}.acts button,.acts .btn{padding:3px 10px;font-size:13px}summary{cursor:pointer;font-weight:600}
+.tag.ok{color:var(--ok)}.acts{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.acts button,.acts .btn{padding:3px 10px;font-size:13px}summary{cursor:pointer;font-weight:600}
 .empty{color:var(--muted);text-align:center;padding:20px}
-@media (max-width:600px){th{white-space:normal}.stats{grid-template-columns:repeat(2,1fr)}.stat b{font-size:22px}th,td{padding:7px 4px}.hide-sm{display:none}}
+@media (max-width:600px){th{white-space:normal}.stats{grid-template-columns:repeat(2,1fr)}.stat b{font-size:22px}th,td{padding:7px 4px}.hide-sm{display:none}label.mark{display:inline-flex}}
 `;
 
 function shell(title: string, body: string): string {
@@ -69,7 +71,7 @@ export function dashboardPage(origin: string): string {
 </div>
 <div class="scroll"><table><thead><tr>
 <th data-key="name">שם</th><th data-key="clicks">כניסות</th><th data-key="watched">צפייה</th>
-<th data-key="last_click">כניסה אחרונה ▼</th><th data-key="first_click" class="hide-sm">כניסה ראשונה</th><th data-key="country" class="hide-sm">מדינה</th>
+<th data-key="last_click">כניסה אחרונה ▼</th><th data-key="first_click" class="hide-sm">כניסה ראשונה</th><th data-key="country" class="hide-sm">מדינה</th><th class="hide-sm">לא רלוונטי</th>
 </tr></thead><tbody id="stats-body"></tbody></table></div>
 </section>
 </main>
@@ -105,7 +107,8 @@ function waLink(r){return 'https://wa.me/'+r.phone+'?text='+encodeURIComponent(t
 
 /* stats table */
 var rows=[],sortKey='last_click',sortDir=-1;
-function cmp(a,b){var x=a[sortKey],y=b[sortKey];
+function cmp(a,b){var ia=a.irrelevant_at?1:0,ib=b.irrelevant_at?1:0;if(ia!==ib)return ia-ib;
+  var x=a[sortKey],y=b[sortKey];
   if(x==null&&y==null)return 0;if(x==null)return 1;if(y==null)return -1;
   if(typeof x==='string'){return x.localeCompare(y,'he')*sortDir}return (x-y)*sortDir}
 function render(){
@@ -121,13 +124,24 @@ function render(){
     var btn=el('button',{title:linkFor(r.id)},'העתק');btn.onclick=function(){copy(linkFor(r.id),btn)};
     var wa=r.phone?el('a',{class:'btn wa',href:waLink(r),target:'_blank',rel:'noopener'},'וואטסאפ'):null;
     if(wa)wa.onclick=function(){wa.href=waLink(r)};
-    var tag=!r.video_at?el('span',{class:'tag'},'אין סרטון'):r.clicks?null:el('span',{class:'tag'},'עוד לא נכנס');
-    return el('tr',{class:r.clicks?'':'idle'},
-      el('td',{},el('div',{},r.name,tag),el('div',{class:'acts'},btn,wa)),
+    var tag=r.irrelevant_at?el('span',{class:'tag'},'לא רלוונטי'):!r.video_at?el('span',{class:'tag'},'אין סרטון'):r.clicks?null:el('span',{class:'tag'},'עוד לא נכנס');
+    function box(){var b=el('input',{type:'checkbox',title:'לסמן כלא רלוונטי','aria-label':'לא רלוונטי: '+r.name});
+      b.checked=!!r.irrelevant_at;b.onchange=function(){mark(r,b)};return b}
+    return el('tr',{class:(r.clicks?'':'idle')+(r.irrelevant_at?' off':'')},
+      el('td',{},el('div',{},r.name,tag),el('div',{class:'acts'},btn,wa,el('label',{class:'mark'},box(),'לא רלוונטי'))),
       el('td',{class:'num'},String(r.clicks)),
       el('td',{},r.watched==null?'':el('span',{class:'tag ok'},watchedLabel(r.watched))),
-      el('td',{},tf(r.last_click)),el('td',{class:'hide-sm'},tf(r.first_click)),el('td',{class:'hide-sm'},r.country||''));
+      el('td',{},tf(r.last_click)),el('td',{class:'hide-sm'},tf(r.first_click)),el('td',{class:'hide-sm'},r.country||''),
+      el('td',{class:'mark hide-sm'},box()));
   }));
+}
+/* not-relevant mark: saved on the server, so it shows on every device */
+function mark(r,box){
+  var want=box.checked,prev=r.irrelevant_at;box.disabled=true;
+  fetch('/admin/api/irrelevant/'+encodeURIComponent(r.id),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({irrelevant:want})})
+    .then(function(res){if(!res.ok)throw 0;return res.json()})
+    .then(function(d){r.irrelevant_at=d.irrelevant_at;render()})
+    .catch(function(){r.irrelevant_at=prev;box.checked=!!prev;box.disabled=false;alert('לא הצלחתי לשמור. נסה שוב.')})
 }
 document.querySelectorAll('th[data-key]').forEach(function(th){th.onclick=function(){
   var k=th.dataset.key;if(sortKey===k){sortDir=-sortDir}else{sortKey=k;sortDir=(k==='name'||k==='country')?1:-1}
