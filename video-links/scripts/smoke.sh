@@ -74,6 +74,16 @@ check "watched = 50%" 50 "$(row | js 'd.watched')"
 curl -s -o /dev/null -A "$CHROME" "$BASE/v/$ID1"; sleep 1
 check "one more visit counts once" $((BEFORE + 3)) "$(row | js 'd.clicks')"
 
+echo "not-relevant mark"
+mark() { curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' -d "$2" "$BASE/admin/api/irrelevant/$1"; }
+check "mark -> 200" 200 "$(mark "$ID1" '{"irrelevant":true}')"
+check "shows in stats" true "$(row | js '!!d.irrelevant_at')"
+check "unmark -> 200" 200 "$(mark "$ID1" '{"irrelevant":false}')"
+check "cleared in stats" false "$(row | js '!!d.irrelevant_at')"
+check "plain form post -> 415" 415 "$(status -X POST -d 'irrelevant=true' "$BASE/admin/api/irrelevant/$ID1")"
+check "bad value -> 400" 400 "$(mark "$ID1" '{"irrelevant":"yes"}')"
+check "unknown id -> 404" 404 "$(mark nosuchid '{"irrelevant":true}')"
+
 echo "robots.txt"
 check "blocks /admin and /v/" 2 "$(curl -s "$BASE/robots.txt" | grep -cE '^Disallow: /(admin|v/)$')"
 
