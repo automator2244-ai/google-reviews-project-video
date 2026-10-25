@@ -9,6 +9,7 @@
 - `google-reviews-v2/`: סרטון התבנית הנוכחי (52 שניות, HyperFrames, בשפת העיצוב של EZ.Path.AI), אחיד לכל המרפאות. הקובץ המוכן: `google-reviews-v2/out/google-reviews-v2-full.mp4`, וכרטיס הסיום שבא אחרי ההקלטה של בניה: `google-reviews-v2/out/outro.mp4`. התסריט, הנתונים והמקורות שלהם ב-`google-reviews-v2/BRIEF.md`. הסרטון המאוחד שבניה אישר (אנימציה, החלק שלו עם כתוביות וכרטיס סיום, 1:43): `google-reviews-v2/out/final-unified.mp4`.
 - `google-reviews-demo/`: סרטון התבנית הקודם (גרסה 1, נשאר לתיעוד).
 - `youtube-transcripts/`: כלי שמוריד תמלולים מערוצי יוטיוב. רץ על הטלפון של בניה (Termux בתיקייה המאובטחת, `yt @channel`) או על Windows, לאט כדי לא להיחסם, ומעלה לבד ל-GitHub. מהענן יוטיוב חוסם תמלולים, אז לא מורידים מכאן. פרטים ב-`youtube-transcripts/README.md`.
+- `instagram/`: הריילס של @ez.path.ai. **לפני כל סרטון לאינסטגרם קוראים את `instagram/CONTENT.md`**: מה כבר פורסם, אילו נתונים שומשו, הסגנון, כללי הכיתוב והרעיונות שמחכים. מפרסמים דרך Composio, ורק אחרי שבניה אישר את הסרטון ואת הכיתוב.
 - `video-links/`: השירות על `go.ezpath-ai.com`. כל עסק מקבל קישור אישי לדף עם הסרטון שלו, ובדשבורד (`/admin`) רואים מי נכנס, מי ניגן ועד איפה צפה. פרטים ב-`video-links/README.md`.
 
 ## כשבניה מבקש קישור לעסק (בלי הקלטה חדשה)
