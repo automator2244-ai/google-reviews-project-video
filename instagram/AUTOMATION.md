@@ -41,7 +41,7 @@
 
 1. מצרפים את הריפו (`add_repo`, גישת push), משכפלים, ועובדים על ענף חדש.
 2. `npm` ו-`npx` כבר זמינים. מוזיקה: `tools/reel.py` מוריד לבד מה שחסר (FreePD או incompetech), ומנרמל את העוצמה ל-16- LUFS.
-3. לכל שורה בלוח של השבוע הבא:
+3. לכל שורה בלוח של השבוע הבא (**אם כבר יש לה תיקייה ב-`queue/` עם `"status": "approved"`, לא נוגעים בה**, רק מציגים אותה בדף האישור כמאושרת):
    - קרוסלה: כותבים `slides.json` ומריצים `python3 tools/carousel.py queue/<תיקייה>` (יוצא PNG ו-JPG).
    - ריל: כותבים `reel.json` ומריצים `python3 tools/reel.py queue/<תיקייה>`. המוזיקה והסגנון נבחרים לבד לפי הסדרה, בלי חזרה על שיר בתוך 10 ריילס (`music-log.json`).
    - כותבים `caption.txt` לפי הכללים ב-`CONTENT.md`, ו-`meta.json` עם `"status": "draft"`.
