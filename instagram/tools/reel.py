@@ -1,0 +1,196 @@
+#!/usr/bin/env python3
+"""Build and render an Instagram Reel (1080x1920 MP4) in the EZ.Path.AI design language with HyperFrames.
+
+Usage: python3 reel.py <post_dir> [--no-render]
+Reads <post_dir>/reel.json, writes <post_dir>/build/ (HyperFrames project) and <post_dir>/reel.mp4.
+
+reel.json:
+{
+  "series": "שאלה של מנהלת · 1",
+  "music": "advertime",              # key in MUSIC below
+  "scenes": [ {"dur": 2.8, "type": ..., ...}, ... ]
+}
+Scene types:
+  bubble  who, text                      a chat bubble (the hook question)
+  title   text, kicker?, sub?            big serif statement
+  vs      rows: [{label, text, good?}]   two or three contrasting rows
+  point   n, title, body?                one numbered point
+  number  value, unit, note?             big number in mono
+  end     text, sub?                     closing line and the EZ.Path.AI sign
+Inline markup: *word* = accent green, newline = line break.
+Layout keeps every text inside the Reels safe zone: y 300 to 1440, and 230px clear on the right.
+"""
+import html
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+IG = os.path.abspath(os.path.join(HERE, ".."))
+REPO = os.path.abspath(os.path.join(IG, ".."))
+V2 = os.path.join(REPO, "google-reviews-v2", "assets")
+MUSIC = {"advertime": os.path.join(V2, "audio", "music.mp3")}
+HF = "hyperframes@0.8.140"
+
+
+def fmt(t):
+    t = html.escape(t or "")
+    t = re.sub(r"\*([^*]+)\*", r"<em>\1</em>", t)
+    return t.replace("\n", "<br>")
+
+
+def scene_inner(s):
+    t = s["type"]
+    if t == "bubble":
+        return (f'<div class="who in">{fmt(s["who"])}</div>'
+                f'<div class="bubble in">{fmt(s["text"])}</div>')
+    if t == "title":
+        k = f'<div class="kicker in">{fmt(s["kicker"])}</div>' if s.get("kicker") else ""
+        sub = f'<div class="sub in">{fmt(s["sub"])}</div>' if s.get("sub") else ""
+        return f'{k}<div class="title in">{fmt(s["text"])}</div>{sub}'
+    if t == "vs":
+        rows = "".join(
+            f'<div class="row in{" good" if r.get("good") else ""}"><div class="rl">{fmt(r["label"])}</div>'
+            f'<div class="rt">{fmt(r["text"])}</div></div>' for r in s["rows"])
+        k = f'<div class="kicker in">{fmt(s["kicker"])}</div>' if s.get("kicker") else ""
+        return f'{k}<div class="rows">{rows}</div>'
+    if t == "point":
+        body = f'<div class="pbody in">{fmt(s["body"])}</div>' if s.get("body") else ""
+        return (f'<div class="pnum in">{fmt(str(s["n"]))}</div>'
+                f'<div class="ptitle in">{fmt(s["title"])}</div>{body}')
+    if t == "number":
+        note = f'<div class="sub in">{fmt(s["note"])}</div>' if s.get("note") else ""
+        return (f'<div class="big in" dir="ltr">{fmt(s["value"])}</div>'
+                f'<div class="unit in">{fmt(s["unit"])}</div>{note}')
+    if t == "end":
+        sub = f'<div class="sub in">{fmt(s["sub"])}</div>' if s.get("sub") else ""
+        return (f'<div class="title in">{fmt(s["text"])}</div>{sub}'
+                f'<div class="sign in" dir="ltr">EZ.Path.AI<span></span></div>')
+    raise SystemExit(f"unknown scene type {t}")
+
+
+CSS = """
+@font-face { font-family: "Frank Ruhl Libre"; src: url("assets/fonts/frank-ruhl-libre-hebrew.woff2") format("woff2"); font-weight: 300 900; font-display: block; unicode-range: U+0590-05FF, U+FB1D-FB4F; }
+@font-face { font-family: "Frank Ruhl Libre"; src: url("assets/fonts/frank-ruhl-libre-latin.woff2") format("woff2"); font-weight: 300 900; font-display: block; }
+@font-face { font-family: "Assistant"; src: url("assets/fonts/assistant-hebrew.woff2") format("woff2"); font-weight: 200 800; font-display: block; unicode-range: U+0590-05FF, U+FB1D-FB4F; }
+@font-face { font-family: "Assistant"; src: url("assets/fonts/assistant-latin.woff2") format("woff2"); font-weight: 200 800; font-display: block; }
+@font-face { font-family: "JetBrains Mono"; src: url("assets/fonts/jetbrains-mono-latin.woff2") format("woff2"); font-weight: 400 700; font-display: block; }
+:root { --paper:#f4f8f5; --rule:#ccd3cd; --muted:#4e544f; --ink:#141a15; --accent:#007329; --accent-soft:#d0eed5; --card:#fdfefd; --red:#b3261e; --red-soft:#f6dcda; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--paper); }
+#root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: var(--paper); color: var(--ink); font-family: "Assistant", sans-serif; }
+#bg { position: absolute; inset: 0; background: radial-gradient(ellipse 900px 900px at 80% 18%, #dcefe0 0%, rgba(244,248,245,0) 70%), radial-gradient(ellipse 700px 700px at 10% 90%, #e6f2e8 0%, rgba(244,248,245,0) 70%); }
+#top { position: absolute; top: 236px; left: 90px; right: 230px; display: flex; justify-content: space-between; align-items: center; direction: rtl; }
+#top .series { font-weight: 800; font-size: 36px; color: var(--accent); }
+#top .brand { font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 30px; letter-spacing: 1px; direction: ltr; }
+#prog { position: absolute; top: 300px; left: 90px; right: 230px; height: 6px; border-radius: 3px; background: var(--rule); overflow: hidden; }
+#prog-fill { width: 100%; height: 100%; background: var(--accent); transform-origin: right center; transform: scaleX(0); }
+.clip { position: absolute; inset: 0; }
+.scene .box { position: absolute; top: 360px; bottom: 480px; left: 90px; right: 230px; display: flex; flex-direction: column; justify-content: center; gap: 36px; direction: rtl; text-align: right; }
+em { font-style: normal; color: var(--accent); }
+.who { font-weight: 800; font-size: 44px; color: var(--muted); }
+.bubble { background: var(--card); border: 2px solid var(--rule); border-radius: 56px 56px 14px 56px; padding: 56px 60px; font-family: "Frank Ruhl Libre", serif; font-weight: 900; font-size: 100px; line-height: 1.12; box-shadow: 0 24px 60px rgba(20,26,21,.10); }
+.kicker { font-weight: 800; font-size: 42px; color: var(--accent); }
+.title { font-family: "Frank Ruhl Libre", serif; font-weight: 900; font-size: 108px; line-height: 1.12; letter-spacing: -1px; }
+.sub { font-size: 56px; line-height: 1.4; color: var(--muted); font-weight: 600; }
+.rows { display: flex; flex-direction: column; gap: 30px; }
+.row { background: var(--card); border: 2px solid var(--rule); border-radius: 36px; padding: 40px 44px; display: flex; flex-direction: column; gap: 14px; }
+.row .rl { font-weight: 800; font-size: 38px; color: var(--red); }
+.row .rt { font-size: 58px; line-height: 1.3; font-weight: 700; }
+.row.good { border-color: var(--accent); background: #eef8f0; }
+.row.good .rl { color: var(--accent); }
+.pnum { width: 120px; height: 120px; border-radius: 50%; background: var(--accent); color: #fff; font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 60px; display: flex; align-items: center; justify-content: center; }
+.ptitle { font-family: "Frank Ruhl Libre", serif; font-weight: 900; font-size: 100px; line-height: 1.12; }
+.pbody { font-size: 58px; line-height: 1.4; color: var(--muted); font-weight: 600; }
+.big { font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 220px; line-height: 1; color: var(--accent); text-align: right; }
+.unit { font-family: "Frank Ruhl Libre", serif; font-weight: 900; font-size: 84px; line-height: 1.15; }
+.sign { margin-top: 30px; font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 46px; letter-spacing: 2px; text-align: right; }
+.sign span { display: block; width: 150px; height: 6px; background: var(--accent); margin: 20px 0 0 auto; border-radius: 3px; }
+"""
+
+
+def build(post):
+    spec = json.load(open(os.path.join(post, "reel.json"), encoding="utf-8"))
+    scenes = spec["scenes"]
+    starts, t = [], 0.0
+    for s in scenes:
+        starts.append(round(t, 2))
+        t += s["dur"]
+    total = round(t, 2)
+
+    b = os.path.join(post, "build")
+    shutil.rmtree(b, ignore_errors=True)
+    os.makedirs(os.path.join(b, "assets", "audio"))
+    shutil.copytree(os.path.join(V2, "fonts"), os.path.join(b, "assets", "fonts"))
+    os.makedirs(os.path.join(b, "assets", "vendor"))
+    shutil.copy(os.path.join(V2, "vendor", "gsap.min.js"), os.path.join(b, "assets", "vendor"))
+    music = MUSIC[spec.get("music", "advertime")]
+    fade = max(0.1, total - 1.5)
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", music, "-t", str(total), "-af",
+                    f"afade=t=in:d=0.4,afade=t=out:st={fade}:d=1.5,volume=0.8",
+                    os.path.join(b, "assets", "audio", "music.mp3")], check=True)
+
+    secs = "".join(
+        f'<section id="s{i}" class="scene clip" data-start="{starts[i]}" data-duration="{s["dur"]}" '
+        f'data-track-index="{1 + i % 2}"><div class="box">{scene_inner(s)}</div></section>'
+        for i, s in enumerate(scenes))
+    js_scenes = json.dumps([{"start": starts[i], "dur": s["dur"]} for i, s in enumerate(scenes)])
+    doc = f"""<!doctype html>
+<html lang="he" data-resolution="portrait"><head><meta charset="UTF-8"><meta name="viewport" content="width=1080, height=1920">
+<title>{html.escape(spec.get("series", "reel"))}</title><script src="assets/vendor/gsap.min.js"></script><style>{CSS}</style></head>
+<body><div id="root" data-composition-id="main" data-start="0" data-duration="{total}" data-width="1080" data-height="1920">
+<div id="bg"></div>
+<div id="top"><span class="series">{fmt(spec.get("series", ""))}</span><span class="brand">EZ.Path.AI</span></div>
+<div id="prog"><div id="prog-fill"></div></div>
+{secs}
+<audio id="music" src="assets/audio/music.mp3" data-start="0" data-duration="{total}" data-track-index="10" data-volume="1"></audio>
+</div>
+<script>
+(function () {{
+  const SCENES = {js_scenes};
+  const TOTAL = {total};
+  function build() {{
+    window.__timelines = window.__timelines || {{}};
+    const tl = gsap.timeline({{ paused: true }});
+    tl.fromTo("#prog-fill", {{ scaleX: 0 }}, {{ scaleX: 1, duration: TOTAL, ease: "none" }}, 0);
+    SCENES.forEach((sc, i) => {{
+      const items = "#s" + i + " .in";
+      if (i === 0)
+        tl.fromTo(items, {{ opacity: 1, scale: 0.94 }}, {{ opacity: 1, scale: 1, duration: 0.6, ease: "back.out(2)", stagger: 0.08 }}, 0);
+      else
+        tl.fromTo(items, {{ opacity: 0, y: 70 }}, {{ opacity: 1, y: 0, duration: 0.55, ease: "power3.out", stagger: 0.16 }}, sc.start + 0.05);
+      if (i < SCENES.length - 1)
+        tl.to(items, {{ opacity: 0, y: -40, duration: 0.3, ease: "power2.in" }}, sc.start + sc.dur - 0.32);
+    }});
+    window.__timelines["main"] = tl;
+    if (typeof window.__hfForceTimelineRebind === "function") window.__hfForceTimelineRebind();
+  }}
+  Promise.all([
+    document.fonts.load('900 90px "Frank Ruhl Libre"', "אבגד"),
+    document.fonts.load('700 40px "Assistant"', "אבגד"),
+    document.fonts.load('700 40px "JetBrains Mono"', "EZ.Path0123"),
+  ]).then(() => document.fonts.ready).then(build, build);
+}})();
+</script></body></html>
+"""
+    open(os.path.join(b, "index.html"), "w", encoding="utf-8").write(doc)
+    json.dump({"id": os.path.basename(post), "name": os.path.basename(post)}, open(os.path.join(b, "meta.json"), "w"))
+    return b, total
+
+
+def main():
+    post = os.path.abspath(sys.argv[1])
+    b, total = build(post)
+    print(f"built {b} ({total}s)")
+    if "--no-render" in sys.argv:
+        return
+    out = os.path.join(post, "reel.mp4")
+    subprocess.run(["npx", "--yes", HF, "render", b, "-o", out, "--quiet"], check=True)
+    print(out)
+
+
+if __name__ == "__main__":
+    main()
