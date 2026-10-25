@@ -132,7 +132,8 @@ def scene_inner(s):
             btns = "".join(f'<div class="qb">{fmt(b)}</div>' for b in m.get("buttons", []))
             btns = f'<div class="qbs">{btns}</div>' if btns else ""
             link = f'<div class="lnk" dir="ltr">{fmt(m["link"])}</div>' if m.get("link") else ""
-            msgs += f'<div class="m in {m["from"]}"><div class="mt">{fmt(m["text"])}{link}</div>{btns}</div>'
+            anim = "" if m.get("show") else " in"
+            msgs += f'<div class="m{anim} {m["from"]}"><div class="mt">{fmt(m["text"])}{link}</div>{btns}</div>'
         head = fmt(s.get("chat", "מרפאת השיניים"))
         pcls = "phone" + ("" if s.get("_cont") else " in") + (" keep" if s.get("_next_phone") else "")
         return (f'{cap}<div class="{pcls}"><div class="ph-head"><span class="ph-av"></span>'
@@ -261,7 +262,7 @@ def build(post):
       else
         tl.fromTo(items, {st_from}, Object.assign({st_to}, sc.stagger ? {{ stagger: sc.stagger }} : {{}}), sc.start + 0.02);
       if (i < SCENES.length - 1)
-        tl.to("#s" + i + " .in:not(.keep)", {st_out}, sc.start + sc.dur - 0.3);
+        tl.to("#s" + i + " .in:not(.keep):not(.keep .in)", {st_out}, sc.start + sc.dur - 0.3);
     }});
     window.__timelines["main"] = tl;
     if (typeof window.__hfForceTimelineRebind === "function") window.__hfForceTimelineRebind();
