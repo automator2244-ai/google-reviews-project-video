@@ -18,7 +18,7 @@
 | פרסום בוקר | א' עד ו', 8:27 | `trig_015F7Qd27kjwZW6EXaZxuyea` |
 | פרסום ערב | א' עד ה', 21:27 | `trig_01XxsLhaQM1xFLTespLUE5nF` |
 | פרסום מוצאי שבת | שבת, 21:57 | `trig_018CwJty4xd1XMiwHNg5qGbU` |
-| הפקה שבועית | א', 5:47 | `trig_01XnR275ewBJYoyg3WvSz47F` |
+| הפקה שבועית | א', 4:27 | `trig_01XnR275ewBJYoyg3WvSz47F` |
 
 כל משימה מכבה את עצמה אחרי 4.12.2026.
 
