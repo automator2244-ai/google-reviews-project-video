@@ -3,3 +3,7 @@ queue/*/build/
 queue/*/render.log
 queue/*/work-*/
 queue/*/.reel.hf-transaction-*/
+prototypes/*/build/
+prototypes/*/render.log
+prototypes/*/work-*/
+prototypes/*/.reel.hf-transaction-*/

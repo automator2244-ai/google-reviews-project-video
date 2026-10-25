@@ -11,6 +11,9 @@ Slide types:
   quote   label, title, quote, note?
   list    title, items[], mark ("check" | "cross" | "num"), note?
   end     title, sub?
+  web     label, title?, url, head, text      a website mockup (what the clinic says about itself)
+  reviews label, title?, items[{name, when, text}], note?   Google-style review cards (UI as content).
+          Example reviews must be marked as examples in "note".
 Inline markup in any text: *word* renders in the accent green, newline breaks the line.
 """
 import html
@@ -69,6 +72,28 @@ em { font-style: normal; color: var(--accent); }
         font-family: "JetBrains Mono", monospace; font-size: 36px; font-weight: 700; margin-top: 0; }
 .mark.check, .mark.num { background: var(--accent); color: #fff; }
 .mark.cross { background: #f6dcda; color: var(--red); }
+/* web, reviews */
+.label { font-family: "Assistant"; font-size: 40px; font-weight: 800; color: var(--accent); margin-bottom: 24px; }
+.wt { font-size: 88px; margin-bottom: 48px; }
+.site { background: #fff; border: 2px solid var(--rule); border-radius: 30px; overflow: hidden; box-shadow: 0 18px 50px rgba(20,26,21,.08); }
+.bar { background: #eceeec; padding: 22px 28px; display: flex; align-items: center; gap: 12px; direction: ltr; }
+.bar i { width: 20px; height: 20px; border-radius: 50%; background: #c9cdca; display: block; }
+.bar span { flex: 1; margin-left: 16px; background: #fff; border-radius: 14px; padding: 8px 22px; font-size: 30px; color: var(--muted); direction: rtl; text-align: right; }
+.hero { padding: 56px 56px 60px; direction: rtl; }
+.hero .h { font-size: 66px; font-weight: 800; line-height: 1.2; color: #5d635e; }
+.hero .p { margin-top: 22px; font-size: 44px; line-height: 1.45; color: #8a908b; font-weight: 500; }
+.hero .btn { display: inline-block; margin-top: 36px; background: #b9c0ba; color: #fff; font-size: 38px; font-weight: 800; padding: 18px 40px; border-radius: 16px; }
+.rvl { display: flex; flex-direction: column; gap: 30px; }
+.rv { background: #fff; border: 2px solid var(--rule); border-radius: 30px; padding: 34px 40px; box-shadow: 0 14px 40px rgba(20,26,21,.07); }
+.rvh { display: flex; align-items: center; gap: 22px; }
+.av { width: 72px; height: 72px; border-radius: 50%; color: #fff; font-weight: 800; font-size: 38px; display: flex; align-items: center; justify-content: center; }
+.nm { font-size: 40px; font-weight: 800; }
+.rvs { display: flex; align-items: center; gap: 18px; margin: 18px 0 14px; }
+.st { display: flex; gap: 4px; }
+.st svg { width: 38px; height: 38px; fill: #f2a900; }
+.wh { font-size: 32px; color: var(--muted); }
+.rvt { font-size: 46px; line-height: 1.4; font-weight: 600; }
+.note.sm { font-size: 34px; margin-top: 30px; }
 /* end */
 .end .display { font-size: 112px; }
 .end .sub { margin-top: 44px; font-size: 54px; color: var(--muted); font-weight: 600; line-height: 1.4; }
@@ -108,6 +133,25 @@ def slide_html(s, idx, total, series):
         note = f'<div class="note">{fmt(s["note"])}</div>' if s.get("note") else ""
         inner = (f'<div class="frame list center"><div class="display">{fmt(s["title"])}</div>'
                  f'<ul class="items">{lis}</ul>{note}</div>')
+    elif t == "web":
+        ttl = f'<div class="display wt">{fmt(s["title"])}</div>' if s.get("title") else ""
+        inner = (f'<div class="frame web center"><div class="label">{fmt(s["label"])}</div>{ttl}'
+                 f'<div class="site"><div class="bar"><i></i><i></i><i></i><span>{fmt(s["url"])}</span></div>'
+                 f'<div class="hero"><div class="h">{fmt(s["head"])}</div><div class="p">{fmt(s["text"])}</div>'
+                 f'<div class="btn">לקביעת תור</div></div></div></div>')
+    elif t == "reviews":
+        ttl = f'<div class="display wt">{fmt(s["title"])}</div>' if s.get("title") else ""
+        stars = "".join('<svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 '
+                        '6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/></svg>' for _ in range(5))
+        cols = ["#007329", "#6b3fb5", "#b35c00", "#027eb5"]
+        cards = "".join(
+            f'<div class="rv"><div class="rvh"><span class="av" style="background:{cols[i % 4]}">{fmt(it["name"][0])}</span>'
+            f'<span class="nm">{fmt(it["name"])}</span></div><div class="rvs"><span class="st" dir="ltr">{stars}</span>'
+            f'<span class="wh">{fmt(it.get("when", ""))}</span></div><div class="rvt">{fmt(it["text"])}</div></div>'
+            for i, it in enumerate(s["items"]))
+        note = f'<div class="note sm">{fmt(s["note"])}</div>' if s.get("note") else ""
+        inner = (f'<div class="frame reviews center"><div class="label">{fmt(s["label"])}</div>{ttl}'
+                 f'<div class="rvl">{cards}</div>{note}</div>')
     elif t == "end":
         inner = (f'<div class="frame end center"><div class="display">{fmt(s["title"])}</div>'
                  f'<div class="sub">{fmt(s.get("sub"))}</div><div class="sign">EZ.Path.AI<span></span></div></div>')
