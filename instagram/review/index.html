@@ -1,0 +1,211 @@
+<title>תור האישור של EZ.Path.AI</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&family=Frank+Ruhl+Libre:wght@700;900&family=JetBrains+Mono:wght@400;700&display=swap">
+<style>
+  /* Layout: one column of posts, each a phone-width preview with its caption beside it on wide screens. */
+  :root {
+    --paper: #f4f8f5; --card: #fdfefd; --ink: #141a15; --muted: #4e544f; --rule: #ccd3cd;
+    --accent: #007329; --accent-soft: #d0eed5; --warn: #8a5a00; --warn-soft: #fbefd2;
+    --display: "Frank Ruhl Libre", "David", serif; --body: "Assistant", "Arial Hebrew", sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --paper: #0f1511; --card: #18201a; --ink: #e8efe9; --muted: #a9b3ab; --rule: #2c362e;
+    --accent: #4cc472; --accent-soft: #1d3a25; --warn: #f2c15b; --warn-soft: #3a2f14; color-scheme: dark } }
+  :root[data-theme="dark"] {
+    --paper: #0f1511; --card: #18201a; --ink: #e8efe9; --muted: #a9b3ab; --rule: #2c362e;
+    --accent: #4cc472; --accent-soft: #1d3a25; --warn: #f2c15b; --warn-soft: #3a2f14; color-scheme: dark }
+  body { background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 17px; direction: rtl;
+         padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .wrap { max-width: 980px; margin: 0 auto; padding-block: 28px 64px; display: flex; flex-direction: column; gap: 28px; }
+  header { display: flex; flex-direction: column; gap: 6px; }
+  .brand { font-family: var(--mono); font-size: 13px; letter-spacing: 1px; color: var(--muted); }
+  h1 { font-family: var(--display); font-weight: 900; font-size: clamp(30px, 6vw, 44px); line-height: 1.1; margin: 0; text-wrap: balance; }
+  .lede { color: var(--muted); margin: 0; line-height: 1.6; max-width: 62ch; }
+  .post { background: var(--card); border: 1px solid var(--rule); border-radius: 18px; padding: 20px;
+          display: grid; grid-template-columns: minmax(0, 340px) minmax(0, 1fr); gap: 24px; }
+  @media (max-width: 720px) { .post { grid-template-columns: minmax(0, 1fr); } }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 12px; }
+  .slot { font-family: var(--mono); font-weight: 700; font-size: 15px; }
+  .chip { font-size: 13px; font-weight: 800; padding: 3px 10px; border-radius: 999px; background: var(--accent-soft); color: var(--accent); }
+  .chip.draft { background: var(--warn-soft); color: var(--warn); }
+  h2 { font-family: var(--display); font-size: 24px; margin: 0 0 12px; line-height: 1.25; text-wrap: balance; }
+  .viewer { position: relative; }
+  .track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; border-radius: 12px; border: 1px solid var(--rule); direction: ltr; }
+  .track img { flex: 0 0 100%; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; scroll-snap-align: start; display: block; }
+  .reel { width: 100%; aspect-ratio: 9 / 16; border-radius: 12px; border: 1px solid var(--rule); background: #000; display: block; max-width: 100%; }
+  .nav { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; gap: 8px; }
+  .nav button { font: inherit; font-weight: 700; border: 1px solid var(--rule); background: var(--paper); color: var(--ink);
+                border-radius: 10px; padding: 6px 14px; cursor: pointer; }
+  .nav button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .count { font-family: var(--mono); font-size: 14px; color: var(--muted); }
+  .caption { white-space: pre-wrap; line-height: 1.65; background: var(--paper); border-radius: 12px; padding: 14px 16px; margin: 0; }
+  .label { font-size: 13px; font-weight: 800; color: var(--muted); margin: 16px 0 6px; letter-spacing: .3px; }
+  .notes { margin: 0; padding-inline-start: 18px; color: var(--muted); line-height: 1.6; }
+  .how { border-top: 1px solid var(--rule); padding-top: 18px; color: var(--muted); line-height: 1.7; }
+  .how strong { color: var(--ink); }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="brand">EZ.Path.AI · @ez.path.ai</span>
+    <h1>הפוסטים שמחכים לאישור שלך</h1>
+    <p class="lede">כאן רואים כל פוסט בדיוק כמו שהוא יעלה: השקפים או הסרטון, השעה והכיתוב. שום דבר עוד לא עלה לאינסטגרם.</p>
+  </header>
+
+  <div id="posts"></div>
+
+  <p class="how"><strong>איך מאשרים:</strong> כותבים לי בשיחה "מאשר", או מה לשנות בכל פוסט. פוסט שלא אושר לא עולה.</p>
+</div>
+
+<script>
+  const POSTS = [
+ {
+  "slot": "יום שלישי, 27.10 · 8:30",
+  "status": "אושר",
+  "series": "מהדלפק · 1",
+  "title": "איך לבקש ביקורת ליד הדלפק: 4 משפטים",
+  "dir": "p/2026-10-27-0830",
+  "caption": "רוב המטופלים המרוצים לא כותבים ביקורת בגוגל. לא כי לא אכפת להם, פשוט אף אחד לא ביקש.\n\nאלה 4 משפטים שהצוות בקבלה של מרפאת שיניים יכול להגיד כבר מחר, בלי להרגיש לא נעים ובלי להישמע כמו מוכרים.\n\nהכי חשוב: לבקש ברגע שהמטופל מחמיא, ולשלוח קישור מיד. שבוע אחרי, כבר אף אחד לא זוכר.\n\nשמרו את הפוסט ותעבירו אותו למי שעומד בקבלה.\n\n#מרפאת_שיניים #ביקורות_בגוגל #ניהול_מרפאה #רופא_שיניים",
+  "notes": [
+   "Google: הטבות תמורת ביקורת אסורות (מדיניות התוכן של Google Maps)"
+  ],
+  "slides": 8,
+  "format": "קרוסלה, 8 שקפים"
+ },
+ {
+  "slot": "יום שלישי, 27.10 · 21:30",
+  "status": "אושר",
+  "series": "שאלה של מנהלת · 1",
+  "title": "זה לא ספאם למטופלים?",
+  "dir": "p/2026-10-27-2130",
+  "caption": "\"זה לא ספאם למטופלים?\" זו השאלה הראשונה שמנהלות מרפאה שואלות, ובצדק.\n\nההבדל בין ספאם לשירות הוא פשוט: ספאם מגיע ממישהו שלא הכרתם. כאן ההודעה מגיעה מהמרפאה שהמטופל ביקר בה באותו יום, מהמספר שהוא כבר מכיר.\n\nהודעה אחרי הביקור, תזכורת עדינה רק למי שלא ענה, ומי שכותב \"הסר\" לא מקבל יותר כלום.\n\nואצלכם, מה הכי מדאיג אתכם בפנייה למטופלים בוואטסאפ?\n\n#מרפאת_שיניים #ביקורות_בגוגל #ניהול_מרפאה #וואטסאפ_עסקי",
+  "notes": [
+   "עובדות על המוצר מ-google-reviews-project/CLAUDE.md: הודעה אחרי ביקור, תזכורת אחת לכל היותר, הסרה מכובדת, המספר של המרפאה",
+   "מוזיקה: Happy Whistling Ukulele מ-FreePD (נחלת הכלל). סגנון אנימציה: pop."
+  ],
+  "video": true,
+  "format": "ריל, 21 שניות, עם מוזיקה"
+ },
+ {
+  "slot": "יום רביעי, 28.10 · 8:30",
+  "status": "אושר",
+  "series": "מאחורי הקלעים · 1",
+  "title": "מה המטופל רואה בוואטסאפ אחרי הביקור",
+  "dir": "p/2026-10-28-0830",
+  "caption": "מה מטופל של מרפאת שיניים רואה בוואטסאפ, שעה אחרי הביקור?\n\nהודעה מהמספר של המרפאה: \"איך היה הטיפול?\" עם שני כפתורים לתשובה מהירה.\n\nמי שעונה שהיה טוב מקבל קישור אישי שפותח לו ישר את חלון הביקורת בגוגל. בלי לחפש את המרפאה, בלי לגלול ובלי לזכור לעשות את זה אחר כך.\n\nיש לכם שאלה על איך זה עובד? כתבו בתגובות.\n\n#מרפאת_שיניים #ביקורות_בגוגל #ניהול_מרפאה #וואטסאפ_עסקי",
+  "notes": [
+   "נוסחי ההודעות והכפתורים מהאפיון של פרויקט הביקורות (T1, LINK_MSG). השם \"דנה\" והקישור בדויים.",
+   "מוזיקה: Beat One מ-FreePD (נחלת הכלל). סגנון אנימציה: slide."
+  ],
+  "video": true,
+  "format": "ריל, 21 שניות, עם מוזיקה"
+ },
+ {
+  "slot": "יום רביעי, 28.10 · 21:30",
+  "status": "אושר",
+  "series": "חשבון פשוט · 1",
+  "title": "10 שנים בתחום, ורק 15 ביקורות?",
+  "dir": "p/2026-10-28-2130",
+  "caption": "10 שנים בתחום, ו-15 ביקורות בגוגל. זו ביקורת אחת כל 8 חודשים.\n\nבאותו זמן עברו במרפאה אלפי מטופלים. רובם יצאו מרוצים, אבל אף אחד לא ביקש מהם לכתוב, אז הם לא כתבו.\n\nמטופל חדש שמחפש רופא שיניים בגוגל לא רואה את 10 השנים. הוא רואה את ה-15.\n\nכמה ביקורות יש לכם, וכמה שנים אתם פתוחים? כתבו בתגובות.\n\n#מרפאת_שיניים #רופא_שיניים #ביקורות_בגוגל #ניהול_מרפאה",
+  "notes": [
+   "חשבון פשוט. \"50 מטופלים שונים בחודש\" מוצג כהנחה.",
+   "מוזיקה: Chronos מ-FreePD (נחלת הכלל). סגנון אנימציה: slide."
+  ],
+  "video": true,
+  "format": "ריל, 18 שניות, עם מוזיקה"
+ },
+ {
+  "slot": "יום חמישי, 29.10 · 8:30",
+  "status": "אושר",
+  "series": "מהדלפק · 2",
+  "title": "איפה מוצאים את הקישור הישיר לביקורת בגוגל",
+  "dir": "p/2026-10-29-0830",
+  "caption": "הקישור הישיר לביקורת בגוגל הוא הכלי הכי פשוט שיש למרפאה, ורוב המרפאות לא יודעות איפה למצוא אותו.\n\nמטופל שצריך לחפש את המרפאה בגוגל, לגלול ולמצוא את הכפתור, בדרך כלל מוותר באמצע. קישור ישיר פותח לו את חלון הביקורת מיד.\n\nב-4 שלבים, בתוך הפרופיל העסקי שלכם בגוגל. עושים את זה פעם אחת, ומשתמשים בקישור בוואטסאפ, בשלט בקבלה ובחתימה של המייל.\n\nשמרו את הפוסט, ותעבירו למי שמנהל אצלכם את הפרופיל בגוגל.\n\n#מרפאת_שיניים #ביקורות_בגוגל #ניהול_מרפאה #גוגל_מפות",
+  "notes": [
+   "Google Business Profile: \"קבלת ביקורות נוספות\" / Ask for reviews. הממשק משתנה, ונאמר בשקף."
+  ],
+  "slides": 8,
+  "format": "קרוסלה, 8 שקפים"
+ },
+ {
+  "slot": "יום חמישי, 29.10 · 21:30",
+  "status": "אושר",
+  "series": "שאלה של מנהלת · 2",
+  "title": "\"לא נעים לי לבקש ממטופלים\"",
+  "dir": "p/2026-10-29-2130",
+  "caption": "\"לא נעים לי לבקש ממטופלים ביקורת.\" את זה אמר לי השבוע רופא שיניים, בשיחה של חצי שעה.\n\nוהוא צודק. ברפואת שיניים יש אמון שנבנה במשך שנים, ואף אחד לא רוצה לסכן אותו בשביל ביקורת בגוגל.\n\nאבל יש הבדל גדול בין לחץ לבין בקשה. לחץ זה \"תן 5 כוכבים ותקבל הנחה\". בקשה זה \"איך היה? אם מתאים לך, זה עוזר לנו\". פעם אחת, עם אפשרות אמיתית להגיד לא.\n\nואצלכם, מי מבקש ביקורות: הרופא, הצוות, או אף אחד?\n\n#מרפאת_שיניים #רופא_שיניים #ביקורות_בגוגל #ניהול_מרפאה",
+  "notes": [
+   "insights/2026-10-20-dentist-call.md, נקודה 4. בלי שם הרופא.",
+   "מוזיקה: Ukulele Song מ-FreePD (נחלת הכלל). סגנון אנימציה: pop."
+  ],
+  "video": true,
+  "format": "ריל, 21 שניות, עם מוזיקה"
+ },
+ {
+  "slot": "יום שישי, 30.10 · 8:30",
+  "status": "אושר",
+  "series": "מהדלפק · 3",
+  "title": "שלט QR בקבלה",
+  "dir": "p/2026-10-30-0830",
+  "caption": "שלט QR בקבלה של מרפאת שיניים יכול להביא ביקורות בגוגל גם בימים שאף אחד לא זוכר לבקש.\n\nהרגע הכי טוב הוא אחרי הטיפול, ליד הקופה: המטופל רגוע, הטלפון ביד, והחוויה עוד טרייה.\n\nבפוסט: איפה לתלות, מה לכתוב, מה לא לכתוב, ואיך מכינים את הקוד מהקישור לביקורת (שהראינו אתמול).\n\nשמרו את הפוסט לפני שאתם מדפיסים.\n\n#מרפאת_שיניים #ביקורות_בגוגל #ניהול_מרפאה #רופא_שיניים",
+  "notes": [
+   "גוגל אוסרת הטבות תמורת ביקורת."
+  ],
+  "slides": 8,
+  "format": "קרוסלה, 8 שקפים"
+ },
+ {
+  "slot": "מוצאי שבת, 31.10 · 22:00",
+  "status": "אושר",
+  "series": "סיפור · 1",
+  "title": "3 דברים ששמעתי מרופא שיניים השבוע",
+  "dir": "p/2026-10-31-2200",
+  "caption": "השבוע דיברתי חצי שעה עם רופא שיניים, ויצאתי עם 3 דברים שלא ידעתי.\n\nביקורת אחת רעה יכולה לקפוץ ראשונה, גם כשכל השאר מעולות, כי ברירת המחדל בגוגל היא \"הרלוונטיות ביותר\" ולא \"החדשות ביותר\".\n\nלבקש ביקורת זה מביך, במיוחד כשיש אמון של שנים עם המטופל.\n\nומטופלים שכן רוצים לכתוב פשוט שוכחים. כשיש להם קישור ישיר שפותח את חלון הביקורת, זה לוקח פחות מדקה.\n\nהמשותף לשלושתם הוא לא מחסור במטופלים מרוצים, אלא מחסור בדרך קלה לכתוב. תודה לרופא שנתן לי חצי שעה של אמת.\n\n#מרפאת_שיניים #רופא_שיניים #ביקורות_בגוגל #ניהול_מרפאה",
+  "notes": [
+   "insights/2026-10-20-dentist-call.md, נקודות 1, 4, 7. ברירת המחדל של מיון הביקורות בגוגל מפות היא \"הרלוונטיות ביותר\".",
+   "מוזיקה: Relaxing Ballad מ-FreePD (נחלת הכלל). סגנון אנימציה: drift."
+  ],
+  "video": true,
+  "format": "ריל, 25 שניות, עם מוזיקה"
+ }
+];
+
+  const root = document.getElementById("posts");
+  POSTS.forEach((p, i) => {
+    const el = document.createElement("article");
+    el.className = "post";
+    const imgs = p.video ? "" : Array.from({ length: p.slides }, (_, k) =>
+      `<img src="${p.dir}/slide-${String(k + 1).padStart(2, "0")}.png" alt="שקף ${k + 1} מתוך ${p.slides}" loading="${i ? "lazy" : "eager"}">`).join("");
+    const viewer = p.video
+      ? `<div class="viewer"><video class="reel" src="${p.dir}/reel.mp4" poster="${p.dir}/poster.jpg" controls playsinline preload="metadata"></video></div>`
+      : `<div class="viewer">
+        <div class="track" id="t${i}">${imgs}</div>
+        <div class="nav">
+          <button type="button" id="prev${i}">הקודם</button>
+          <span class="count" id="c${i}">1/${p.slides}</span>
+          <button type="button" id="next${i}">הבא</button>
+        </div>
+      </div>`;
+    el.innerHTML = `
+      ${viewer}
+      <div>
+        <div class="meta"><span class="slot">${p.slot}</span><span class="chip draft">${p.status}</span><span class="chip">${p.series}</span></div>
+        <h2>${p.title}</h2>
+        <div class="label">${p.format} · הכיתוב</div>
+        <p class="caption"></p>
+        <div class="label">הערות שלי</div>
+        <ul class="notes">${p.notes.map(n => `<li></li>`).join("")}</ul>
+      </div>`;
+    el.querySelector(".caption").textContent = p.caption;
+    el.querySelectorAll(".notes li").forEach((li, k) => li.textContent = p.notes[k]);
+    root.appendChild(el);
+    if (p.video) return;
+    const track = el.querySelector(".track"), count = el.querySelector(".count");
+    const idx = () => Math.round(track.scrollLeft / track.clientWidth);
+    const go = d => track.scrollTo({ left: Math.max(0, Math.min(p.slides - 1, idx() + d)) * track.clientWidth, behavior: "smooth" });
+    el.querySelector(`#prev${i}`).onclick = () => go(-1);
+    el.querySelector(`#next${i}`).onclick = () => go(1);
+    track.addEventListener("scroll", () => { count.textContent = `${idx() + 1}/${p.slides}`; }, { passive: true });
+  });
+</script>

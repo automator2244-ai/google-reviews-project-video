@@ -1,0 +1,5 @@
+queue/*/build/
+.music-cache/
+queue/*/render.log
+queue/*/work-*/
+queue/*/.reel.hf-transaction-*/

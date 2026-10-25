@@ -132,6 +132,8 @@ def main():
                             "--force-device-scale-factor=1", "--window-size=1080,1350",
                             "--virtual-time-budget=3000", f"--screenshot={out}", "file://" + page],
                            check=True, capture_output=True)
+            # Instagram's API takes JPEG only for images.
+            subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", out, "-q:v", "2", out[:-4] + ".jpg"], check=True)
             print(out)
 
 
