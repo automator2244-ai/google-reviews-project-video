@@ -1,6 +1,6 @@
 {
- "source": "FreePD (https://archive.org/details/freepd), public domain (CC0)",
- "rules": "Never the same track within 10 reels. Advertime is retired (used in the earlier reels).",
+ "source": "FreePD (https://archive.org/details/freepd), public domain (CC0), and Kevin MacLeod (https://incompetech.com), CC BY 4.0. Tracks with a 'credit' field must carry it in the caption (tools/credit.py adds it).",
+ "rules": "Never the same track within 10 reels. Advertime is retired (used in the earlier reels). When two tracks are used equally often, a CC0 track wins, so credit lines stay rare.",
  "series_mood": {
   "שאלה של מנהלת": "light",
   "חשבון פשוט": "beat",
@@ -9,14 +9,18 @@
   "דעה": "groove",
   "סיפור": "calm",
   "בניה בסלפי": "calm",
-  "הצעה": "bright"
+  "הצעה": "bright",
+  "סיטקום": "humor",
+  "ניסוי": "beat",
+  "לפני ואחרי": "bright"
  },
  "mood_style": {
   "light": "pop",
   "beat": "slide",
   "groove": "punch",
   "calm": "drift",
-  "bright": "rise"
+  "bright": "rise",
+  "humor": "bounce"
  },
  "tracks": {
   "Happy_Whistling_Ukulele": {
@@ -24,224 +28,496 @@
    "file": "Happy_Whistling_Ukulele.mp3",
    "freepd": "upbeat/Happy Whistling Ukulele.mp3",
    "bpm": 129.2,
-   "start": 42.24
+   "start": 42.24,
+   "license": "CC0"
   },
   "Ukulele_Song": {
    "mood": "light",
    "file": "Ukulele_Song.mp3",
    "freepd": "upbeat/Ukulele Song.mp3",
    "bpm": 184.6,
-   "start": 42.72
+   "start": 42.72,
+   "license": "CC0"
   },
   "Hold_on_a_Sec": {
    "mood": "light",
    "file": "Hold_on_a_Sec.mp3",
    "freepd": "misc/Hold on a Sec.mp3",
    "bpm": 184.6,
-   "start": 30.67
+   "start": 30.67,
+   "license": "CC0"
   },
   "Pickled_Pink": {
    "mood": "light",
    "file": "Pickled_Pink.mp3",
    "freepd": "upbeat/Pickled Pink.mp3",
    "bpm": 99.4,
-   "start": 57.96
+   "start": 57.96,
+   "license": "CC0"
   },
   "And_Just_Like_That": {
    "mood": "light",
    "file": "And_Just_Like_That.mp3",
    "freepd": "upbeat/And Just Like That.mp3",
    "bpm": 123.0,
-   "start": 62.46
+   "start": 62.46,
+   "license": "CC0"
   },
   "Beat_One": {
    "mood": "beat",
    "file": "Beat_One.mp3",
    "freepd": "electronic/Beat One.mp3",
    "bpm": 117.5,
-   "start": 33.81
+   "start": 33.81,
+   "license": "CC0"
   },
   "Chronos": {
    "mood": "beat",
    "file": "Chronos.mp3",
    "freepd": "electronic/Chronos.mp3",
    "bpm": 117.5,
-   "start": 76.58
+   "start": 76.58,
+   "license": "CC0"
   },
   "Favorite": {
    "mood": "beat",
    "file": "Favorite.mp3",
    "freepd": "electronic/Favorite.mp3",
    "bpm": 117.5,
-   "start": 32.16
+   "start": 32.16,
+   "license": "CC0"
   },
   "Hippety_Hop": {
    "mood": "beat",
    "file": "Hippety_Hop.mp3",
    "freepd": "electronic/Hippety Hop.mp3",
    "bpm": 92.3,
-   "start": 82.85
+   "start": 82.85,
+   "license": "CC0"
   },
   "Motions": {
    "mood": "beat",
    "file": "Motions.mp3",
    "freepd": "upbeat/Motions.mp3",
    "bpm": 123.0,
-   "start": 34.27
+   "start": 34.27,
+   "license": "CC0"
   },
   "Screen_Saver": {
    "mood": "beat",
    "file": "Screen_Saver.mp3",
    "freepd": "upbeat/Screen Saver.mp3",
    "bpm": 80.7,
-   "start": 10.29
+   "start": 10.29,
+   "license": "CC0"
   },
   "Inventing_Flight": {
    "mood": "beat",
    "file": "Inventing_Flight.mp3",
    "freepd": "upbeat/Inventing Flight.mp3",
    "bpm": 143.6,
-   "start": 56.38
+   "start": 56.38,
+   "license": "CC0"
   },
   "Hear_What_They_Say": {
    "mood": "beat",
    "file": "Hear_What_They_Say.mp3",
    "freepd": "electronic/Hear What They Say.mp3",
    "bpm": 117.5,
-   "start": 67.31
+   "start": 67.31,
+   "license": "CC0"
   },
   "Downtown_Boogie": {
    "mood": "groove",
    "file": "Downtown_Boogie.mp3",
    "freepd": "misc/Downtown Boogie.mp3",
    "bpm": 103.4,
-   "start": 29.77
+   "start": 29.77,
+   "license": "CC0"
   },
   "Funkeriffic": {
    "mood": "groove",
    "file": "Funkeriffic.mp3",
    "freepd": "misc/Funkeriffic.mp3",
    "bpm": 112.3,
-   "start": 106.14
+   "start": 106.14,
+   "license": "CC0"
   },
   "Groovin": {
    "mood": "groove",
    "file": "Groovin.mp3",
    "freepd": "misc/Groovin.mp3",
    "bpm": 117.5,
-   "start": 11.82
+   "start": 11.82,
+   "license": "CC0"
   },
   "Gotta_Keep_On_Movin": {
    "mood": "groove",
    "file": "Gotta_Keep_On_Movin.mp3",
    "freepd": "misc/Gotta Keep On Movin.mp3",
    "bpm": 112.3,
-   "start": 70.96
+   "start": 70.96,
+   "license": "CC0"
   },
   "Sunday_Dub": {
    "mood": "groove",
    "file": "Sunday_Dub.mp3",
    "freepd": "misc/Sunday Dub.mp3",
    "bpm": 103.4,
-   "start": 8.64
+   "start": 8.64,
+   "license": "CC0"
   },
   "Martini_Sunset": {
    "mood": "groove",
    "file": "Martini_Sunset.mp3",
    "freepd": "misc/Martini Sunset.mp3",
    "bpm": 143.6,
-   "start": 48.92
+   "start": 48.92,
+   "license": "CC0"
   },
   "Trip_Up_North": {
    "mood": "groove",
    "file": "Trip_Up_North.mp3",
    "freepd": "misc/Trip Up North.mp3",
    "bpm": 129.2,
-   "start": 100.96
+   "start": 100.96,
+   "license": "CC0"
   },
   "Relaxing_Ballad": {
    "mood": "calm",
    "file": "Relaxing_Ballad.mp3",
    "freepd": "upbeat/Relaxing Ballad.mp3",
    "bpm": 136.0,
-   "start": 63.67
+   "start": 63.67,
+   "license": "CC0"
   },
   "Painting_Room": {
    "mood": "calm",
    "file": "Painting_Room.mp3",
    "freepd": "misc/Painting Room.mp3",
    "bpm": 129.2,
-   "start": 15.53
+   "start": 15.53,
+   "license": "CC0"
   },
   "Study_and_Relax": {
    "mood": "calm",
    "file": "Study_and_Relax.mp3",
    "freepd": "featured/Study and Relax.mp3",
    "bpm": 143.6,
-   "start": 23.41
+   "start": 23.41,
+   "license": "CC0"
   },
   "Finally_See_The_Light": {
    "mood": "calm",
    "file": "Finally_See_The_Light.mp3",
    "freepd": "misc/Finally See The Light.mp3",
    "bpm": 92.3,
-   "start": 119.42
+   "start": 119.42,
+   "license": "CC0"
   },
   "Meditating_Beat": {
    "mood": "calm",
    "file": "Meditating_Beat.mp3",
    "freepd": "electronic/Meditating Beat.mp3",
    "bpm": 92.3,
-   "start": 86.82
+   "start": 86.82,
+   "license": "CC0"
   },
   "Be_Chillin": {
    "mood": "calm",
    "file": "Be_Chillin.mp3",
    "freepd": "upbeat/Be Chillin.mp3",
    "bpm": 136.0,
-   "start": 15.51
+   "start": 15.51,
+   "license": "CC0"
   },
   "Inspiration": {
    "mood": "bright",
    "file": "Inspiration.mp3",
    "freepd": "upbeat/Inspiration.mp3",
    "bpm": 117.5,
-   "start": 98.38
+   "start": 98.38,
+   "license": "CC0"
   },
   "City_Sunshine": {
    "mood": "bright",
    "file": "City_Sunshine.mp3",
    "freepd": "upbeat/City Sunshine.mp3",
    "bpm": 86.1,
-   "start": 94.64
+   "start": 94.64,
+   "license": "CC0"
   },
   "Funshine": {
    "mood": "bright",
    "file": "Funshine.mp3",
    "freepd": "upbeat/Funshine.mp3",
    "bpm": 95.7,
-   "start": 29.14
+   "start": 29.14,
+   "license": "CC0"
   },
   "From_Page_to_Practice": {
    "mood": "bright",
    "file": "From_Page_to_Practice.mp3",
    "freepd": "upbeat/From Page to Practice.mp3",
    "bpm": 161.5,
-   "start": 77.69
+   "start": 77.69,
+   "license": "CC0"
   },
   "One_Step_Closer": {
    "mood": "bright",
    "file": "One_Step_Closer.mp3",
    "freepd": "misc/One Step Closer.mp3",
    "bpm": 99.4,
-   "start": 55.96
+   "start": 55.96,
+   "license": "CC0"
   },
   "Energizing": {
    "mood": "bright",
    "file": "Energizing.mp3",
    "freepd": "misc/Energizing.mp3",
    "bpm": 89.1,
-   "start": 93.02
+   "start": 93.02,
+   "license": "CC0"
+  },
+  "Carefree": {
+   "mood": "light",
+   "file": "inc_Carefree.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Carefree.mp3",
+   "bpm": 95.7,
+   "start": 72.89,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN1400037",
+   "credit": "\"Carefree\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
+  },
+  "Wallpaper": {
+   "mood": "light",
+   "file": "inc_Wallpaper.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Wallpaper.mp3",
+   "bpm": 92.3,
+   "start": 50.39,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN1100843",
+   "credit": "\"Wallpaper\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
+  },
+  "Cheery_Monday": {
+   "mood": "light",
+   "file": "inc_Cheery_Monday.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Cheery%20Monday.mp3",
+   "bpm": 103.4,
+   "start": 27.26,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN1700065",
+   "credit": "\"Cheery Monday\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
+  },
+  "Happy_Alley": {
+   "mood": "light",
+   "file": "inc_Happy_Alley.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Happy%20Alley.mp3",
+   "bpm": 73.8,
+   "start": 12.86,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN1100482",
+   "credit": "\"Happy Alley\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
+  },
+  "Bit_Shift": {
+   "mood": "beat",
+   "file": "inc_Bit_Shift.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Bit%20Shift.mp3",
+   "bpm": 129.2,
+   "start": 3.07,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN1600045",
+   "credit": "\"Bit Shift\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
+  },
+  "Overcast": {
+   "mood": "beat",
+   "file": "inc_Overcast.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Overcast.mp3",
+   "bpm": 117.5,
+   "start": 4.3,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN1200002",
+   "credit": "\"Overcast\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
+  },
+  "Getting_it_Done": {
+   "mood": "beat",
+   "file": "inc_Getting_it_Done.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Getting%20it%20Done.mp3",
+   "bpm": 136.0,
+   "start": 55.17,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN1800004",
+   "credit": "\"Getting it Done\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
+  },
+  "Werq": {
+   "mood": "beat",
+   "file": "inc_Werq.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Werq.mp3",
+   "bpm": 123.0,
+   "start": 119.56,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN1800005",
+   "credit": "\"Werq\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
+  },
+  "Funkorama": {
+   "mood": "groove",
+   "file": "inc_Funkorama.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Funkorama.mp3",
+   "bpm": 99.4,
+   "start": 25.61,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN1100474",
+   "credit": "\"Funkorama\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
+  },
+  "Hep_Cats": {
+   "mood": "groove",
+   "file": "inc_Hep_Cats.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Hep%20Cats.mp3",
+   "bpm": 184.6,
+   "start": 89.4,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN1500022",
+   "credit": "\"Hep Cats\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
+  },
+  "Pamgaea": {
+   "mood": "groove",
+   "file": "inc_Pamgaea.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Pamgaea.mp3",
+   "bpm": 95.7,
+   "start": 102.84,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN1300036",
+   "credit": "\"Pamgaea\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
+  },
+  "Chill_Wave": {
+   "mood": "groove",
+   "file": "inc_Chill_Wave.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Chill%20Wave.mp3",
+   "bpm": 99.4,
+   "start": 30.0,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN1600048",
+   "credit": "\"Chill Wave\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
+  },
+  "Easy_Lemon": {
+   "mood": "calm",
+   "file": "inc_Easy_Lemon.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Easy%20Lemon.mp3",
+   "bpm": 80.7,
+   "start": 73.24,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN1200076",
+   "credit": "\"Easy Lemon\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
+  },
+  "Late_Night_Radio": {
+   "mood": "calm",
+   "file": "inc_Late_Night_Radio.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Late%20Night%20Radio.mp3",
+   "bpm": 143.6,
+   "start": 89.86,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN2100003",
+   "credit": "\"Late Night Radio\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
+  },
+  "Dreamer": {
+   "mood": "calm",
+   "file": "inc_Dreamer.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Dreamer.mp3",
+   "bpm": 99.4,
+   "start": 4.88,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN1600043",
+   "credit": "\"Dreamer\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
+  },
+  "Sincerely": {
+   "mood": "calm",
+   "file": "inc_Sincerely.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Sincerely.mp3",
+   "bpm": 71.8,
+   "start": 55.08,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN1900016",
+   "credit": "\"Sincerely\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
+  },
+  "Inspired": {
+   "mood": "bright",
+   "file": "inc_Inspired.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Inspired.mp3",
+   "bpm": 117.5,
+   "start": 80.06,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN1600022",
+   "credit": "\"Inspired\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
+  },
+  "Life_of_Riley": {
+   "mood": "bright",
+   "file": "inc_Life_of_Riley.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Life%20of%20Riley.mp3",
+   "bpm": 103.4,
+   "start": 116.54,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN1400054",
+   "credit": "\"Life of Riley\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
+  },
+  "Beachfront_Celebration": {
+   "mood": "bright",
+   "file": "inc_Beachfront_Celebration.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Beachfront%20Celebration.mp3",
+   "bpm": 95.7,
+   "start": 88.79,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN1200022",
+   "credit": "\"Beachfront Celebration\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
+  },
+  "Fretless": {
+   "mood": "bright",
+   "file": "inc_Fretless.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Fretless.mp3",
+   "bpm": 99.4,
+   "start": 119.16,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN1500074",
+   "credit": "\"Fretless\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
+  },
+  "Investigations": {
+   "mood": "humor",
+   "file": "inc_Investigations.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Investigations.mp3",
+   "bpm": 95.7,
+   "start": 48.37,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN1100646",
+   "credit": "\"Investigations\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
+  },
+  "Chee_Zee_Beach": {
+   "mood": "humor",
+   "file": "inc_Chee_Zee_Beach.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Chee%20Zee%20Beach.mp3",
+   "bpm": 172.3,
+   "start": 93.92,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN1100686",
+   "credit": "\"Chee Zee Beach\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
+  },
+  "Local_Forecast_Elevator": {
+   "mood": "humor",
+   "file": "inc_Local_Forecast_-_Elevator.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Local%20Forecast%20-%20Elevator.mp3",
+   "bpm": 107.7,
+   "start": 110.55,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN1300012",
+   "credit": "\"Local Forecast - Elevator\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
+  },
+  "Quirky_Dog": {
+   "mood": "humor",
+   "file": "inc_Quirky_Dog.mp3",
+   "url": "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Quirky%20Dog.mp3",
+   "bpm": 117.5,
+   "start": 12.24,
+   "license": "CC BY 4.0",
+   "isrc": "USUAN1500053",
+   "credit": "\"Quirky Dog\" Kevin MacLeod (incompetech.com)\nLicensed under Creative Commons: By Attribution 4.0\nhttps://creativecommons.org/licenses/by/4.0/"
   }
  }
 }

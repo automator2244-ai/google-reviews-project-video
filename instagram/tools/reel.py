@@ -17,6 +17,9 @@ Scene types:
   point   n, title, body?                one numbered point
   number  value, unit, note?             big number in mono
   end     text, sub?                     closing line and the EZ.Path.AI sign
+  confess tag, role?, quote, icon?       documentary "talking head": dark frame, lower-third name tag, quote.
+                                         icon: person (default) | star. Good for sitcom and mockumentary formats.
+  phone   msgs[{from, text, name?, ...}] a msg with "name" shows the sender, for group chats (chat, sub on the scene)
 Inline markup: *word* = accent green, newline = line break.
 Layout keeps every text inside the Reels safe zone: y 300 to 1440, and 230px clear on the right.
 """
@@ -47,6 +50,8 @@ STYLES = {
               "{opacity: 0, x: 140, duration: 0.25, ease: 'power2.in'}"),
     "punch": ("{opacity: 0, scale: 1.35, rotation: -3}", "{opacity: 1, scale: 1, rotation: 0, duration: 0.4, ease: 'expo.out', stagger: 0.1}",
               "{opacity: 0, scale: 0.85, duration: 0.22, ease: 'power3.in'}"),
+    "bounce": ("{opacity: 0, y: -90, scaleY: 1.15}", "{opacity: 1, y: 0, scaleY: 1, duration: 0.7, ease: 'bounce.out', stagger: 0.12}",
+               "{opacity: 0, y: 60, duration: 0.25, ease: 'power2.in'}"),
     "drift": ("{opacity: 0, y: 40, filter: 'blur(10px)'}", "{opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.0, ease: 'power2.out', stagger: 0.25}",
               "{opacity: 0, filter: 'blur(6px)', duration: 0.45, ease: 'power1.in'}"),
 }
@@ -67,15 +72,15 @@ def pick_track(spec, slot):
         used = [e["track"] for e in log]
         pool = [n for n, t in tracks.items() if t["mood"] == mood and n not in recent] or \
                [n for n in tracks if n not in recent]
-        # least used first, then catalog order
-        name = sorted(pool, key=lambda n: (used.count(n), list(tracks).index(n)))[0]
+        # least used first, then CC0 before tracks that need a credit line, then catalog order
+        name = sorted(pool, key=lambda n: (used.count(n), "credit" in tracks[n], list(tracks).index(n)))[0]
     t = tracks[name]
     path = os.path.join(CACHE, t["file"])
     if not os.path.exists(path):
         os.makedirs(CACHE, exist_ok=True)
         import urllib.parse
-        subprocess.run(["curl", "-sSfL", "-o", path,
-                        "https://archive.org/download/freepd/" + urllib.parse.quote(t["freepd"])], check=True)
+        url = t.get("url") or "https://archive.org/download/freepd/" + urllib.parse.quote(t["freepd"])
+        subprocess.run(["curl", "-sSfL", "-A", "Mozilla/5.0", "-o", path, url], check=True)
     style = spec.get("style") or cat["mood_style"][t["mood"]]
     return name, t, path, style
 
@@ -120,6 +125,14 @@ def scene_inner(s):
         sub = f'<div class="sub in">{fmt(s["sub"])}</div>' if s.get("sub") else ""
         return (f'<div class="title in">{fmt(s["text"])}</div>{sub}'
                 f'<div class="sign in" dir="ltr">EZ.Path.AI<span></span></div>')
+    if t == "confess":
+        icon = STAR_SVG if s.get("icon") == "star" else PERSON_SVG
+        role = f'<span class="cf-role">{fmt(s["role"])}</span>' if s.get("role") else ""
+        return (f'<div class="cf-card in"><span class="cf-c tl"></span><span class="cf-c tr"></span>'
+                f'<span class="cf-c bl"></span><span class="cf-c br"></span>'
+                f'<span class="cf-rec" dir="ltr"><i></i>REC</span>{icon}</div>'
+                f'<div class="cf-tag in"><span class="cf-name">{fmt(s["tag"])}</span>{role}</div>'
+                f'<div class="cf-quote in">{fmt(s["quote"])}</div>')
     if t == "phone":
         cap = f'<div class="pcap in">{fmt(s["caption"])}</div>' if s.get("caption") else ""
         msgs = ""
@@ -133,13 +146,25 @@ def scene_inner(s):
             btns = f'<div class="qbs">{btns}</div>' if btns else ""
             link = f'<div class="lnk" dir="ltr">{fmt(m["link"])}</div>' if m.get("link") else ""
             anim = "" if m.get("show") else " in"
-            msgs += f'<div class="m{anim} {m["from"]}"><div class="mt">{fmt(m["text"])}{link}</div>{btns}</div>'
+            who = ""
+            if m.get("name"):
+                col = NAME_COLORS[sum(map(ord, m["name"])) % len(NAME_COLORS)]
+                who = f'<div class="mn" style="color:{col}">{fmt(m["name"])}</div>'
+            msgs += f'<div class="m{anim} {m["from"]}"><div class="mt">{who}{fmt(m["text"])}{link}</div>{btns}</div>'
         head = fmt(s.get("chat", "מרפאת השיניים"))
+        if s.get("sub"):
+            head = f'<span class="ph-hn">{head}<small>{fmt(s["sub"])}</small></span>'
         pcls = "phone" + ("" if s.get("_cont") else " in") + (" keep" if s.get("_next_phone") else "")
         return (f'{cap}<div class="{pcls}"><div class="ph-head"><span class="ph-av"></span>'
                 f'<span class="ph-name">{head}</span></div><div class="ph-body">{msgs}</div></div>')
     raise SystemExit(f"unknown scene type {t}")
 
+
+PERSON_SVG = ('<svg class="cf-icon" viewBox="0 0 200 200"><circle cx="100" cy="72" r="40"/>'
+              '<path d="M30 190c0-42 31-70 70-70s70 28 70 70z"/></svg>')
+STAR_SVG = ('<svg class="cf-icon star" viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 '
+            '6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/></svg>')
+NAME_COLORS = ["#007329", "#b3261e", "#6b3fb5", "#b35c00", "#027eb5"]
 
 CSS = """
 @font-face { font-family: "Frank Ruhl Libre"; src: url("assets/fonts/frank-ruhl-libre-hebrew.woff2") format("woff2"); font-weight: 300 900; font-display: block; unicode-range: U+0590-05FF, U+FB1D-FB4F; }
@@ -198,6 +223,24 @@ em { font-style: normal; color: var(--accent); }
 .qb { background: #fff; color: #027eb5; text-align: center; padding: 18px; border-radius: 20px; font-size: 38px; font-weight: 700; }
 .m.stars { align-self: center; display: flex; gap: 14px; background: #fff; padding: 26px 34px; border-radius: 30px; max-width: none; }
 .m.stars svg { width: 76px; height: 76px; fill: #f2a900; }
+.mn { font-weight: 800; font-size: 34px; margin-bottom: 4px; }
+.ph-hn { display: flex; flex-direction: column; line-height: 1.15; }
+.ph-hn small { font-size: 28px; font-weight: 600; opacity: .8; }
+.cf-card { position: relative; height: 470px; border-radius: 48px; background: var(--ink); display: flex; align-items: flex-end; justify-content: center; overflow: hidden; box-shadow: 0 30px 70px rgba(20,26,21,.22); }
+.cf-icon { width: 330px; height: 330px; fill: #3a453c; margin-bottom: -6px; }
+.cf-icon.star { fill: #f2a900; width: 300px; height: 300px; margin-bottom: 70px; }
+.cf-c { position: absolute; width: 56px; height: 56px; border: 0 solid rgba(244,248,245,.75); }
+.cf-c.tl { top: 34px; left: 34px; border-top-width: 6px; border-left-width: 6px; }
+.cf-c.tr { top: 34px; right: 34px; border-top-width: 6px; border-right-width: 6px; }
+.cf-c.bl { bottom: 34px; left: 34px; border-bottom-width: 6px; border-left-width: 6px; }
+.cf-c.br { bottom: 34px; right: 34px; border-bottom-width: 6px; border-right-width: 6px; }
+.cf-rec { position: absolute; top: 46px; left: 110px; font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 30px; color: #f4f8f5; display: flex; align-items: center; gap: 12px; }
+.cf-rec i { width: 22px; height: 22px; border-radius: 50%; background: #e5483e; display: block; }
+.cf-tag { align-self: flex-start; margin-top: -110px; position: relative; background: var(--accent); color: #fff; padding: 20px 38px; border-radius: 20px; display: flex; flex-direction: column; gap: 4px; box-shadow: 0 14px 30px rgba(0,76,26,.3); }
+.cf-name { font-weight: 800; font-size: 54px; line-height: 1.1; }
+.cf-role { font-weight: 600; font-size: 34px; opacity: .9; }
+.cf-quote { font-family: "Frank Ruhl Libre", serif; font-weight: 900; font-size: 84px; line-height: 1.16; }
+#s0 .cf-quote { font-size: 96px; }
 """
 
 
@@ -228,7 +271,7 @@ def build(post):
     shutil.copy(os.path.join(V2, "vendor", "gsap.min.js"), os.path.join(b, "assets", "vendor"))
     fade = max(0.1, total - 1.5)
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", str(track["start"]), "-i", music, "-t", str(total), "-af",
-                    f"afade=t=in:d=0.4,afade=t=out:st={fade}:d=1.5,volume=0.8",
+                    f"loudnorm=I=-16:TP=-1.5:LRA=11,afade=t=in:d=0.4,afade=t=out:st={fade}:d=1.5",
                     os.path.join(b, "assets", "audio", "music.mp3")], check=True)
 
     secs = "".join(
@@ -276,7 +319,8 @@ def build(post):
 </script></body></html>
 """
     open(os.path.join(b, "index.html"), "w", encoding="utf-8").write(doc)
-    json.dump({"track": name, "freepd": track["freepd"], "bpm": track["bpm"], "style": style, "duration": total},
+    json.dump({"track": name, "source": track.get("url") or track["freepd"], "license": track.get("license", "CC0"),
+               "credit": track.get("credit"), "bpm": track["bpm"], "style": style, "duration": total},
               open(os.path.join(post, "music.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     json.dump({"id": os.path.basename(post), "name": os.path.basename(post)}, open(os.path.join(b, "meta.json"), "w"))
     return b, total
@@ -290,7 +334,9 @@ def main():
         return
     out = os.path.join(post, "reel.mp4")
     subprocess.run(["npx", "--yes", HF, "render", b, "-o", out, "--quiet"], check=True)
-    log_track(os.path.basename(post), json.load(open(os.path.join(post, "music.json")))["track"])
+    if os.path.basename(os.path.dirname(post)) == "queue":  # prototypes do not use up a track
+        log_track(os.path.basename(post), json.load(open(os.path.join(post, "music.json")))["track"])
+    subprocess.run([sys.executable, os.path.join(HERE, "credit.py"), post], check=True)
     print(out)
 
 
