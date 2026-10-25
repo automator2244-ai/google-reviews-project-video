@@ -1,0 +1,247 @@
+{
+ "source": "FreePD (https://archive.org/details/freepd), public domain (CC0)",
+ "rules": "Never the same track within 10 reels. Advertime is retired (used in the earlier reels).",
+ "series_mood": {
+  "שאלה של מנהלת": "light",
+  "חשבון פשוט": "beat",
+  "מאחורי הקלעים": "beat",
+  "מספר אחד": "beat",
+  "דעה": "groove",
+  "סיפור": "calm",
+  "בניה בסלפי": "calm",
+  "הצעה": "bright"
+ },
+ "mood_style": {
+  "light": "pop",
+  "beat": "slide",
+  "groove": "punch",
+  "calm": "drift",
+  "bright": "rise"
+ },
+ "tracks": {
+  "Happy_Whistling_Ukulele": {
+   "mood": "light",
+   "file": "Happy_Whistling_Ukulele.mp3",
+   "freepd": "upbeat/Happy Whistling Ukulele.mp3",
+   "bpm": 129.2,
+   "start": 42.24
+  },
+  "Ukulele_Song": {
+   "mood": "light",
+   "file": "Ukulele_Song.mp3",
+   "freepd": "upbeat/Ukulele Song.mp3",
+   "bpm": 184.6,
+   "start": 42.72
+  },
+  "Hold_on_a_Sec": {
+   "mood": "light",
+   "file": "Hold_on_a_Sec.mp3",
+   "freepd": "misc/Hold on a Sec.mp3",
+   "bpm": 184.6,
+   "start": 30.67
+  },
+  "Pickled_Pink": {
+   "mood": "light",
+   "file": "Pickled_Pink.mp3",
+   "freepd": "upbeat/Pickled Pink.mp3",
+   "bpm": 99.4,
+   "start": 57.96
+  },
+  "And_Just_Like_That": {
+   "mood": "light",
+   "file": "And_Just_Like_That.mp3",
+   "freepd": "upbeat/And Just Like That.mp3",
+   "bpm": 123.0,
+   "start": 62.46
+  },
+  "Beat_One": {
+   "mood": "beat",
+   "file": "Beat_One.mp3",
+   "freepd": "electronic/Beat One.mp3",
+   "bpm": 117.5,
+   "start": 33.81
+  },
+  "Chronos": {
+   "mood": "beat",
+   "file": "Chronos.mp3",
+   "freepd": "electronic/Chronos.mp3",
+   "bpm": 117.5,
+   "start": 76.58
+  },
+  "Favorite": {
+   "mood": "beat",
+   "file": "Favorite.mp3",
+   "freepd": "electronic/Favorite.mp3",
+   "bpm": 117.5,
+   "start": 32.16
+  },
+  "Hippety_Hop": {
+   "mood": "beat",
+   "file": "Hippety_Hop.mp3",
+   "freepd": "electronic/Hippety Hop.mp3",
+   "bpm": 92.3,
+   "start": 82.85
+  },
+  "Motions": {
+   "mood": "beat",
+   "file": "Motions.mp3",
+   "freepd": "upbeat/Motions.mp3",
+   "bpm": 123.0,
+   "start": 34.27
+  },
+  "Screen_Saver": {
+   "mood": "beat",
+   "file": "Screen_Saver.mp3",
+   "freepd": "upbeat/Screen Saver.mp3",
+   "bpm": 80.7,
+   "start": 10.29
+  },
+  "Inventing_Flight": {
+   "mood": "beat",
+   "file": "Inventing_Flight.mp3",
+   "freepd": "upbeat/Inventing Flight.mp3",
+   "bpm": 143.6,
+   "start": 56.38
+  },
+  "Hear_What_They_Say": {
+   "mood": "beat",
+   "file": "Hear_What_They_Say.mp3",
+   "freepd": "electronic/Hear What They Say.mp3",
+   "bpm": 117.5,
+   "start": 67.31
+  },
+  "Downtown_Boogie": {
+   "mood": "groove",
+   "file": "Downtown_Boogie.mp3",
+   "freepd": "misc/Downtown Boogie.mp3",
+   "bpm": 103.4,
+   "start": 29.77
+  },
+  "Funkeriffic": {
+   "mood": "groove",
+   "file": "Funkeriffic.mp3",
+   "freepd": "misc/Funkeriffic.mp3",
+   "bpm": 112.3,
+   "start": 106.14
+  },
+  "Groovin": {
+   "mood": "groove",
+   "file": "Groovin.mp3",
+   "freepd": "misc/Groovin.mp3",
+   "bpm": 117.5,
+   "start": 11.82
+  },
+  "Gotta_Keep_On_Movin": {
+   "mood": "groove",
+   "file": "Gotta_Keep_On_Movin.mp3",
+   "freepd": "misc/Gotta Keep On Movin.mp3",
+   "bpm": 112.3,
+   "start": 70.96
+  },
+  "Sunday_Dub": {
+   "mood": "groove",
+   "file": "Sunday_Dub.mp3",
+   "freepd": "misc/Sunday Dub.mp3",
+   "bpm": 103.4,
+   "start": 8.64
+  },
+  "Martini_Sunset": {
+   "mood": "groove",
+   "file": "Martini_Sunset.mp3",
+   "freepd": "misc/Martini Sunset.mp3",
+   "bpm": 143.6,
+   "start": 48.92
+  },
+  "Trip_Up_North": {
+   "mood": "groove",
+   "file": "Trip_Up_North.mp3",
+   "freepd": "misc/Trip Up North.mp3",
+   "bpm": 129.2,
+   "start": 100.96
+  },
+  "Relaxing_Ballad": {
+   "mood": "calm",
+   "file": "Relaxing_Ballad.mp3",
+   "freepd": "upbeat/Relaxing Ballad.mp3",
+   "bpm": 136.0,
+   "start": 63.67
+  },
+  "Painting_Room": {
+   "mood": "calm",
+   "file": "Painting_Room.mp3",
+   "freepd": "misc/Painting Room.mp3",
+   "bpm": 129.2,
+   "start": 15.53
+  },
+  "Study_and_Relax": {
+   "mood": "calm",
+   "file": "Study_and_Relax.mp3",
+   "freepd": "featured/Study and Relax.mp3",
+   "bpm": 143.6,
+   "start": 23.41
+  },
+  "Finally_See_The_Light": {
+   "mood": "calm",
+   "file": "Finally_See_The_Light.mp3",
+   "freepd": "misc/Finally See The Light.mp3",
+   "bpm": 92.3,
+   "start": 119.42
+  },
+  "Meditating_Beat": {
+   "mood": "calm",
+   "file": "Meditating_Beat.mp3",
+   "freepd": "electronic/Meditating Beat.mp3",
+   "bpm": 92.3,
+   "start": 86.82
+  },
+  "Be_Chillin": {
+   "mood": "calm",
+   "file": "Be_Chillin.mp3",
+   "freepd": "upbeat/Be Chillin.mp3",
+   "bpm": 136.0,
+   "start": 15.51
+  },
+  "Inspiration": {
+   "mood": "bright",
+   "file": "Inspiration.mp3",
+   "freepd": "upbeat/Inspiration.mp3",
+   "bpm": 117.5,
+   "start": 98.38
+  },
+  "City_Sunshine": {
+   "mood": "bright",
+   "file": "City_Sunshine.mp3",
+   "freepd": "upbeat/City Sunshine.mp3",
+   "bpm": 86.1,
+   "start": 94.64
+  },
+  "Funshine": {
+   "mood": "bright",
+   "file": "Funshine.mp3",
+   "freepd": "upbeat/Funshine.mp3",
+   "bpm": 95.7,
+   "start": 29.14
+  },
+  "From_Page_to_Practice": {
+   "mood": "bright",
+   "file": "From_Page_to_Practice.mp3",
+   "freepd": "upbeat/From Page to Practice.mp3",
+   "bpm": 161.5,
+   "start": 77.69
+  },
+  "One_Step_Closer": {
+   "mood": "bright",
+   "file": "One_Step_Closer.mp3",
+   "freepd": "misc/One Step Closer.mp3",
+   "bpm": 99.4,
+   "start": 55.96
+  },
+  "Energizing": {
+   "mood": "bright",
+   "file": "Energizing.mp3",
+   "freepd": "misc/Energizing.mp3",
+   "bpm": 89.1,
+   "start": 93.02
+  }
+ }
+}

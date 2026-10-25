@@ -32,8 +32,59 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 IG = os.path.abspath(os.path.join(HERE, ".."))
 REPO = os.path.abspath(os.path.join(IG, ".."))
 V2 = os.path.join(REPO, "google-reviews-v2", "assets")
-MUSIC = {"advertime": os.path.join(V2, "audio", "music.mp3")}
+CATALOG = os.path.join(IG, "music.json")
+LOG = os.path.join(IG, "music-log.json")
+CACHE = os.path.join(IG, ".music-cache")
 HF = "hyperframes@0.8.140"
+
+# Entry and exit motion per style. Picked from the music mood so the motion matches the track.
+STYLES = {
+    "rise":  ("{opacity: 0, y: 70}", "{opacity: 1, y: 0, duration: 0.55, ease: 'power3.out', stagger: 0.16}",
+              "{opacity: 0, y: -40, duration: 0.3, ease: 'power2.in'}"),
+    "pop":   ("{opacity: 0, scale: 0.6}", "{opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(2.2)', stagger: 0.12}",
+              "{opacity: 0, scale: 0.9, duration: 0.25, ease: 'power2.in'}"),
+    "slide": ("{opacity: 0, x: -140}", "{opacity: 1, x: 0, duration: 0.45, ease: 'power4.out', stagger: 0.1}",
+              "{opacity: 0, x: 140, duration: 0.25, ease: 'power2.in'}"),
+    "punch": ("{opacity: 0, scale: 1.35, rotation: -3}", "{opacity: 1, scale: 1, rotation: 0, duration: 0.4, ease: 'expo.out', stagger: 0.1}",
+              "{opacity: 0, scale: 0.85, duration: 0.22, ease: 'power3.in'}"),
+    "drift": ("{opacity: 0, y: 40, filter: 'blur(10px)'}", "{opacity: 1, y: 0, filter: 'blur(0px)', duration: 1.0, ease: 'power2.out', stagger: 0.25}",
+              "{opacity: 0, filter: 'blur(6px)', duration: 0.45, ease: 'power1.in'}"),
+}
+
+
+def pick_track(spec, slot):
+    cat = json.load(open(CATALOG, encoding="utf-8"))
+    tracks = cat["tracks"]
+    log = [e for e in json.load(open(LOG)) if e["slot"] != slot]
+    if spec.get("music") in tracks:
+        name = spec["music"]
+    else:
+        mood = spec.get("mood")
+        if not mood:
+            series = spec.get("series", "")
+            mood = next((m for k, m in cat["series_mood"].items() if series.startswith(k)), "bright")
+        recent = [e["track"] for e in log[-10:]]
+        used = [e["track"] for e in log]
+        pool = [n for n, t in tracks.items() if t["mood"] == mood and n not in recent] or \
+               [n for n in tracks if n not in recent]
+        # least used first, then catalog order
+        name = sorted(pool, key=lambda n: (used.count(n), list(tracks).index(n)))[0]
+    t = tracks[name]
+    path = os.path.join(CACHE, t["file"])
+    if not os.path.exists(path):
+        os.makedirs(CACHE, exist_ok=True)
+        import urllib.parse
+        subprocess.run(["curl", "-sSfL", "-o", path,
+                        "https://archive.org/download/freepd/" + urllib.parse.quote(t["freepd"])], check=True)
+    style = spec.get("style") or cat["mood_style"][t["mood"]]
+    return name, t, path, style
+
+
+def log_track(slot, name):
+    log = [e for e in json.load(open(LOG)) if e["slot"] != slot]
+    log.append({"slot": slot, "track": name})
+    log.sort(key=lambda e: e["slot"])
+    json.dump(log, open(LOG, "w"), indent=1)
 
 
 def fmt(t):
@@ -115,11 +166,18 @@ em { font-style: normal; color: var(--accent); }
 def build(post):
     spec = json.load(open(os.path.join(post, "reel.json"), encoding="utf-8"))
     scenes = spec["scenes"]
+    slot = os.path.basename(post)
+    name, track, music, style = pick_track(spec, slot)
+    # Snap every scene to the beat grid: whole multiples of two beats (half time above 150 bpm).
+    beat = 60.0 / track["bpm"] * (2 if track["bpm"] > 150 else 1)
+    unit = 2 * beat
+    for s in scenes:
+        s["dur"] = round(max(2, round(s["dur"] / unit)) * unit, 3)
     starts, t = [], 0.0
     for s in scenes:
-        starts.append(round(t, 2))
+        starts.append(round(t, 3))
         t += s["dur"]
-    total = round(t, 2)
+    total = round(t, 3)
 
     b = os.path.join(post, "build")
     shutil.rmtree(b, ignore_errors=True)
@@ -127,9 +185,8 @@ def build(post):
     shutil.copytree(os.path.join(V2, "fonts"), os.path.join(b, "assets", "fonts"))
     os.makedirs(os.path.join(b, "assets", "vendor"))
     shutil.copy(os.path.join(V2, "vendor", "gsap.min.js"), os.path.join(b, "assets", "vendor"))
-    music = MUSIC[spec.get("music", "advertime")]
     fade = max(0.1, total - 1.5)
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", music, "-t", str(total), "-af",
+    subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", str(track["start"]), "-i", music, "-t", str(total), "-af",
                     f"afade=t=in:d=0.4,afade=t=out:st={fade}:d=1.5,volume=0.8",
                     os.path.join(b, "assets", "audio", "music.mp3")], check=True)
 
@@ -137,6 +194,7 @@ def build(post):
         f'<section id="s{i}" class="scene clip" data-start="{starts[i]}" data-duration="{s["dur"]}" '
         f'data-track-index="{1 + i % 2}"><div class="box">{scene_inner(s)}</div></section>'
         for i, s in enumerate(scenes))
+    st_from, st_to, st_out = STYLES[style]
     js_scenes = json.dumps([{"start": starts[i], "dur": s["dur"]} for i, s in enumerate(scenes)])
     doc = f"""<!doctype html>
 <html lang="he" data-resolution="portrait"><head><meta charset="UTF-8"><meta name="viewport" content="width=1080, height=1920">
@@ -161,9 +219,9 @@ def build(post):
       if (i === 0)
         tl.fromTo(items, {{ opacity: 1, scale: 0.94 }}, {{ opacity: 1, scale: 1, duration: 0.6, ease: "back.out(2)", stagger: 0.08 }}, 0);
       else
-        tl.fromTo(items, {{ opacity: 0, y: 70 }}, {{ opacity: 1, y: 0, duration: 0.55, ease: "power3.out", stagger: 0.16 }}, sc.start + 0.05);
+        tl.fromTo(items, {st_from}, {st_to}, sc.start + 0.02);
       if (i < SCENES.length - 1)
-        tl.to(items, {{ opacity: 0, y: -40, duration: 0.3, ease: "power2.in" }}, sc.start + sc.dur - 0.32);
+        tl.to(items, {st_out}, sc.start + sc.dur - 0.3);
     }});
     window.__timelines["main"] = tl;
     if (typeof window.__hfForceTimelineRebind === "function") window.__hfForceTimelineRebind();
@@ -177,6 +235,8 @@ def build(post):
 </script></body></html>
 """
     open(os.path.join(b, "index.html"), "w", encoding="utf-8").write(doc)
+    json.dump({"track": name, "freepd": track["freepd"], "bpm": track["bpm"], "style": style, "duration": total},
+              open(os.path.join(post, "music.json"), "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     json.dump({"id": os.path.basename(post), "name": os.path.basename(post)}, open(os.path.join(b, "meta.json"), "w"))
     return b, total
 
@@ -189,6 +249,7 @@ def main():
         return
     out = os.path.join(post, "reel.mp4")
     subprocess.run(["npx", "--yes", HF, "render", b, "-o", out, "--quiet"], check=True)
+    log_track(os.path.basename(post), json.load(open(os.path.join(post, "music.json")))["track"])
     print(out)
 
 
