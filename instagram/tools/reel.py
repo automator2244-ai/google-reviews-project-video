@@ -120,6 +120,23 @@ def scene_inner(s):
         sub = f'<div class="sub in">{fmt(s["sub"])}</div>' if s.get("sub") else ""
         return (f'<div class="title in">{fmt(s["text"])}</div>{sub}'
                 f'<div class="sign in" dir="ltr">EZ.Path.AI<span></span></div>')
+    if t == "phone":
+        cap = f'<div class="pcap in">{fmt(s["caption"])}</div>' if s.get("caption") else ""
+        msgs = ""
+        for m in s["msgs"]:
+            if m.get("stars"):
+                msgs += '<div class="m in stars" dir="ltr">' + "".join(
+                    '<svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/></svg>'
+                    for _ in range(5)) + '</div>'
+                continue
+            btns = "".join(f'<div class="qb">{fmt(b)}</div>' for b in m.get("buttons", []))
+            btns = f'<div class="qbs">{btns}</div>' if btns else ""
+            link = f'<div class="lnk" dir="ltr">{fmt(m["link"])}</div>' if m.get("link") else ""
+            msgs += f'<div class="m in {m["from"]}"><div class="mt">{fmt(m["text"])}{link}</div>{btns}</div>'
+        head = fmt(s.get("chat", "מרפאת השיניים"))
+        pcls = "phone" + ("" if s.get("_cont") else " in") + (" keep" if s.get("_next_phone") else "")
+        return (f'{cap}<div class="{pcls}"><div class="ph-head"><span class="ph-av"></span>'
+                f'<span class="ph-name">{head}</span></div><div class="ph-body">{msgs}</div></div>')
     raise SystemExit(f"unknown scene type {t}")
 
 
@@ -160,6 +177,26 @@ em { font-style: normal; color: var(--accent); }
 .unit { font-family: "Frank Ruhl Libre", serif; font-weight: 900; font-size: 84px; line-height: 1.15; }
 .sign { margin-top: 30px; font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 46px; letter-spacing: 2px; text-align: right; }
 .sign span { display: block; width: 150px; height: 6px; background: var(--accent); margin: 20px 0 0 auto; border-radius: 3px; }
+#s0 .title { font-size: 128px; line-height: 1.08; }
+#s0 .bubble { font-size: 112px; }
+#s0 .kicker { font-size: 46px; }
+.scene .box.ph { gap: 26px; justify-content: flex-start; top: 350px; bottom: 470px; }
+.pcap { font-family: "Frank Ruhl Libre", serif; font-weight: 900; font-size: 64px; line-height: 1.15; min-height: 148px; }
+.phone { flex: 1; border-radius: 56px; background: #ece5dd; border: 14px solid var(--ink); overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 30px 70px rgba(20,26,21,.18); }
+.ph-head { background: #075e54; color: #fff; padding: 24px 30px; display: flex; align-items: center; gap: 18px; font-weight: 800; font-size: 40px; }
+.ph-av { width: 56px; height: 56px; border-radius: 50%; background: #d0eed5; flex: 0 0 56px; }
+.ph-body { flex: 1; padding: 26px 24px; display: flex; flex-direction: column; gap: 18px; justify-content: flex-end; }
+.m { max-width: 88%; font-size: 42px; line-height: 1.32; font-weight: 600; }
+.m .mt { padding: 20px 24px; border-radius: 26px; box-shadow: 0 2px 4px rgba(0,0,0,.08); }
+.m.clinic { align-self: flex-start; }
+.m.clinic .mt { background: #fff; border-top-right-radius: 6px; }
+.m.patient { align-self: flex-end; }
+.m.patient .mt { background: #d9fdd3; border-top-left-radius: 6px; }
+.lnk { margin-top: 10px; color: #027eb5; font-size: 36px; text-decoration: underline; }
+.qbs { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.qb { background: #fff; color: #027eb5; text-align: center; padding: 18px; border-radius: 20px; font-size: 38px; font-weight: 700; }
+.m.stars { align-self: center; display: flex; gap: 14px; background: #fff; padding: 26px 34px; border-radius: 30px; max-width: none; }
+.m.stars svg { width: 76px; height: 76px; fill: #f2a900; }
 """
 
 
@@ -173,6 +210,9 @@ def build(post):
     unit = 2 * beat
     for s in scenes:
         s["dur"] = round(max(2, round(s["dur"] / unit)) * unit, 3)
+    for i, s in enumerate(scenes):
+        s["_cont"] = i > 0 and s["type"] == "phone" and scenes[i - 1]["type"] == "phone"
+        s["_next_phone"] = s["type"] == "phone" and i + 1 < len(scenes) and scenes[i + 1]["type"] == "phone"
     starts, t = [], 0.0
     for s in scenes:
         starts.append(round(t, 3))
@@ -192,10 +232,10 @@ def build(post):
 
     secs = "".join(
         f'<section id="s{i}" class="scene clip" data-start="{starts[i]}" data-duration="{s["dur"]}" '
-        f'data-track-index="{1 + i % 2}"><div class="box">{scene_inner(s)}</div></section>'
+        f'data-track-index="{1 + i % 2}"><div class="box{' ph' if s['type'] == 'phone' else ''}">{scene_inner(s)}</div></section>'
         for i, s in enumerate(scenes))
     st_from, st_to, st_out = STYLES[style]
-    js_scenes = json.dumps([{"start": starts[i], "dur": s["dur"]} for i, s in enumerate(scenes)])
+    js_scenes = json.dumps([{"start": starts[i], "dur": s["dur"], "stagger": s.get("stagger")} for i, s in enumerate(scenes)])
     doc = f"""<!doctype html>
 <html lang="he" data-resolution="portrait"><head><meta charset="UTF-8"><meta name="viewport" content="width=1080, height=1920">
 <title>{html.escape(spec.get("series", "reel"))}</title><script src="assets/vendor/gsap.min.js"></script><style>{CSS}</style></head>
@@ -219,9 +259,9 @@ def build(post):
       if (i === 0)
         tl.fromTo(items, {{ opacity: 1, scale: 0.94 }}, {{ opacity: 1, scale: 1, duration: 0.6, ease: "back.out(2)", stagger: 0.08 }}, 0);
       else
-        tl.fromTo(items, {st_from}, {st_to}, sc.start + 0.02);
+        tl.fromTo(items, {st_from}, Object.assign({st_to}, sc.stagger ? {{ stagger: sc.stagger }} : {{}}), sc.start + 0.02);
       if (i < SCENES.length - 1)
-        tl.to(items, {st_out}, sc.start + sc.dur - 0.3);
+        tl.to("#s" + i + " .in:not(.keep)", {st_out}, sc.start + sc.dur - 0.3);
     }});
     window.__timelines["main"] = tl;
     if (typeof window.__hfForceTimelineRebind === "function") window.__hfForceTimelineRebind();
