@@ -25,6 +25,7 @@
 | 9 | 18.10 | [DeopwHmNBez](https://www.instagram.com/reel/DeopwHmNBez/) | "לפני שמטופל חדש מתקשר אליכם, הוא כבר קרא עליכם" | צילומי סטוק עם כרטיסי נתונים |
 | 10 | 27.10 | [De_N1PNEXK1](https://www.instagram.com/p/De_N1PNEXK1/) | מהדלפק 1: איך לבקש ביקורת ליד הדלפק, 4 משפטים (קרוסלה, 8 שקפים) | נייר, סריף, שפת העיצוב החדשה |
 | 11 | 27.10 | [DfAm9aCDflo](https://www.instagram.com/reel/DfAm9aCDflo/) | שאלה של מנהלת 1: "זה לא ספאם למטופלים?" (ריל, 22 שנ') | בועת שאלה וכרטיסים, Happy Whistling Ukulele |
+| 12 | 28.10 | [DfBykEPjR7V](https://www.instagram.com/reel/DfBykEPjR7V/) | מאחורי הקלעים 1: מה המטופל רואה בוואטסאפ אחרי הביקור (ריל) | מוקאפ טלפון, Beat One |
 
 פריימים מכל סרטון (12 לכל אחד): `instagram/reference/`. קוד המקור של 9 הסרטונים האלה לא נמצא בריפו.
 
