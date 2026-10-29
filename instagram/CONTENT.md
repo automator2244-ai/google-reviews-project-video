@@ -27,6 +27,7 @@
 | 11 | 27.10 | [DfAm9aCDflo](https://www.instagram.com/reel/DfAm9aCDflo/) | שאלה של מנהלת 1: "זה לא ספאם למטופלים?" (ריל, 22 שנ') | בועת שאלה וכרטיסים, Happy Whistling Ukulele |
 | 12 | 28.10 | [DfBykEPjR7V](https://www.instagram.com/reel/DfBykEPjR7V/) | מאחורי הקלעים 1: מה המטופל רואה בוואטסאפ אחרי הביקור (ריל) | מוקאפ טלפון, Beat One |
 | 13 | 28.10 | [DfDLy_1EbHC](https://www.instagram.com/reel/DfDLy_1EbHC/) | חשבון פשוט 1: 10 שנים ו-15 ביקורות, ביקורת אחת כל 8 חודשים (ריל) | מספרים ב-JetBrains Mono, Chronos |
+| 14 | 29.10 | [DfEXZCHkSUB](https://www.instagram.com/p/DfEXZCHkSUB/) | מהדלפק 2: איפה מוצאים את הקישור הישיר לביקורת, 4 שלבים (קרוסלה, 8 שקפים) | נייר, סריף, רשימה ממוספרת |
 
 פריימים מכל סרטון (12 לכל אחד): `instagram/reference/`. קוד המקור של 9 הסרטונים האלה לא נמצא בריפו.
 
