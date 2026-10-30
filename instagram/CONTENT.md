@@ -29,6 +29,7 @@
 | 13 | 28.10 | [DfDLy_1EbHC](https://www.instagram.com/reel/DfDLy_1EbHC/) | חשבון פשוט 1: 10 שנים ו-15 ביקורות, ביקורת אחת כל 8 חודשים (ריל) | מספרים ב-JetBrains Mono, Chronos |
 | 14 | 29.10 | [DfEXZCHkSUB](https://www.instagram.com/p/DfEXZCHkSUB/) | מהדלפק 2: איפה מוצאים את הקישור הישיר לביקורת, 4 שלבים (קרוסלה, 8 שקפים) | נייר, סריף, רשימה ממוספרת |
 | 15 | 29.10 | [DfFwhpBjy8Q](https://www.instagram.com/reel/DfFwhpBjy8Q/) | שאלה של מנהלת 2: "לא נעים לי לבקש ממטופלים" (ריל, מהשיחה עם הרופא) | בועת שאלה וכרטיסים, Ukulele Song |
+| 16 | 30.10 | [DfG8HCQFSdQ](https://www.instagram.com/p/DfG8HCQFSdQ/) | מהדלפק 3: שלט QR בקבלה, מה לכתוב ואיפה לתלות (קרוסלה, 8 שקפים) | נייר, סריף, רשימות |
 
 פריימים מכל סרטון (12 לכל אחד): `instagram/reference/`. קוד המקור של 9 הסרטונים האלה לא נמצא בריפו.
 
