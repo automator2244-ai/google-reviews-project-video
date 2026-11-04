@@ -37,6 +37,7 @@
 | 21 | 2.11 | [DfQDtgfCIWn](https://www.instagram.com/reel/DfQDtgfCIWn/) | שאלה של מנהלת 3: "יש לנו כבר מספיק ביקורות" (ריל) | בועת שאלה וכרטיסים, Hold on a Sec |
 | 22 | 3.11 | [DfRPShVDH_w](https://www.instagram.com/reel/DfRPShVDH_w/) | מספר אחד 1: ביקורות הן הדבר הראשון שמטופלים בודקים (ריל) | מספר ענק, Motions |
 | 23 | 3.11 | [DfSohfNgLum](https://www.instagram.com/reel/DfSohfNgLum/) | דעה 1: המזכירה לא אמורה לרדוף אחרי ביקורות (ריל) | טקסט על נייר, ידני מול אוטומטי, Downtown Boogie |
+| 24 | 4.11 | [DfT0HSdkcvy](https://www.instagram.com/p/DfT0HSdkcvy/) | מהדלפק 5: ביקורת של כוכב אחד שקופצת ראשונה, מה עושים (קרוסלה, 7 שקפים) | נייר, סריף, רשימות ותשובה לדוגמה |
 
 פריימים מכל סרטון (12 לכל אחד): `instagram/reference/`. קוד המקור של 9 הסרטונים האלה לא נמצא בריפו.
 
