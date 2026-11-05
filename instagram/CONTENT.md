@@ -39,6 +39,7 @@
 | 23 | 3.11 | [DfSohfNgLum](https://www.instagram.com/reel/DfSohfNgLum/) | דעה 1: המזכירה לא אמורה לרדוף אחרי ביקורות (ריל) | טקסט על נייר, ידני מול אוטומטי, Downtown Boogie |
 | 24 | 4.11 | [DfT0HSdkcvy](https://www.instagram.com/p/DfT0HSdkcvy/) | מהדלפק 5: ביקורת של כוכב אחד שקופצת ראשונה, מה עושים (קרוסלה, 7 שקפים) | נייר, סריף, רשימות ותשובה לדוגמה |
 | 25 | 4.11 | [DfVNYPCClBp](https://www.instagram.com/reel/DfVNYPCClBp/) | שאלה של מנהלת 4: "ואם המטופל לא ילחץ על הקישור?" (ריל) | בועת שאלה וכרטיסים, Pickled Pink |
+| 26 | 5.11 | [DfWY6oGEesw](https://www.instagram.com/reel/DfWY6oGEesw/) | מאחורי הקלעים 3: מטופל עונה "פחות טוב", מה קורה (ריל) | מוקאפ טלפון, Screen Saver |
 
 פריימים מכל סרטון (12 לכל אחד): `instagram/reference/`. קוד המקור של 9 הסרטונים האלה לא נמצא בריפו.
 
