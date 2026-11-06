@@ -41,6 +41,7 @@
 | 25 | 4.11 | [DfVNYPCClBp](https://www.instagram.com/reel/DfVNYPCClBp/) | שאלה של מנהלת 4: "ואם המטופל לא ילחץ על הקישור?" (ריל) | בועת שאלה וכרטיסים, Pickled Pink |
 | 26 | 5.11 | [DfWY6oGEesw](https://www.instagram.com/reel/DfWY6oGEesw/) | מאחורי הקלעים 3: מטופל עונה "פחות טוב", מה קורה (ריל) | מוקאפ טלפון, Screen Saver |
 | 27 | 5.11 | [DfXyIPTDfe3](https://www.instagram.com/reel/DfXyIPTDfe3/) | סיפור 2: הפיצרייה שהציעה פיצה חינם תמורת 5 כוכבים (ריל, גיבוי לסלפי 1) | כותרות סריף, Painting Room |
+| 28 | 6.11 | [DfY9uFaFe9A](https://www.instagram.com/p/DfY9uFaFe9A/) | צ׳קליסט שישי 1: 5 דברים לבדוק בפרופיל גוגל (קרוסלה, 7 שקפים) | נייר, סריף, "1 מתוך 5" |
 
 פריימים מכל סרטון (12 לכל אחד): `instagram/reference/`. קוד המקור של 9 הסרטונים האלה לא נמצא בריפו.
 
