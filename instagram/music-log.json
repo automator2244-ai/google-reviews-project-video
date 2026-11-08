@@ -94,5 +94,45 @@
  {
   "slot": "2026-11-14-2200",
   "track": "Local_Forecast_Elevator"
+ },
+ {
+  "slot": "2026-11-15-2130",
+  "track": "Wallpaper"
+ },
+ {
+  "slot": "2026-11-16-0830",
+  "track": "Werq"
+ },
+ {
+  "slot": "2026-11-16-2130",
+  "track": "Beat_One"
+ },
+ {
+  "slot": "2026-11-17-1300",
+  "track": "Chronos"
+ },
+ {
+  "slot": "2026-11-17-2130",
+  "track": "Gotta_Keep_On_Movin"
+ },
+ {
+  "slot": "2026-11-18-1300",
+  "track": "Favorite"
+ },
+ {
+  "slot": "2026-11-18-2130",
+  "track": "Cheery_Monday"
+ },
+ {
+  "slot": "2026-11-19-0830",
+  "track": "Hippety_Hop"
+ },
+ {
+  "slot": "2026-11-19-2130",
+  "track": "Quirky_Dog"
+ },
+ {
+  "slot": "2026-11-21-2200",
+  "track": "City_Sunshine"
  }
 ]
