@@ -20,6 +20,13 @@ Scene types:
   confess tag, role?, quote, icon?       documentary "talking head": dark frame, lower-third name tag, quote.
                                          icon: person (default) | star. Good for sitcom and mockumentary formats.
   phone   msgs[{from, text, name?, ...}] a msg with "name" shows the sender, for group chats (chat, sub on the scene)
+  hook    look, text, kicker?, ...        the opening frame (put it first). Full screen, no series bar or logo,
+                                         one big line of up to 5 words. It is also the grid cover, so vary the look:
+            look ink | green | sun          solid backgrounds (dark, brand green, warm yellow)
+            look notif  time?, notif{app, title, text}?   a phone lock screen; the notification plays a ding
+            look search query, text in a dark card over a blurred Google results page
+            look number value, text        a giant number with the line under it
+            size?                          font size of the line in px (default 170), for very short lines
 Inline markup: *word* = accent green, newline = line break.
 Layout keeps every text inside the Reels safe zone: y 300 to 1440, and 230px clear on the right.
 """
@@ -98,8 +105,39 @@ def fmt(t):
     return t.replace("\n", "<br>")
 
 
+def hook_bg(s):
+    """Full-screen background of a hook scene. Sits under the text box and covers the series bar."""
+    look = s.get("look", "ink")
+    extra = ""
+    if look == "notif":
+        n = s.get("notif")
+        card = ""
+        if n:
+            card = (f'<div class="hk-notif"><div class="hk-nh"><span class="hk-app"></span>'
+                    f'<span class="hk-an">{fmt(n.get("app", "WhatsApp"))}</span><span class="hk-now">עכשיו</span></div>'
+                    f'<div class="hk-nt">{fmt(n["title"])}</div><div class="hk-nx">{fmt(n["text"])}</div></div>')
+        extra = (f'<div class="hk-time" dir="ltr">{fmt(s.get("time", "09:41"))}</div>'
+                 f'<div class="hk-date">{fmt(s.get("date", ""))}</div>{card}')
+    if look == "search":
+        rows = "".join(
+            '<div class="hk-res"><span class="hk-pin"></span><span class="hk-l1"></span>'
+            f'<span class="hk-st">{"★" * k}{"☆" * (5 - k)}</span><span class="hk-l2"></span></div>'
+            for k in (5, 4, 5, 3, 4))
+        extra = (f'<div class="hk-sbar"><span class="hk-g" dir="ltr">G</span>{fmt(s.get("query", ""))}</div>'
+                 f'<div class="hk-blur"><div class="hk-map"></div>{rows}</div>')
+    return f'<div class="hk-bg look-{look}"><div class="hk-zoom">{extra}</div></div>'
+
+
 def scene_inner(s):
     t = s["type"]
+    if t == "hook":
+        k = f'<div class="hk-kicker in">{fmt(s["kicker"])}</div>' if s.get("kicker") else ""
+        num = f'<div class="hk-num in" dir="ltr">{fmt(s["value"])}</div>' if s.get("look") == "number" else ""
+        size = f' style="font-size:{s["size"]}px"' if s.get("size") else ""
+        txt = f'{k}{num}<div class="hk-text in"{size}>{fmt(s["text"])}</div>'
+        if s.get("look") == "search":
+            return f'<div class="hk-card in"><div class="hk-rule"></div>{txt}<div class="hk-sign" dir="ltr">EZ.Path.AI</div></div>'
+        return txt
     if t == "bubble":
         return (f'<div class="who in">{fmt(s["who"])}</div>'
                 f'<div class="bubble in">{fmt(s["text"])}</div>')
@@ -241,6 +279,54 @@ em { font-style: normal; color: var(--accent); }
 .cf-role { font-weight: 600; font-size: 34px; opacity: .9; }
 .cf-quote { font-family: "Frank Ruhl Libre", serif; font-weight: 900; font-size: 84px; line-height: 1.16; }
 #s0 .cf-quote { font-size: 96px; }
+/* hook: full-screen opening frame, also the grid cover */
+.scene.hook { z-index: 5; }
+.hk-bg { position: absolute; inset: 0; overflow: hidden; }
+.hk-zoom { position: absolute; inset: 0; }
+.look-ink { background: radial-gradient(ellipse 900px 900px at 80% 20%, #1f3a26 0%, rgba(20,26,21,0) 70%), #141a15; }
+.look-green { background: radial-gradient(ellipse 900px 900px at 80% 15%, #1a8c3f 0%, rgba(0,115,41,0) 70%), radial-gradient(ellipse 700px 700px at 10% 95%, #005a20 0%, rgba(0,115,41,0) 70%), #007329; }
+.look-sun { background: radial-gradient(ellipse 900px 900px at 80% 15%, #fff1c2 0%, rgba(248,214,107,0) 70%), #f8d66b; }
+.look-number { background: radial-gradient(ellipse 900px 900px at 80% 15%, #1a8c3f 0%, rgba(0,115,41,0) 70%), #007329; }
+.look-notif { background: radial-gradient(ellipse 1000px 800px at 70% 10%, #2c6b45 0%, rgba(11,40,22,0) 70%), radial-gradient(ellipse 800px 700px at 0% 100%, #3b2a5a 0%, rgba(11,40,22,0) 70%), #0b2816; }
+.look-search { background: #f1f3f4; }
+.hook .box { top: 360px; bottom: 480px; gap: 30px; }
+.hk-text { font-family: "Frank Ruhl Libre", serif; font-weight: 900; font-size: 170px; line-height: 1.04; letter-spacing: -2px; }
+.hk-kicker { font-weight: 800; font-size: 56px; }
+.hk-num { font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 380px; line-height: .9; color: #fff; text-align: right; }
+.look-ink ~ .box, .look-green ~ .box, .look-number ~ .box, .look-notif ~ .box { color: #fff; }
+.look-ink ~ .box em, .look-notif ~ .box em { color: #4cc472; }
+.look-ink ~ .box .hk-kicker, .look-notif ~ .box .hk-kicker { color: #4cc472; }
+.look-green ~ .box em, .look-number ~ .box em { color: #c9f2d2; }
+.look-green ~ .box .hk-kicker, .look-number ~ .box .hk-kicker { color: #c9f2d2; }
+.look-sun ~ .box { color: var(--ink); }
+.look-sun ~ .box em { color: var(--accent); }
+.look-sun ~ .box .hk-kicker { color: #8a5a00; }
+.look-number ~ .box .hk-text { font-size: 104px; }
+.look-notif ~ .box { justify-content: flex-end; }
+.look-notif ~ .box .hk-text { font-size: 128px; }
+.hk-time { position: absolute; top: 330px; left: 0; right: 0; text-align: center; font-family: "Assistant", sans-serif; font-weight: 300; font-size: 190px; color: #fff; letter-spacing: -4px; }
+.hk-date { position: absolute; top: 560px; left: 0; right: 0; text-align: center; font-weight: 600; font-size: 44px; color: rgba(255,255,255,.85); direction: rtl; }
+.hk-notif { position: absolute; top: 680px; left: 70px; right: 70px; direction: rtl; background: rgba(244,248,245,.92); border-radius: 44px; padding: 30px 38px 36px; box-shadow: 0 20px 60px rgba(0,0,0,.35); color: var(--ink); }
+.hk-nh { display: flex; align-items: center; gap: 16px; font-size: 32px; color: var(--muted); font-weight: 700; }
+.hk-app { width: 52px; height: 52px; border-radius: 14px; background: #25d366; display: block; }
+.hk-now { margin-right: auto; font-weight: 600; }
+.hk-nt { font-weight: 800; font-size: 44px; margin-top: 16px; }
+.hk-nx { font-size: 46px; line-height: 1.3; font-weight: 600; margin-top: 6px; }
+.hk-sbar { position: absolute; top: 250px; left: 70px; right: 70px; height: 120px; border-radius: 60px; background: #fff; box-shadow: 0 6px 20px rgba(0,0,0,.12); display: flex; align-items: center; gap: 26px; padding: 0 44px; direction: rtl; font-size: 48px; font-weight: 600; color: #202124; }
+.hk-g { font-family: "Assistant", sans-serif; font-weight: 800; font-size: 62px; color: #4285f4; }
+.hk-blur { position: absolute; top: 410px; left: 70px; right: 70px; bottom: 0; filter: blur(9px); display: flex; flex-direction: column; gap: 28px; }
+.hk-map { height: 420px; border-radius: 30px; background: linear-gradient(135deg, #cfe8d4 0%, #e8f0e0 40%, #c9dcf0 100%); }
+.hk-res { display: grid; grid-template-columns: 70px 1fr; gap: 10px 24px; background: #fff; border-radius: 26px; padding: 28px 34px; direction: rtl; }
+.hk-pin { grid-row: span 3; width: 60px; height: 60px; border-radius: 50%; background: #ea4335; }
+.hk-l1 { height: 34px; width: 70%; background: #3c4043; border-radius: 8px; }
+.hk-st { color: #fbbc04; font-size: 40px; letter-spacing: 4px; }
+.hk-l2 { height: 26px; width: 50%; background: #bdc1c6; border-radius: 8px; }
+.hk-card { background: #141a15; color: #fff; border-radius: 44px; padding: 64px 60px 56px; box-shadow: 0 30px 80px rgba(0,0,0,.35); display: flex; flex-direction: column; gap: 26px; }
+.hk-card em { color: #4cc472; }
+.hk-card .hk-text { font-size: 118px; }
+.hk-card .hk-kicker { color: #4cc472; }
+.hk-rule { width: 120px; height: 8px; border-radius: 4px; background: #4cc472; }
+.hk-sign { font-family: "JetBrains Mono", monospace; font-weight: 700; font-size: 34px; letter-spacing: 2px; color: #a9b3ab; text-align: right; }
 """
 
 
@@ -270,13 +356,22 @@ def build(post):
     os.makedirs(os.path.join(b, "assets", "vendor"))
     shutil.copy(os.path.join(V2, "vendor", "gsap.min.js"), os.path.join(b, "assets", "vendor"))
     fade = max(0.1, total - 1.5)
-    subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", str(track["start"]), "-i", music, "-t", str(total), "-af",
-                    f"loudnorm=I=-16:TP=-1.5:LRA=11,afade=t=in:d=0.4,afade=t=out:st={fade}:d=1.5",
-                    os.path.join(b, "assets", "audio", "music.mp3")], check=True)
+    af = f"loudnorm=I=-16:TP=-1.5:LRA=11,afade=t=in:d=0.4,afade=t=out:st={fade}:d=1.5"
+    out_mp3 = os.path.join(b, "assets", "audio", "music.mp3")
+    if scenes[0]["type"] == "hook" and scenes[0].get("look") == "notif" and scenes[0].get("notif"):
+        # A two-tone notification ding over the first beat, so the opening has a sound that stops the thumb.
+        ding = ("aevalsrc='0.55*sin(2*PI*1319*t)*exp(-14*t)+0.5*sin(2*PI*1760*(t-0.11))*exp(-9*(t-0.11))*gte(t,0.11)'"
+                ":s=44100:d=0.7,aformat=channel_layouts=stereo")
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", str(track["start"]), "-i", music, "-t", str(total),
+                        "-filter_complex", f"[0:a]{af},aformat=channel_layouts=stereo:sample_rates=44100[m];{ding}[d];"
+                        "[m][d]amix=inputs=2:duration=first:normalize=0[o]", "-map", "[o]", out_mp3], check=True)
+    else:
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", str(track["start"]), "-i", music, "-t", str(total), "-af",
+                        af, out_mp3], check=True)
 
     secs = "".join(
-        f'<section id="s{i}" class="scene clip" data-start="{starts[i]}" data-duration="{s["dur"]}" '
-        f'data-track-index="{1 + i % 2}"><div class="box{' ph' if s['type'] == 'phone' else ''}">{scene_inner(s)}</div></section>'
+        f'<section id="s{i}" class="scene clip{' hook' if s['type'] == 'hook' else ''}" data-start="{starts[i]}" data-duration="{s["dur"]}" '
+        f'data-track-index="{1 + i % 2}">{hook_bg(s) if s['type'] == 'hook' else ''}<div class="box{' ph' if s['type'] == 'phone' else ''}">{scene_inner(s)}</div></section>'
         for i, s in enumerate(scenes))
     st_from, st_to, st_out = STYLES[style]
     js_scenes = json.dumps([{"start": starts[i], "dur": s["dur"], "stagger": s.get("stagger")} for i, s in enumerate(scenes)])
@@ -300,6 +395,8 @@ def build(post):
     tl.fromTo("#prog-fill", {{ scaleX: 0 }}, {{ scaleX: 1, duration: TOTAL, ease: "none" }}, 0);
     SCENES.forEach((sc, i) => {{
       const items = "#s" + i + " .in";
+      if (document.querySelector("#s" + i + ".hook"))
+        tl.fromTo("#s" + i + " .hk-zoom", {{ scale: 1 }}, {{ scale: 1.08, duration: sc.dur, ease: "none" }}, sc.start);
       if (i === 0)
         tl.fromTo(items, {{ opacity: 1, scale: 0.94 }}, {{ opacity: 1, scale: 1, duration: 0.6, ease: "back.out(2)", stagger: 0.08 }}, 0);
       else

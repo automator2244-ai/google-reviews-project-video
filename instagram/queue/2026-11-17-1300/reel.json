@@ -2,8 +2,10 @@
  "series": "10 שניות · 3",
  "scenes": [
   {
-   "dur": 2.6,
-   "type": "title",
+   "dur": 2.2,
+   "type": "hook",
+   "look": "sun",
+   "kicker": "כל מטופל מרוצה:",
    "text": "\"בטח, אני\n*אכתוב לכם!\"*"
   },
   {
@@ -22,5 +24,6 @@
    "type": "title",
    "text": "זה לא\nחוסר רצון.\n*זה עומס.*"
   }
- ]
+ ],
+ "music": "Chronos"
 }
