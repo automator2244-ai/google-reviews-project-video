@@ -6,7 +6,7 @@ Reads <post_dir>/slides.json and writes <post_dir>/slide-01.png, slide-02.png, .
 
 slides.json: {"slides": [ {"type": ..., ...}, ... ]}
 Slide types:
-  cover   title, sub
+  cover   title, sub, tone? ("ink" | "green")   tone colors the whole cover, for a varied profile grid
   text    kicker?, title, body?
   quote   label, title, quote, note?
   list    title, items[], mark ("check" | "cross" | "num"), note?
@@ -55,6 +55,17 @@ em { font-style: normal; color: var(--accent); }
 .body { font-size: 54px; line-height: 1.45; color: var(--muted); font-weight: 500; }
 .kicker { font-family: "Assistant"; font-weight: 800; font-size: 34px; color: var(--accent); margin-bottom: 28px; }
 .center { justify-content: center; }
+/* cover tones: a dark or green cover so the profile grid is not all one color */
+body.t-ink { background: #141a15; background-image: radial-gradient(ellipse 900px 700px at 85% 10%, #1f3a26 0%, rgba(20,26,21,0) 70%); color: #f4f8f5; }
+body.t-ink em, body.t-ink .top .series { color: #4cc472; }
+body.t-ink .rule { background: #4cc472; }
+body.t-ink .sub, body.t-ink .top, body.t-ink .bottom { color: #a9b3ab; }
+body.t-ink .top .brand { color: #f4f8f5; }
+body.t-green { background: #007329; background-image: radial-gradient(ellipse 900px 700px at 85% 10%, #1a8c3f 0%, rgba(0,115,41,0) 70%); color: #fff; }
+body.t-green em, body.t-green .top .series { color: #c9f2d2; }
+body.t-green .rule { background: #fff; }
+body.t-green .sub, body.t-green .top, body.t-green .bottom { color: #d6eedb; }
+body.t-green .top .brand { color: #fff; }
 /* cover */
 .cover .display { font-size: 118px; }
 .cover .sub { margin-top: 52px; font-size: 56px; line-height: 1.4; color: var(--muted); font-weight: 600; }
@@ -174,7 +185,7 @@ def slide_html(s, idx, total, series):
         raise SystemExit(f"unknown slide type: {t}")
     css = CSS.replace("FONTS", "file://" + os.path.abspath(FONTS))
     return (f'<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><style>{css}</style></head>'
-            f'<body>{top}{inner}{bottom}</body></html>')
+            f'<body class="{"t-" + s["tone"] if t == "cover" and s.get("tone") else ""}">{top}{inner}{bottom}</body></html>')
 
 
 def main():
