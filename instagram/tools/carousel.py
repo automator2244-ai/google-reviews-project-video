@@ -12,6 +12,8 @@ Slide types:
   list    title, items[], mark ("check" | "cross" | "num"), note?
   end     title, sub?
   web     label, title?, url, head, text      a website mockup (what the clinic says about itself)
+  photo   label, title?, tone ("stock" | "real"), tag, caption   a photo placeholder card: glossy and generic for
+          stock, warm and lived-in for real. A mock, never a real photo of a real clinic.
   reviews label, title?, items[{name, when, text}], note?   Google-style review cards (UI as content).
           Example reviews must be marked as examples in "note".
 Inline markup in any text: *word* renders in the accent green, newline breaks the line.
@@ -94,6 +96,12 @@ em { font-style: normal; color: var(--accent); }
 .wh { font-size: 32px; color: var(--muted); }
 .rvt { font-size: 46px; line-height: 1.4; font-weight: 600; }
 .note.sm { font-size: 34px; margin-top: 30px; }
+.ph { position: relative; height: 470px; border-radius: 30px; display: flex; align-items: center; justify-content: center; overflow: hidden; box-shadow: 0 18px 50px rgba(20,26,21,.10); }
+.ph svg { width: 170px; height: 170px; }
+.ph.stock { background: linear-gradient(135deg, #eaf4ff 0%, #ffffff 45%, #dbe9f7 100%); color: #9fb6cc; border: 2px solid #d6e2ee; }
+.ph.real { background: linear-gradient(135deg, #f3e3c8 0%, #e7cfa6 50%, #cfe3d3 100%); color: #7a5b2e; border: 2px solid #d9c39c; }
+.ph .tag { position: absolute; top: 26px; right: 26px; background: rgba(255,255,255,.9); color: var(--ink); font-weight: 800; font-size: 32px; padding: 8px 22px; border-radius: 14px; }
+.pcap2 { margin-top: 34px; font-size: 48px; line-height: 1.4; font-weight: 600; color: var(--ink); }
 /* end */
 .end .display { font-size: 112px; }
 .end .sub { margin-top: 44px; font-size: 54px; color: var(--muted); font-weight: 600; line-height: 1.4; }
@@ -139,6 +147,13 @@ def slide_html(s, idx, total, series):
                  f'<div class="site"><div class="bar"><i></i><i></i><i></i><span>{fmt(s["url"])}</span></div>'
                  f'<div class="hero"><div class="h">{fmt(s["head"])}</div><div class="p">{fmt(s["text"])}</div>'
                  f'<div class="btn">לקביעת תור</div></div></div></div>')
+    elif t == "photo":
+        ttl = f'<div class="display wt">{fmt(s["title"])}</div>' if s.get("title") else ""
+        cam = ('<svg viewBox="0 0 24 24"><path d="M9 4h6l1.5 2H20a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3.5z" '
+               'fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="12.5" r="3.6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>')
+        inner = (f'<div class="frame photo center"><div class="label">{fmt(s["label"])}</div>{ttl}'
+                 f'<div class="ph {s.get("tone", "stock")}"><span class="tag">{fmt(s["tag"])}</span>{cam}</div>'
+                 f'<div class="pcap2">{fmt(s["caption"])}</div></div>')
     elif t == "reviews":
         ttl = f'<div class="display wt">{fmt(s["title"])}</div>' if s.get("title") else ""
         stars = "".join('<svg viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 '
