@@ -43,6 +43,7 @@
 | 27 | 5.11 | [DfXyIPTDfe3](https://www.instagram.com/reel/DfXyIPTDfe3/) | סיפור 2: הפיצרייה שהציעה פיצה חינם תמורת 5 כוכבים (ריל, גיבוי לסלפי 1) | כותרות סריף, Painting Room |
 | 28 | 6.11 | [DfY9uFaFe9A](https://www.instagram.com/p/DfY9uFaFe9A/) | צ׳קליסט שישי 1: 5 דברים לבדוק בפרופיל גוגל (קרוסלה, 7 שקפים) | נייר, סריף, "1 מתוך 5" |
 | 29 | 7.11 | [Dfc_K4rge9z](https://www.instagram.com/reel/Dfc_K4rge9z/) | הצעה 1: חודש ראשון בחינם (ריל) | כרטיס סיום עם הטלפון, Inspiration |
+| 30 | 8.11 | [DfeHSwDDjiH](https://www.instagram.com/p/DfeHSwDDjiH/) | מהדלפק 6: איך לענות לביקורת חיובית, 3 תבניות (קרוסלה, 7 שקפים) | נייר, סריף, תבניות להעתקה |
 
 פריימים מכל סרטון (12 לכל אחד): `instagram/reference/`. קוד המקור של 9 הסרטונים האלה לא נמצא בריפו.
 
