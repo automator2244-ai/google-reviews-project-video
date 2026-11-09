@@ -1748,15 +1748,15 @@
       }
       #sv-grid {
         position: absolute;
-        left: 147px;
-        top: 650px;
-        width: 786px;
-        height: 466px;
+        left: 159px;
+        top: 660px;
+        width: 762px;
+        height: 346px;
       }
       .sd {
         position: absolute;
-        width: 26px;
-        height: 26px;
+        width: 34px;
+        height: 34px;
         border-radius: 50%;
         background: var(--accent);
       }
@@ -1767,7 +1767,7 @@
         position: absolute;
         left: 108px;
         right: 108px;
-        top: 1176px;
+        top: 1080px;
         display: flex;
         justify-content: center;
         gap: 60px;
@@ -2443,24 +2443,27 @@
         $("done-stars").innerHTML = STAR + STAR + STAR + STAR + STAR;
 
         // Patient dots for the gap scene: 23 x 10 grid
+        // 105 patients a month: a 15 x 7 grid of slightly larger dots
+        const GC = 15,
+          GR = 7;
         function gridHTML(prefix, cls) {
           let h = "";
-          for (let r = 0; r < 10; r++)
-            for (let c = 0; c < 23; c++) h += '<div class="pd ' + cls + '" id="' + prefix + (r * 23 + c) + '" style="right:' + c * 17 + "px;top:" + r * 17 + 'px"></div>';
+          for (let r = 0; r < GR; r++)
+            for (let c = 0; c < GC; c++) h += '<div class="pd ' + cls + '" id="' + prefix + (r * GC + c) + '" style="right:' + c * 26 + "px;top:" + r * 26 + 'px;width:19px;height:19px"></div>';
           return h;
         }
         $("pgrid-a").innerHTML = gridHTML("pa", "on");
         $("pgrid-b").innerHTML = gridHTML("pb", "off");
 
         // Survey dots: one per visit, 20 x 12. A few fixed ones answered "less good".
-        const SV_COLS = 20,
-          SV_ROWS = 12;
-        const WARM = [23, 67, 118, 152, 189, 214, 237];
+        const SV_COLS = 15,
+          SV_ROWS = 7;
+        const WARM = [12, 31, 58, 77, 96];
         let sv = "";
         for (let r = 0; r < SV_ROWS; r++)
           for (let c = 0; c < SV_COLS; c++) {
             const i = r * SV_COLS + c;
-            sv += '<div class="sd' + (WARM.indexOf(i) >= 0 ? " warm" : "") + '" id="sd' + i + '" style="right:' + c * 40 + "px;top:" + r * 40 + 'px"></div>';
+            sv += '<div class="sd' + (WARM.indexOf(i) >= 0 ? " warm" : "") + '" id="sd' + i + '" style="right:' + c * 52 + "px;top:" + r * 52 + 'px"></div>';
           }
         $("sv-grid").innerHTML = sv;
 
@@ -2627,11 +2630,11 @@
           tl.fromTo("#gap-a", { opacity: 0, x: 80 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, 14.3);
           tl.fromTo("#gap-b", { opacity: 0, x: -80 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, 14.45);
           tl.fromTo("#gap-rule", { scaleY: 0 }, { scaleY: 1, duration: 0.6, ease: "power2.inOut" }, 14.35);
-          counter("gap-a-n", 0, 230, 14.5, 1.7, "power2.out");
-          for (let i = 0; i < 230; i++) {
-            const r = Math.floor(i / 23),
-              c = i % 23;
-            tl.fromTo("#pa" + i, { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(2.5)" }, 14.55 + (r + c) * 0.045);
+          counter("gap-a-n", 0, 105, 14.5, 1.5, "power2.out");
+          for (let i = 0; i < GC * GR; i++) {
+            const r = Math.floor(i / GC),
+              c = i % GC;
+            tl.fromTo("#pa" + i, { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(2.5)" }, 14.55 + (r + c) * 0.06);
           }
           tl.fromTo("#pgrid-b", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "power1.out" }, 14.6);
           counter("gap-b-n", 0, 3, 15.0, 0.9, "power1.out");
@@ -2747,7 +2750,7 @@
           for (let i = 0; i < SV_COLS * SV_ROWS; i++) {
             const r = Math.floor(i / SV_COLS),
               c = i % SV_COLS;
-            tl.fromTo("#sd" + i, { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(2.5)" }, 49.2 + (r + c) * 0.035);
+            tl.fromTo("#sd" + i, { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(2.5)" }, 49.2 + (r + c) * 0.05);
           }
           tl.fromTo(["#lg1", "#lg2"], { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out", stagger: 0.12 }, 50.4);
           capIn("cap10", 48.95, 52.9);
