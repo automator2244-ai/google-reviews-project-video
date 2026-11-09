@@ -9,20 +9,21 @@ interface Recipient {
   name: string;
   video_at: string | null;
   video_key: string | null; // set = plays the shared video shared/{video_key}.mp4 instead of its own
+  page_title: string | null; // set = replaces the default page title
 }
 
 // GET/HEAD /v/{id}: the personal video page. Every visit is logged; bots and previews are flagged, not counted.
 export async function handleView(req: Request, env: Env, ctx: ExecutionContext, id: string, origin: string): Promise<Response> {
   let r: Recipient | null = null;
   try {
-    r = await env.DB.prepare("SELECT name, video_at, video_key FROM recipients WHERE id = ?").bind(id).first<Recipient>();
+    r = await env.DB.prepare("SELECT name, video_at, video_key, page_title FROM recipients WHERE id = ?").bind(id).first<Recipient>();
   } catch (err) {
     console.error("recipient lookup failed", err);
   }
   if (!r?.video_at) return html(unavailablePage(), 404);
 
   ctx.waitUntil(logClick(req, env, id).catch((err) => console.error("click log failed", err)));
-  return html(videoPage(id, r.name, origin, r.video_key));
+  return html(videoPage(id, r.name, origin, r.video_key, r.page_title));
 }
 
 async function logClick(req: Request, env: Env, id: string): Promise<void> {

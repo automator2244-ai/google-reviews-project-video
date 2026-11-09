@@ -10,6 +10,7 @@ interface StatRow {
   created_at: string;
   video_at: string | null;
   irrelevant_at: string | null;
+  page_title: string | null;
   clicks: number;
   first_click: string | null;
   last_click: string | null;
@@ -52,7 +53,7 @@ async function setIrrelevant(req: Request, env: Env, id: string): Promise<Respon
 
 async function stats(env: Env): Promise<StatRow[]> {
   const { results } = await env.DB.prepare(
-    `SELECT r.id, r.name, r.phone, r.note, r.created_at, r.video_at, r.irrelevant_at,
+    `SELECT r.id, r.name, r.phone, r.note, r.created_at, r.video_at, r.irrelevant_at, r.page_title,
             COUNT(c.id) AS clicks, MIN(c.clicked_at) AS first_click, MAX(c.clicked_at) AS last_click,
             (SELECT c2.country FROM clicks c2 WHERE c2.recipient_id = r.id AND c2.is_bot = 0
               ORDER BY c2.clicked_at DESC LIMIT 1) AS country,
