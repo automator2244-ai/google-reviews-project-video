@@ -45,6 +45,7 @@
 | 29 | 7.11 | [Dfc_K4rge9z](https://www.instagram.com/reel/Dfc_K4rge9z/) | הצעה 1: חודש ראשון בחינם (ריל) | כרטיס סיום עם הטלפון, Inspiration |
 | 30 | 8.11 | [DfeHSwDDjiH](https://www.instagram.com/p/DfeHSwDDjiH/) | מהדלפק 6: איך לענות לביקורת חיובית, 3 תבניות (קרוסלה, 7 שקפים) | נייר, סריף, תבניות להעתקה |
 | 31 | 8.11 | [Dffgl0dgEP5](https://www.instagram.com/reel/Dffgl0dgEP5/) | שאלה של מנהלת 5: "אין לנו זמן לעוד מערכת" (ריל) | בועה, pop, Carefree |
+| 32 | 9.11 | [DfgsGWxjkm3](https://www.instagram.com/p/DfgsGWxjkm3/) | שתי גרסאות 1: מה שהמרפאה אומרת מול מה שהמטופלים אומרים (קרוסלה, 7 שקפים) | מוקאפ של אתר וכרטיסי ביקורת |
 
 פריימים מכל סרטון (12 לכל אחד): `instagram/reference/`. קוד המקור של 9 הסרטונים האלה לא נמצא בריפו.
 
