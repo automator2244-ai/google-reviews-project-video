@@ -6,3 +6,7 @@ google-reviews-demo/snapshots/
 google-reviews-demo/.hyperframes/
 node_modules/
 .DS_Store
+google-reviews-system/.hyperframes/
+google-reviews-system/renders/
+google-reviews-system/out/work-*/
+google-reviews-system/out/.*
