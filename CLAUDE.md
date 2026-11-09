@@ -7,7 +7,7 @@
 ## חלקים בריפו
 - `leads/`: גיליון הלידים [לידים רופאי שיניים](https://docs.google.com/spreadsheets/d/13bRjc6ezK3SAYv4YQFW8SEUj3FYZdTM-Frg3Hlb_xS8/edit) (מזהה `13bRjc6ezK3SAYv4YQFW8SEUj3FYZdTM-Frg3Hlb_xS8`). Apps Script (`leads/leads.gs`) ממלא אותו כל א' עד ה' ב-07:00 מ-Google Places: רק נייד, רק 15 עד 70 ביקורות, בלי תקרת חיפושים (לבקשת בניה). לשוניות "עסקי" ו"מאובטח", טלפון בעמודה C, סטטוס בעמודה E, הקישור האישי לסרטון בעמודה O ("קישור לסרטון"), קישור הודעת הפתיחה בוואטסאפ בעמודה P, וקישור ההודעה עם הסרטון בעמודה Q (ראו "קישור וואטסאפ עם הודעה מוכנה"). הסקריפט כותב רק עד עמודה N, אז שורות חדשות מגיעות בלי קישור: כשבניה מבקש, יוצרים קישורים לשורות שאין להן (עם `--shared unified-v1`) וממלאים את O. ב-15/10 נוצרו קישורים לכל 243 העסקים שהיו אז בגיליון. פרטים ב-`leads/README.md`.
 - `google-reviews-v2/`: סרטון התבנית הנוכחי (52 שניות, HyperFrames, בשפת העיצוב של EZ.Path.AI), אחיד לכל המרפאות. הקובץ המוכן: `google-reviews-v2/out/google-reviews-v2-full.mp4`, וכרטיס הסיום שבא אחרי ההקלטה של בניה: `google-reviews-v2/out/outro.mp4`. התסריט, הנתונים והמקורות שלהם ב-`google-reviews-v2/BRIEF.md`. הסרטון המאוחד שבניה אישר (אנימציה, החלק שלו עם כתוביות וכרטיס סיום, 1:43): `google-reviews-v2/out/final-unified.mp4`.
-- `google-reviews-system/`: סרטון ההסבר המלא על מערכת הביקורות (1:29, בלי קריינות, מאותם רכיבים של `google-reviews-v2`, עם 105 מטופלים בחודש לבקשת בניה). הקובץ: `google-reviews-system/out/google-reviews-system.mp4`. העובדות לפי `instagram/PRODUCT.md`, פרטים ב-`google-reviews-system/BRIEF.md`.
+- `google-reviews-system/`: סרטון ההסבר המלא על מערכת הביקורות (1:33, בלי קריינות, מאותם רכיבים של `google-reviews-v2`, עם 105 מטופלים בחודש לבקשת בניה). הקובץ: `google-reviews-system/out/google-reviews-system.mp4`. העובדות לפי `instagram/PRODUCT.md`, פרטים ב-`google-reviews-system/BRIEF.md`.
 - `google-reviews-demo/`: סרטון התבנית הקודם (גרסה 1, נשאר לתיעוד).
 - `youtube-transcripts/`: כלי שמוריד תמלולים מערוצי יוטיוב. רץ על הטלפון של בניה (Termux בתיקייה המאובטחת, `yt @channel`) או על Windows, לאט כדי לא להיחסם, ומעלה לבד ל-GitHub. מהענן יוטיוב חוסם תמלולים, אז לא מורידים מכאן. פרטים ב-`youtube-transcripts/README.md`.
 - `instagram/`: הריילס של @ez.path.ai. **לפני כל סרטון לאינסטגרם קוראים את `instagram/CONTENT.md` ואת `instagram/PRODUCT.md`**: מה כבר פורסם, אילו נתונים שומשו, הסגנון, כללי הכיתוב והרעיונות שמחכים. מפרסמים דרך Composio, ורק אחרי שבניה אישר את הסרטון ואת הכיתוב.
@@ -22,12 +22,8 @@
    הקישור מצביע לסרטון המשותף `unified-v1` (הסרטון המאוחד שכבר עלה פעם אחת), אז אין קידוד ואין העלאה. פרטים ב-`video-links/README.md`, בסעיף "סרטון משותף".
 3. מריצים את `out/<id>/register.sql` על D1 (כמו בשלב 6 בסעיף הבא), ואז `scripts/link.sh <id>` מדפיס את הקישור. בודקים שהדף עולה, ומעדכנים את הגיליון (שלב 8 בסעיף הבא). תמונת התצוגה בוואטסאפ זהה לכל הקישורים (`video-links/public/og-v1.jpg`), והכותרת היא "סרטון הסבר עבור <שם>".
 
-## ממתין: קישור "סרטון מלא עבור ד״ר רפאל חיימוב" (9.11)
-בניה ביקש קישור במערכת המעקב לסרטון המלא, עם הכותרת "סרטון מלא עבור ד״ר רפאל חיימוב". חיבור Cloudflare נפל באמצע, אז זה לא הושלם. הקוד מוכן בענף (עמודה `page_title` ו-`publish.sh --title`), אבל **לא ממזגים לפני שהמיגרציה רצה**, כי הקוד החדש שולף את `page_title` וכל הדפים ייפלו בלעדיה. הסדר:
-1. על D1: `video-links/migrations/0007_page_title.sql`, ושורה ב-`d1_migrations`.
-2. מיזוג הענף לענף הראשי, ומחכים לפריסה.
-3. מתוך `video-links/`: `scripts/publish-shared.sh system-v1 ../google-reviews-system/out/google-reviews-system.mp4 --thumb-at 33`, מריצים את ה-SQL שלו על D1, ואז `scripts/publish-shared.sh system-v1 --upload`.
-4. `scripts/publish.sh --shared system-v1 --name "ד״ר רפאל חיימוב" --phone 0585038024 --title "סרטון מלא עבור ד״ר רפאל חיימוב"`, מריצים את `register.sql` על D1, ומחזירים לבניה את הקישור. לא נוגעים בקישור הישן שלו (`f94t4tji`).
+## קישור לסרטון המלא (עם כותרת משלו)
+הסרטון המלא (`google-reviews-system`) עלה כסרטון משותף `system-v1`. לקישור עם כותרת אחרת מ"סרטון הסבר עבור": `scripts/publish.sh --shared system-v1 --name "..." --phone 05... --title "סרטון מלא עבור ..."`, ואז `register.sql` על D1. בדשבורד הקישור מופיע לפי הכותרת. ב-9.11 נוצר כך הקישור של ד״ר רפאל חיימוב: https://go.ezpath-ai.com/v/w7dnfguc (הקישור הישן שלו, `f94t4tji`, נשאר).
 
 ## כשבניה שולח הקלטה אישית לעסק
 1. מקבלים את הקובץ: קובץ מצורף בשיחה, או מ-Google Drive דרך החיבור.
