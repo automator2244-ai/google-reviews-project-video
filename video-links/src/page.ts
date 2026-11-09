@@ -97,6 +97,7 @@ function copy(text,btn){
   if(navigator.clipboard){navigator.clipboard.writeText(text).then(done,fallback)}else{fallback()}
   function fallback(){var t=el('textarea');t.value=text;document.body.append(t);t.select();document.execCommand('copy');t.remove();done()}
 }
+function label(r){return r.page_title||r.name}
 function watchedLabel(w){if(w==null)return '';if(w===0)return 'התחיל';return w===100?'עד הסוף ✓':w+'%'}
 
 /* WhatsApp message template, kept in this browser only */
@@ -117,7 +118,7 @@ function render(){
   $('#s-played').textContent=rows.filter(function(r){return r.watched!=null}).length;
   $('#s-rate').textContent=total?Math.round(clicked*100/total)+'%':'0%';
   var q=$('#search').value.trim().toLowerCase();
-  var list=rows.filter(function(r){return !q||r.name.toLowerCase().indexOf(q)>=0}).sort(cmp);
+  var list=rows.filter(function(r){return !q||label(r).toLowerCase().indexOf(q)>=0}).sort(cmp);
   var body=$('#stats-body');
   if(!list.length){body.replaceChildren(el('tr',{},el('td',{colspan:'7',class:'empty'},rows.length?'אין תוצאות':'עוד אין נמענים. נמען נוצר כשמעלים לו סרטון.')));return}
   body.replaceChildren.apply(body,list.map(function(r){
@@ -128,7 +129,7 @@ function render(){
     function box(){var b=el('input',{type:'checkbox',title:'לסמן כלא רלוונטי','aria-label':'לא רלוונטי: '+r.name});
       b.checked=!!r.irrelevant_at;b.onchange=function(){mark(r,b)};return b}
     return el('tr',{class:(r.clicks?'':'idle')+(r.irrelevant_at?' off':'')},
-      el('td',{},el('div',{},r.name,tag),el('div',{class:'acts'},btn,wa,el('label',{class:'mark'},box(),'לא רלוונטי'))),
+      el('td',{},el('div',{},label(r),tag),el('div',{class:'acts'},btn,wa,el('label',{class:'mark'},box(),'לא רלוונטי'))),
       el('td',{class:'num'},String(r.clicks)),
       el('td',{},r.watched==null?'':el('span',{class:'tag ok'},watchedLabel(r.watched))),
       el('td',{},tf(r.last_click)),el('td',{class:'hide-sm'},tf(r.first_click)),el('td',{class:'hide-sm'},r.country||''),
@@ -223,9 +224,9 @@ function sideCard(name: string): string {
 </aside>`;
 }
 
-export function videoPage(id: string, name: string, origin: string, videoKey: string | null = null): string {
+export function videoPage(id: string, name: string, origin: string, videoKey: string | null = null, pageTitle: string | null = null): string {
   const media = videoKey && /^[A-Za-z0-9_-]{1,64}$/.test(videoKey) ? `/s/${videoKey}` : `/m/${id}`;
-  const title = escapeHtml(`סרטון הסבר עבור ${name}`);
+  const title = escapeHtml(pageTitle || `סרטון הסבר עבור ${name}`);
   // One branded preview image for every link (public/og-v1.jpg); /m/{id}.jpg stays the video poster.
   const thumb = `${origin}/og-v1.jpg`;
   return `<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8">
