@@ -49,6 +49,7 @@
 | 33 | 9.11 | [DfiFT-KiIBN](https://www.instagram.com/reel/DfiFT-KiIBN/) | דעה 2: אל תבקשו 5 כוכבים, תבקשו ביקורת (ריל) | punch, Funkeriffic |
 | 34 | 10.11 | [DfjQ2UmDCmZ](https://www.instagram.com/reel/DfjQ2UmDCmZ/) | מאחורי הקלעים 4: תזכורת עדינה, רק למי שלא ענה (ריל) | טלפון, slide, Inventing Flight |
 | 35 | 10.11 | [Dfjv_iFj7Cy](https://www.instagram.com/reel/Dfjv_iFj7Cy/) | 10 שניות 1: מהשאלה ועד הביקורת (ריל קצר, ניסוי 13:00) | טלפון, לופ, Hear What They Say |
+| 36 | 10.11 | [DfkqD3lFQbS](https://www.instagram.com/reel/DfkqD3lFQbS/) | חשבון פשוט 3: גם 4 מטופלים ביום זה 600 בשנה (ריל) | מספרים, slide, Bit Shift |
 
 פריימים מכל סרטון (12 לכל אחד): `instagram/reference/`. קוד המקור של 9 הסרטונים האלה לא נמצא בריפו.
 
