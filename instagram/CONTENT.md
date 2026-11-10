@@ -47,6 +47,7 @@
 | 31 | 8.11 | [Dffgl0dgEP5](https://www.instagram.com/reel/Dffgl0dgEP5/) | שאלה של מנהלת 5: "אין לנו זמן לעוד מערכת" (ריל) | בועה, pop, Carefree |
 | 32 | 9.11 | [DfgsGWxjkm3](https://www.instagram.com/p/DfgsGWxjkm3/) | שתי גרסאות 1: מה שהמרפאה אומרת מול מה שהמטופלים אומרים (קרוסלה, 7 שקפים) | מוקאפ של אתר וכרטיסי ביקורת |
 | 33 | 9.11 | [DfiFT-KiIBN](https://www.instagram.com/reel/DfiFT-KiIBN/) | דעה 2: אל תבקשו 5 כוכבים, תבקשו ביקורת (ריל) | punch, Funkeriffic |
+| 34 | 10.11 | [DfjQ2UmDCmZ](https://www.instagram.com/reel/DfjQ2UmDCmZ/) | מאחורי הקלעים 4: תזכורת עדינה, רק למי שלא ענה (ריל) | טלפון, slide, Inventing Flight |
 
 פריימים מכל סרטון (12 לכל אחד): `instagram/reference/`. קוד המקור של 9 הסרטונים האלה לא נמצא בריפו.
 
