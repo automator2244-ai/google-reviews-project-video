@@ -50,6 +50,7 @@
 | 34 | 10.11 | [DfjQ2UmDCmZ](https://www.instagram.com/reel/DfjQ2UmDCmZ/) | מאחורי הקלעים 4: תזכורת עדינה, רק למי שלא ענה (ריל) | טלפון, slide, Inventing Flight |
 | 35 | 10.11 | [Dfjv_iFj7Cy](https://www.instagram.com/reel/Dfjv_iFj7Cy/) | 10 שניות 1: מהשאלה ועד הביקורת (ריל קצר, ניסוי 13:00) | טלפון, לופ, Hear What They Say |
 | 36 | 10.11 | [DfkqD3lFQbS](https://www.instagram.com/reel/DfkqD3lFQbS/) | חשבון פשוט 3: גם 4 מטופלים ביום זה 600 בשנה (ריל) | מספרים, slide, Bit Shift |
+| 37 | 11.11 | [Dfl1nhNlTdM](https://www.instagram.com/p/Dfl1nhNlTdM/) | מהדלפק 7: ביקורת שלילית בלי לחשוף מידע רפואי (קרוסלה, 6 שקפים) | נייר, סריף, תשובה לדוגמה |
 
 פריימים מכל סרטון (12 לכל אחד): `instagram/reference/`. קוד המקור של 9 הסרטונים האלה לא נמצא בריפו.
 
