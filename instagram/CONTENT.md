@@ -51,6 +51,7 @@
 | 35 | 10.11 | [Dfjv_iFj7Cy](https://www.instagram.com/reel/Dfjv_iFj7Cy/) | 10 שניות 1: מהשאלה ועד הביקורת (ריל קצר, ניסוי 13:00) | טלפון, לופ, Hear What They Say |
 | 36 | 10.11 | [DfkqD3lFQbS](https://www.instagram.com/reel/DfkqD3lFQbS/) | חשבון פשוט 3: גם 4 מטופלים ביום זה 600 בשנה (ריל) | מספרים, slide, Bit Shift |
 | 37 | 11.11 | [Dfl1nhNlTdM](https://www.instagram.com/p/Dfl1nhNlTdM/) | מהדלפק 7: ביקורת שלילית בלי לחשוף מידע רפואי (קרוסלה, 6 שקפים) | נייר, סריף, תשובה לדוגמה |
+| 38 | 11.11 | [DfnO3C6ka3Y](https://www.instagram.com/reel/DfnO3C6ka3Y/) | צ'אט הצוות 1: "המטופלים שלנו מבוגרים מדי" (ריל) | צ'אט קבוצתי, pop, And Just Like That |
 
 פריימים מכל סרטון (12 לכל אחד): `instagram/reference/`. קוד המקור של 9 הסרטונים האלה לא נמצא בריפו.
 
