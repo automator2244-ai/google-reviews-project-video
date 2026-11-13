@@ -1,7 +1,9 @@
 {
  "track": "Chronos",
- "freepd": "electronic/Chronos.mp3",
+ "source": "electronic/Chronos.mp3",
+ "license": "CC0",
+ "credit": null,
  "bpm": 117.5,
  "style": "slide",
- "duration": 18.384
+ "duration": 17.363
 }
