@@ -6,5 +6,6 @@
   "sources": [
     "PRODUCT.md: לא שולחים בשבת ובחג."
   ],
-  "status": "draft"
+  "status": "draft",
+  "cover": "calendar"
 }

@@ -2,12 +2,16 @@
  "series": "10 שניות · 4",
  "scenes": [
   {
-   "dur": 2.2,
+   "dur": 2.6,
    "type": "hook",
-   "look": "green",
-   "kicker": "מהשאלה ועד הביקורת:",
-   "text": "פחות\n*מדקה.*",
-   "size": 230
+   "look": "cover",
+   "style": "timer",
+   "cover": {
+    "digits": "00:58",
+    "label": "מהשאלה ועד הביקורת",
+    "text": "פחות *מדקה.*",
+    "size": 150
+   }
   },
   {
    "dur": 2.2,
