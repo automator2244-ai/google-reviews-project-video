@@ -1,7 +1,9 @@
 {
  "track": "Relaxing_Ballad",
- "freepd": "upbeat/Relaxing Ballad.mp3",
+ "source": "upbeat/Relaxing Ballad.mp3",
+ "license": "CC0",
+ "credit": null,
  "bpm": 136.0,
  "style": "drift",
- "duration": 24.706
+ "duration": 23.824
 }

@@ -1,6 +1,8 @@
 {
  "track": "Hippety_Hop",
- "freepd": "electronic/Hippety Hop.mp3",
+ "source": "electronic/Hippety Hop.mp3",
+ "license": "CC0",
+ "credit": null,
  "bpm": 92.3,
  "style": "slide",
  "duration": 24.7

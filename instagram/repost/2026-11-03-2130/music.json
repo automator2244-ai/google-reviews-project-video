@@ -1,7 +1,9 @@
 {
  "track": "Downtown_Boogie",
- "freepd": "misc/Downtown Boogie.mp3",
+ "source": "misc/Downtown Boogie.mp3",
+ "license": "CC0",
+ "credit": null,
  "bpm": 103.4,
  "style": "punch",
- "duration": 15.088
+ "duration": 13.927
 }
