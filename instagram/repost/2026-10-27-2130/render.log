@@ -1,0 +1,39 @@
+built /home/user/google-reviews-project-video/instagram/repost/2026-10-27-2130/build (21.36s)
+[INFO] [Compiler] Embedded local font file: assets/fonts/frank-ruhl-libre-hebrew.woff2 (18 KB → data URI)
+[INFO] [Compiler] Embedded local font file: assets/fonts/frank-ruhl-libre-latin.woff2 (43 KB → data URI)
+[INFO] [Compiler] Embedded local font file: assets/fonts/assistant-hebrew.woff2 (7 KB → data URI)
+[INFO] [Compiler] Embedded local font file: assets/fonts/assistant-latin.woff2 (22 KB → data URI)
+[INFO] [Compiler] Embedded local font file: assets/fonts/jetbrains-mono-latin.woff2 (31 KB → data URI)
+[hyperframes] browserGpuMode probe → software (WebGL unavailable)
+[BrowserManager] Browser launched (HeadlessChrome/152.0.7977.30, beginframe, gl=--use-gl=angle --use-angle=swiftshader, headlessShell=true, platform=linux)
+[initSession:beginframe] warmup loop started (0ms)
+[initSession:beginframe] page.goto start (1ms)
+[initSession:beginframe] page.goto complete (282ms)
+[initSession:beginframe] GSAP proxy flush complete (297ms)
+[HyperFrames] render runtime fps {"canonicalFps":30,"source":"render-options","rawFpsSource":"render-options","rawFps":30}
+[Browser:WARN] GSAP target #s0 .in not found. https://gsap.com
+[Browser:WARN] GSAP target  not found. https://gsap.com
+[Browser:WARN] GSAP target #s0 .in:not(.keep):not(.keep .in) not found. https://gsap.com
+[Browser:WARN] GSAP target  not found. https://gsap.com
+[initSession:beginframe] pollHfReady complete (600ms)
+[initSession:beginframe] pollSubCompositionTimelines complete (ready) (604ms)
+[initSession:beginframe] applyVideoMetadataHints complete (605ms)
+[initSession:beginframe] media + fonts + tailwind ready (608ms)
+[initSession:beginframe] static-frame dedup: disabled (capture mode beginframe, not screenshot) (617ms)
+[BrowserManager] Browser launched (HeadlessChrome/152.0.7977.30, beginframe, gl=--use-gl=angle --use-angle=swiftshader, headlessShell=true, platform=linux)
+[initSession:beginframe] warmup loop started (0ms)
+[initSession:beginframe] page.goto start (0ms)
+[initSession:beginframe] page.goto complete (232ms)
+[initSession:beginframe] GSAP proxy flush complete (241ms)
+[HyperFrames] render runtime fps {"canonicalFps":30,"source":"render-options","rawFpsSource":"render-options","rawFps":30}
+[Browser:WARN] GSAP target #s0 .in not found. https://gsap.com
+[Browser:WARN] GSAP target  not found. https://gsap.com
+[Browser:WARN] GSAP target #s0 .in:not(.keep):not(.keep .in) not found. https://gsap.com
+[Browser:WARN] GSAP target  not found. https://gsap.com
+[initSession:beginframe] pollHfReady complete (398ms)
+[initSession:beginframe] pollSubCompositionTimelines complete (ready) (402ms)
+[initSession:beginframe] applyVideoMetadataHints complete (402ms)
+[initSession:beginframe] media + fonts + tailwind ready (404ms)
+[initSession:beginframe] static-frame dedup: disabled (capture mode beginframe, not screenshot) (436ms)
+credit: none needed
+/home/user/google-reviews-project-video/instagram/repost/2026-10-27-2130/reel.mp4

@@ -134,7 +134,7 @@ def fmt(text):
 def slide_html(s, idx, total, series):
     t = s["type"]
     top = (f'<div class="top"><span class="brand">EZ.Path.AI</span>'
-           f'<span class="series">{fmt(series)}</span></div>')
+           '<span></span></div>')  # the series name is internal only, never on the slide (13.11, Benaya)
     bottom = f'<div class="bottom"><span dir="ltr">{idx}/{total}</span><span dir="ltr">@ez.path.ai</span></div>'
     if t == "cover" and s.get("style"):
         css = CSS.replace("FONTS", "file://" + os.path.abspath(FONTS))
