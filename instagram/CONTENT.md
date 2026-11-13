@@ -53,6 +53,7 @@
 | 37 | 11.11 | [Dfl1nhNlTdM](https://www.instagram.com/p/Dfl1nhNlTdM/) | מהדלפק 7: ביקורת שלילית בלי לחשוף מידע רפואי (קרוסלה, 6 שקפים) | נייר, סריף, תשובה לדוגמה |
 | 38 | 11.11 | [DfnO3C6ka3Y](https://www.instagram.com/reel/DfnO3C6ka3Y/) | צ'אט הצוות 1: "המטופלים שלנו מבוגרים מדי" (ריל) | צ'אט קבוצתי, pop, And Just Like That |
 | 39 | 12.11 | [DfoacQjDmCW](https://www.instagram.com/reel/DfoacQjDmCW/) | מספר אחד 3: 88% מול 47%, עסק שעונה לביקורות (ריל) | מספר גדול, slide, Getting it Done |
+| 40 | 13.11 | [Dfq_Ou8FXCE](https://www.instagram.com/p/Dfq_Ou8FXCE/) | צ׳קליסט שישי 2: 5 תמונות להעלות לפרופיל השבוע (קרוסלה, 7 שקפים) | נייר, סריף, "1 מתוך 5" |
 
 פריימים מכל סרטון (12 לכל אחד): `instagram/reference/`. קוד המקור של 9 הסרטונים האלה לא נמצא בריפו.
 
