@@ -5,7 +5,7 @@ in the middle of the 1080x1920 frame (top 285) as the hook scene. Keep what matt
 so in a reel it stays clear of the caption and buttons.
 
 render(style, d, img) -> (bg_css, stage_html)
-  style  chat | poster | face | vs | newspaper | maps | timer | postit | calendar | notes
+  style  chat | poster | face | vs | newspaper | maps | timer | postit | calendar | notes | sms | review | receipt
   d      the fields of that style (below). *word* marks a highlighted word.
   img    URL prefix where bnaya.jpg can be loaded from (assets/ in a reel build, file://.../assets/ in a carousel)
 """
@@ -131,6 +131,46 @@ CSS = """
 .cv-notes li b { flex: 0 0 62px; height: 62px; border-radius: 50%; border: 4px solid #c7c7cc; color: #fff; display: flex; align-items: center; justify-content: center; }
 .cv-notes li b svg { width: 40px; height: 40px; }
 .cv-notes li.cv-on b { background: #e0a800; border-color: #e0a800; }
+
+/* sms: a plain text-message screen */
+.cv-sms .cv-hd { position: absolute; top: 30px; left: 0; right: 0; text-align: center; }
+.cv-sms .cv-hd i { display: block; margin: 0 auto 14px; width: 140px; height: 140px; border-radius: 50%; background: linear-gradient(#a3a8b4, #858a96); color: #fff; font-style: normal; font-weight: 700; font-size: 66px; line-height: 140px; }
+.cv-sms .cv-hd b { font-weight: 700; font-size: 46px; color: #111; }
+.cv-sms .cv-col { position: absolute; top: 300px; left: 60px; right: 60px; display: flex; flex-direction: column; gap: 20px; }
+.cv-sms .cv-m { max-width: 880px; padding: 30px 42px; border-radius: 50px; font-size: 60px; line-height: 1.3; font-weight: 500; }
+.cv-sms .cv-m.cv-in { align-self: flex-start; background: #e9e9eb; color: #111; }
+.cv-sms .cv-m.cv-out { align-self: flex-end; background: #0a84ff; color: #fff; }
+.cv-sms .cv-when { align-self: center; font-size: 34px; color: #8e8e93; font-weight: 600; }
+.cv-sms .cv-t { position: absolute; top: 760px; left: 70px; right: 70px; line-height: 1.02; color: #111; }
+.cv-sms .cv-hl { color: #0a84ff; }
+
+/* review: a review card (always marked as an example) */
+.cv-review .cv-col { position: absolute; top: 0; bottom: 60px; left: 60px; right: 60px; display: flex; flex-direction: column; justify-content: center; gap: 80px; }
+.cv-review .cv-card { background: #fff; border-radius: 36px; padding: 56px 58px; box-shadow: 0 10px 30px rgba(0,0,0,.10); }
+.cv-review .cv-who { display: flex; align-items: center; gap: 24px; }
+.cv-review .cv-who i { width: 110px; height: 110px; border-radius: 50%; color: #fff; font-style: normal; font-weight: 800; font-size: 46px; display: flex; align-items: center; justify-content: center; }
+.cv-review .cv-who b { font-size: 52px; font-weight: 700; color: #202124; display: block; }
+.cv-review .cv-who small { font-size: 32px; color: #70757a; }
+.cv-review .cv-ex { margin-right: auto; background: #f1f3f4; color: #5f6368; font-size: 28px; font-weight: 700; padding: 8px 20px; border-radius: 20px; }
+.cv-review .cv-stars { margin: 30px 0 18px; font-size: 92px; letter-spacing: 6px; direction: ltr; text-align: right; }
+.cv-review .cv-stars span { color: #fbbc04; } .cv-review .cv-stars em { color: #dadce0; font-style: normal; }
+.cv-review .cv-txt { font-size: 56px; line-height: 1.35; color: #202124; font-weight: 500; }
+.cv-review .cv-rep { margin-top: 34px; background: #f1f3f4; border-radius: 22px; padding: 28px 32px; font-size: 46px; line-height: 1.3; color: #202124; }
+.cv-review .cv-rep b { display: block; font-size: 34px; margin-bottom: 6px; }
+.cv-review .cv-t { line-height: 1.02; color: #111; padding: 0 10px; }
+.cv-review .cv-t .cv-hl { color: var(--acc); }
+
+/* receipt: a till receipt that adds things up */
+.cv-receipt .cv-paper { position: absolute; top: 40px; left: 50%; margin-left: -330px; width: 660px; background: #fff; padding: 56px 54px 70px; transform: rotate(-2deg); box-shadow: 0 24px 50px rgba(0,0,0,.25); font-family: "JetBrains Mono", "Assistant", monospace; color: #222;
+  -webkit-mask: linear-gradient(#000 0 0) top/100% calc(100% - 22px) no-repeat, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom/44px 22px repeat-x;
+  mask: linear-gradient(#000 0 0) top/100% calc(100% - 22px) no-repeat, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom/44px 22px repeat-x; }
+.cv-receipt .cv-rh { text-align: center; font-family: "Assistant", sans-serif; font-weight: 800; font-size: 50px; letter-spacing: 4px; }
+.cv-receipt .cv-dash { border-top: 4px dashed #999; margin: 28px 0; }
+.cv-receipt .cv-row { display: flex; justify-content: space-between; font-family: "Assistant", sans-serif; font-size: 42px; font-weight: 600; margin: 14px 0; }
+.cv-receipt .cv-row span:last-child { font-family: "JetBrains Mono", monospace; direction: ltr; }
+.cv-receipt .cv-tot { font-size: 54px; font-weight: 800; }
+.cv-receipt .cv-t { position: absolute; top: 880px; left: 70px; right: 70px; line-height: 1.02; color: #111; }
+.cv-receipt .cv-hl { color: #d93025; }
 """
 
 
@@ -217,4 +257,31 @@ def render(style, d, img):
         body = (f'<div class="cv-top"><span>‹ פתקים</span><span>סיום</span></div><div class="cv-dt">{fmt(d.get("date", ""))}</div>'
                 f'<div class="cv-ttl cv-heavy">{fmt(d["title"])}</div><ul>{items}</ul>')
         return "background: #fff;", f'<div class="cv-stage cv-notes">{body}</div>'
+    if style == "sms":
+        msgs = "".join(
+            (f'<div class="cv-when">{fmt(m["when"])}</div>' if m.get("when") else "")
+            + f'<div class="cv-m {"cv-out" if m.get("from") == "out" else "cv-in"}">{fmt(m["text"])}</div>' for m in d["msgs"])
+        body = (f'<div class="cv-hd"><i>{fmt(d.get("initial", "מ"))}</i><b>{fmt(d["name"])}</b></div>'
+                f'<div class="cv-col">{msgs}</div><div class="cv-t cv-heavy" style="font-size:{d.get("size", 112)}px">{fmt(d["text"])}</div>')
+        return "background: #fff;", f'<div class="cv-stage cv-sms">{body}</div>'
+    if style == "review":
+        n = int(d.get("stars", 5))
+        rep = (f'<div class="cv-rep"><b>{fmt(d.get("reply_by", "תגובה מהמרפאה"))}</b>{fmt(d["reply"])}</div>'
+               if d.get("reply") else "")
+        card = (f'<div class="cv-card"><div class="cv-who"><i style="background:{d.get("color", "#6b3fb5")}">{fmt(d["name"][0])}</i>'
+                f'<div><b>{fmt(d["name"])}</b><small>{fmt(d.get("when", "לפני יומיים"))}</small></div>'
+                f'<span class="cv-ex">דוגמה</span></div>'
+                f'<div class="cv-stars"><span>{"★" * n}</span><em>{"★" * (5 - n)}</em></div>'
+                f'<div class="cv-txt">{fmt(d["review"])}</div>{rep}</div>')
+        hl = d.get("accent", "#d93025" if n <= 2 else "#188038")
+        body = (f'<div class="cv-col">{card}<div class="cv-t cv-heavy" style="font-size:{d.get("size", 140)}px;--acc:{hl}">'
+                f'{fmt(d["text"])}</div></div>')
+        return "background: #f1f3f4;", f'<div class="cv-stage cv-review">{body}</div>'
+    if style == "receipt":
+        rows = "".join(f'<div class="cv-row"><span>{fmt(a)}</span><span>{fmt(b)}</span></div>' for a, b in d["rows"])
+        tot = d["total"]
+        body = (f'<div class="cv-paper"><div class="cv-rh">{fmt(d.get("head", "קבלה"))}</div><div class="cv-dash"></div>{rows}'
+                f'<div class="cv-dash"></div><div class="cv-row cv-tot"><span>{fmt(tot[0])}</span><span>{fmt(tot[1])}</span></div></div>'
+                f'<div class="cv-t cv-heavy" style="font-size:{d.get("size", 110)}px">{fmt(d["text"])}</div>')
+        return "background: #e8e1d3;", f'<div class="cv-stage cv-receipt">{body}</div>'
     raise SystemExit(f"unknown cover style {style}")

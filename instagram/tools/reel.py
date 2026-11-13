@@ -6,7 +6,7 @@ Reads <post_dir>/reel.json, writes <post_dir>/build/ (HyperFrames project) and <
 
 reel.json:
 {
-  "series": "שאלה של מנהלת · 1",
+  "series": "שאלה של מנהלת · 1",       # internal only: never shown in the video (13.11, Benaya)
   "music": "advertime",              # key in MUSIC below
   "scenes": [ {"dur": 2.8, "type": ..., ...}, ... ]
 }
@@ -393,7 +393,7 @@ def build(post):
 <title>{html.escape(spec.get("series", "reel"))}</title><script src="assets/vendor/gsap.min.js"></script><style>{CSS}{covers.CSS}</style></head>
 <body><div id="root" data-composition-id="main" data-start="0" data-duration="{total}" data-width="1080" data-height="1920">
 <div id="bg"></div>
-<div id="top"><span class="series">{fmt(spec.get("series", ""))}</span><span class="brand">EZ.Path.AI</span></div>
+<div id="top"><span></span><span class="brand">EZ.Path.AI</span></div>
 <div id="prog"><div id="prog-fill"></div></div>
 {secs}
 <audio id="music" src="assets/audio/music.mp3" data-start="0" data-duration="{total}" data-track-index="10" data-volume="1"></audio>
