@@ -2,12 +2,18 @@
  "series": "מאחורי הקלעים · 5",
  "scenes": [
   {
-   "dur": 2.2,
+   "dur": 2.6,
    "type": "hook",
-   "look": "ink",
-   "kicker": "מטופל ענה לנו:",
-   "text": "\"*הסר.*\"",
-   "size": 300
+   "look": "cover",
+   "style": "poster",
+   "cover": {
+    "bg": "#e5322d",
+    "kicker": "מטופל ענה לנו:",
+    "kfg": "#ffd60a",
+    "text": "\"הסר.\"",
+    "size": 280,
+    "sub": "הנה מה שקרה אחר כך."
+   }
   },
   {
    "dur": 3.0,

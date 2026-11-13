@@ -7,6 +7,7 @@ Reads <post_dir>/slides.json and writes <post_dir>/slide-01.png, slide-02.png, .
 slides.json: {"slides": [ {"type": ..., ...}, ... ]}
 Slide types:
   cover   title, sub, tone? ("ink" | "green")   tone colors the whole cover, for a varied profile grid
+          or style + cover{...}: a "different" cover from covers.py (chat, vs, notes, poster ...), no brand bars
   text    kicker?, title, body?
   quote   label, title, quote, note?
   list    title, items[], mark ("check" | "cross" | "num"), note?
@@ -25,6 +26,9 @@ import re
 import subprocess
 import sys
 import tempfile
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import covers  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 FONTS = os.path.join(HERE, "..", "shared", "fonts")
@@ -132,6 +136,11 @@ def slide_html(s, idx, total, series):
     top = (f'<div class="top"><span class="brand">EZ.Path.AI</span>'
            f'<span class="series">{fmt(series)}</span></div>')
     bottom = f'<div class="bottom"><span dir="ltr">{idx}/{total}</span><span dir="ltr">@ez.path.ai</span></div>'
+    if t == "cover" and s.get("style"):
+        css = CSS.replace("FONTS", "file://" + os.path.abspath(FONTS))
+        bg, stage = covers.render(s["style"], s["cover"], "file://" + os.path.abspath(os.path.join(HERE, "..", "assets")) + "/")
+        return (f'<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><style>{css}{covers.CSS}'
+                f'body{{{bg}}} .cv-stage{{top:0}}</style></head><body>{stage}</body></html>')
     if t == "cover":
         inner = (f'<div class="frame cover center"><div class="rule"></div>'
                  f'<div class="display">{fmt(s["title"])}</div><div class="sub">{fmt(s.get("sub"))}</div></div>')

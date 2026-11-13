@@ -2,12 +2,16 @@
  "series": "מאחורי הקלעים · 6",
  "scenes": [
   {
-   "dur": 2.2,
+   "dur": 2.6,
    "type": "hook",
-   "look": "notif",
-   "time": "10:15",
-   "date": "שבת",
-   "text": "הטלפון שקט.\n*וזה בכוונה.*"
+   "look": "cover",
+   "style": "calendar",
+   "cover": {
+    "month": "נובמבר",
+    "day": "שבת",
+    "dsub": "יום מנוחה",
+    "text": "הטלפון שקט.\n*וזה בכוונה.*"
+   }
   },
   {
    "dur": 3.0,

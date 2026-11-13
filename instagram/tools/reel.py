@@ -27,6 +27,8 @@ Scene types:
             look search query, text in a dark card over a blurred Google results page
             look number value, text        a giant number with the line under it
             size?                          font size of the line in px (default 170), for very short lines
+            look cover  style, cover{...}  a full "different" cover from covers.py (chat, poster, face, maps, timer,
+                                           postit, calendar, newspaper, notes, vs). Not the brand look: see AUTOMATION.md
 Inline markup: *word* = accent green, newline = line break.
 Layout keeps every text inside the Reels safe zone: y 300 to 1440, and 230px clear on the right.
 """
@@ -37,6 +39,9 @@ import re
 import shutil
 import subprocess
 import sys
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import covers  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 IG = os.path.abspath(os.path.join(HERE, ".."))
@@ -108,6 +113,10 @@ def fmt(t):
 def hook_bg(s):
     """Full-screen background of a hook scene. Sits under the text box and covers the series bar."""
     look = s.get("look", "ink")
+    if look == "cover":
+        bg, stage = covers.render(s["style"], s["cover"], "assets/img/")
+        return (f'<div class="hk-bg" style="{bg}"><div class="hk-zoom">'
+                f'<div style="position:absolute;top:285px;left:0;width:1080px;height:1350px">{stage}</div></div></div>')
     extra = ""
     if look == "notif":
         n = s.get("notif")
@@ -130,6 +139,8 @@ def hook_bg(s):
 
 def scene_inner(s):
     t = s["type"]
+    if t == "hook" and s.get("look") == "cover":
+        return ""
     if t == "hook":
         k = f'<div class="hk-kicker in">{fmt(s["kicker"])}</div>' if s.get("kicker") else ""
         num = f'<div class="hk-num in" dir="ltr">{fmt(s["value"])}</div>' if s.get("look") == "number" else ""
@@ -355,6 +366,8 @@ def build(post):
     shutil.copytree(os.path.join(V2, "fonts"), os.path.join(b, "assets", "fonts"))
     os.makedirs(os.path.join(b, "assets", "vendor"))
     shutil.copy(os.path.join(V2, "vendor", "gsap.min.js"), os.path.join(b, "assets", "vendor"))
+    os.makedirs(os.path.join(b, "assets", "img"))
+    shutil.copy(os.path.join(IG, "assets", "bnaya.jpg"), os.path.join(b, "assets", "img"))
     fade = max(0.1, total - 1.5)
     af = f"loudnorm=I=-16:TP=-1.5:LRA=11,afade=t=in:d=0.4,afade=t=out:st={fade}:d=1.5"
     out_mp3 = os.path.join(b, "assets", "audio", "music.mp3")
@@ -377,7 +390,7 @@ def build(post):
     js_scenes = json.dumps([{"start": starts[i], "dur": s["dur"], "stagger": s.get("stagger")} for i, s in enumerate(scenes)])
     doc = f"""<!doctype html>
 <html lang="he" data-resolution="portrait"><head><meta charset="UTF-8"><meta name="viewport" content="width=1080, height=1920">
-<title>{html.escape(spec.get("series", "reel"))}</title><script src="assets/vendor/gsap.min.js"></script><style>{CSS}</style></head>
+<title>{html.escape(spec.get("series", "reel"))}</title><script src="assets/vendor/gsap.min.js"></script><style>{CSS}{covers.CSS}</style></head>
 <body><div id="root" data-composition-id="main" data-start="0" data-duration="{total}" data-width="1080" data-height="1920">
 <div id="bg"></div>
 <div id="top"><span class="series">{fmt(spec.get("series", ""))}</span><span class="brand">EZ.Path.AI</span></div>

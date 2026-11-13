@@ -2,12 +2,16 @@
  "series": "הצעה · 2",
  "scenes": [
   {
-   "dur": 2.2,
+   "dur": 2.6,
    "type": "hook",
-   "look": "green",
-   "kicker": "רופא שיניים אמר לי:",
-   "text": "\"לא מאמין\n*בחינם.\"*",
-   "size": 160
+   "look": "cover",
+   "style": "face",
+   "cover": {
+    "bg": "#0f172a",
+    "bubble": "רופא שיניים\nאמר לי:",
+    "text": "\"אני לא מאמין\n*בחינם.*\"",
+    "size": 128
+   }
   },
   {
    "dur": 2.6,
