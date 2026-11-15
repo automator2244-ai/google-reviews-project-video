@@ -55,6 +55,7 @@
 | 39 | 12.11 | [DfoacQjDmCW](https://www.instagram.com/reel/DfoacQjDmCW/) | מספר אחד 3: 88% מול 47%, עסק שעונה לביקורות (ריל) | מספר גדול, slide, Getting it Done |
 | 40 | 13.11 | [Dfq_Ou8FXCE](https://www.instagram.com/p/Dfq_Ou8FXCE/) | צ׳קליסט שישי 2: 5 תמונות להעלות לפרופיל השבוע (קרוסלה, 7 שקפים) | נייר, סריף, "1 מתוך 5" |
 | 41 | 14.11 | [DfvAsmPjzuE](https://www.instagram.com/reel/DfvAsmPjzuE/) | ראיון 1: ראיון עם ביקורת שלא נכתבה (ריל) | פתיחה ink "ראיון בלעדי", confess, Local Forecast |
+| 42 | 15.11 | [DfwI5D6Fe79](https://www.instagram.com/p/DfwI5D6Fe79/) | מהדלפק 8: הודעת וואטסאפ שאפשר לשלוח מחר (קרוסלה, 7 שקפים) | שער chat (מסך וואטסאפ) |
 
 פריימים מכל סרטון (12 לכל אחד): `instagram/reference/`. קוד המקור של 9 הסרטונים האלה לא נמצא בריפו.
 
