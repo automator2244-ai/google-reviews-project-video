@@ -27,6 +27,7 @@ Scene types:
             look search query, text in a dark card over a blurred Google results page
             look number value, text        a giant number with the line under it
             size?                          font size of the line in px (default 170), for very short lines
+            num_size?                      font size of the giant number (default 380), for long numbers like 4,800
             look cover  style, cover{...}  a full "different" cover from covers.py (chat, poster, face, maps, timer,
                                            postit, calendar, newspaper, notes, vs). Not the brand look: see AUTOMATION.md
 Inline markup: *word* = accent green, newline = line break.
@@ -143,7 +144,8 @@ def scene_inner(s):
         return ""
     if t == "hook":
         k = f'<div class="hk-kicker in">{fmt(s["kicker"])}</div>' if s.get("kicker") else ""
-        num = f'<div class="hk-num in" dir="ltr">{fmt(s["value"])}</div>' if s.get("look") == "number" else ""
+        nsz = f' style="font-size:{s["num_size"]}px"' if s.get("num_size") else ""
+        num = f'<div class="hk-num in" dir="ltr"{nsz}>{fmt(s["value"])}</div>' if s.get("look") == "number" else ""
         size = f' style="font-size:{s["size"]}px"' if s.get("size") else ""
         txt = f'{k}{num}<div class="hk-text in"{size}>{fmt(s["text"])}</div>'
         if s.get("look") == "search":
