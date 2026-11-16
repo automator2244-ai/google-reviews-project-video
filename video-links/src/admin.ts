@@ -1,4 +1,5 @@
 import { dashboardPage } from "./page";
+import { SEGMENTS, type Segment } from "./segments";
 import { type Env, html, json, notFound } from "./util";
 import { ID_RE } from "./video";
 
@@ -22,13 +23,17 @@ interface StatRow {
 export async function handleAdmin(req: Request, env: Env, url: URL): Promise<Response> {
   const path = url.pathname.replace(/\/+$/, "") || "/admin";
 
+  // One dashboard per audience: /admin (dental clinics) and /admin/<key> (for example /admin/vet).
+  const page = path.match(/^\/admin(?:\/([a-z0-9-]{1,32}))?$/);
+  const pageSeg = page ? SEGMENTS.find((s) => s.key === (page[1] ?? "")) : undefined;
+  if (req.method === "GET" && pageSeg) return html(dashboardPage(url.origin, pageSeg));
+
+  const seg = SEGMENTS.find((s) => s.key === (url.searchParams.get("seg") ?? "")) ?? SEGMENTS[0];
   switch (`${req.method} ${path}`) {
-    case "GET /admin":
-      return html(dashboardPage(url.origin));
     case "GET /admin/api/stats":
-      return json({ rows: await stats(env) });
+      return json({ rows: await stats(env, seg) });
     case "GET /admin/export.csv":
-      return exportCsv(env, url.origin);
+      return exportCsv(env, url.origin, seg);
   }
   const mark = path.match(/^\/admin\/api\/irrelevant\/([^/]+)$/);
   if (mark && req.method === "POST" && ID_RE.test(mark[1])) return setIrrelevant(req, env, mark[1]);
@@ -51,7 +56,7 @@ async function setIrrelevant(req: Request, env: Env, id: string): Promise<Respon
   return json({ id, irrelevant_at: at });
 }
 
-async function stats(env: Env): Promise<StatRow[]> {
+async function stats(env: Env, seg: Segment): Promise<StatRow[]> {
   const { results } = await env.DB.prepare(
     `SELECT r.id, r.name, r.phone, r.note, r.created_at, r.video_at, r.irrelevant_at, r.page_title,
             COUNT(c.id) AS clicks, MIN(c.clicked_at) AS first_click, MAX(c.clicked_at) AS last_click,
@@ -60,9 +65,12 @@ async function stats(env: Env): Promise<StatRow[]> {
             (SELECT MAX(w.progress) FROM watch_events w WHERE w.recipient_id = r.id) AS watched
      FROM recipients r
      LEFT JOIN clicks c ON c.recipient_id = r.id AND c.is_bot = 0
+     WHERE COALESCE(r.segment, '') = ?
      GROUP BY r.id
      ORDER BY last_click IS NULL, last_click DESC, r.created_at DESC`,
-  ).all<StatRow>();
+  )
+    .bind(seg.key)
+    .all<StatRow>();
   return results;
 }
 
@@ -84,8 +92,8 @@ function watchedLabel(w: number | null): string {
   return w === 100 ? "עד הסוף" : `${w}%`;
 }
 
-async function exportCsv(env: Env, origin: string): Promise<Response> {
-  const rows = await stats(env);
+async function exportCsv(env: Env, origin: string, seg: Segment): Promise<Response> {
+  const rows = await stats(env, seg);
   const fmt = (iso: string | null) => (iso ? ilTime.format(new Date(iso)) : "");
   const lines = [
     ["שם", "מזהה", "טלפון", "הערה", "קישור", "כניסות", "צפייה", "כניסה ראשונה", "כניסה אחרונה", "מדינה", "לא רלוונטי"],
@@ -98,7 +106,7 @@ async function exportCsv(env: Env, origin: string): Promise<Response> {
   return new Response(csv, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": `attachment; filename="clicks-${new Date().toISOString().slice(0, 10)}.csv"`,
+      "Content-Disposition": `attachment; filename="clicks-${seg.key || "dental"}-${new Date().toISOString().slice(0, 10)}.csv"`,
       "Cache-Control": "no-store",
     },
   });
