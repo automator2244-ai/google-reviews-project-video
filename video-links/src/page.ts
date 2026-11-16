@@ -1,4 +1,5 @@
 import { CONTACT_NAME, CONTACT_PHONE, CONTACT_ROLE, CONTACT_WA, PHOTO, SITE } from "./brand";
+import { SEGMENTS, type Segment } from "./segments";
 import { escapeHtml } from "./util";
 
 const STYLE = `
@@ -9,6 +10,7 @@ body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-ap
 main{max-width:1000px;margin:0 auto;padding:16px}
 header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
 h1{font-size:20px;margin:0}h2{font-size:17px;margin:0 0 12px}
+.tabs{display:flex;gap:8px;margin-bottom:16px}.tabs .btn.on{background:var(--accent);border-color:var(--accent);color:var(--accent-text)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
 .stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center}
@@ -42,13 +44,17 @@ function shell(title: string, body: string): string {
 <title>${title}</title><style>${STYLE}</style></head><body>${body}</body></html>`;
 }
 
-const DEFAULT_TEMPLATE = "היי {שם}, הכנתי לך סרטון קצר במיוחד בשבילך: {קישור}";
-
-export function dashboardPage(origin: string): string {
+export function dashboardPage(origin: string, seg: Segment): string {
+  const tabs = SEGMENTS.map(
+    (s) => `<a class="btn${s.key === seg.key ? " on" : ""}" href="/admin${s.key ? "/" + s.key : ""}">${escapeHtml(s.label)}</a>`,
+  ).join("");
+  const qs = seg.key ? `?seg=${seg.key}` : "";
   return shell(
-    "מעקב צפיות",
+    `מעקב צפיות: ${escapeHtml(seg.label)}`,
     `<main>
-<header><h1>מעקב צפיות בסרטונים</h1></header>
+<header><h1>מעקב צפיות בסרטונים: ${escapeHtml(seg.label)}</h1>
+<a class="btn" href="${escapeHtml(seg.sheet)}" target="_blank" rel="noopener">גיליון הלידים</a></header>
+<nav class="tabs">${tabs}</nav>
 
 <div class="stats">
 <div class="stat"><b id="s-total">0</b><span>נמענים</span></div>
@@ -67,7 +73,7 @@ export function dashboardPage(origin: string): string {
 <h2>מי צפה</h2>
 <div class="row" style="margin-top:0">
 <input id="search" type="search" placeholder="חיפוש לפי שם" style="flex:1;min-width:160px">
-<button id="refresh">רענון</button><a class="btn" href="/admin/export.csv">ייצוא CSV</a>
+<button id="refresh">רענון</button><a class="btn" href="/admin/export.csv${qs}">ייצוא CSV</a>
 </div>
 <div class="scroll"><table><thead><tr>
 <th data-key="name">שם</th><th data-key="clicks">כניסות</th><th data-key="watched">צפייה</th>
@@ -77,7 +83,8 @@ export function dashboardPage(origin: string): string {
 </main>
 <script>
 var ORIGIN = ${JSON.stringify(origin)};
-var DEFAULT_TEMPLATE = ${JSON.stringify(DEFAULT_TEMPLATE)};
+var SEG = ${JSON.stringify(seg.key)};
+var DEFAULT_TEMPLATE = ${JSON.stringify(seg.template)};
 ${CLIENT_JS}
 </script>`,
   );
@@ -102,8 +109,9 @@ function watchedLabel(w){if(w==null)return '';if(w===0)return 'התחיל';retur
 
 /* WhatsApp message template, kept in this browser only */
 var tpl=$('#tpl');
-try{tpl.value=localStorage.getItem('wa_template')||DEFAULT_TEMPLATE}catch(e){tpl.value=DEFAULT_TEMPLATE}
-tpl.oninput=function(){try{localStorage.setItem('wa_template',tpl.value)}catch(e){}};
+var TPL_KEY='wa_template'+(SEG?'_'+SEG:'');
+try{tpl.value=localStorage.getItem(TPL_KEY)||DEFAULT_TEMPLATE}catch(e){tpl.value=DEFAULT_TEMPLATE}
+tpl.oninput=function(){try{localStorage.setItem(TPL_KEY,tpl.value)}catch(e){}};
 function waLink(r){return 'https://wa.me/'+r.phone+'?text='+encodeURIComponent(tpl.value.split('{שם}').join(r.name).split('{קישור}').join(linkFor(r.id)))}
 
 /* stats table */
@@ -148,7 +156,7 @@ document.querySelectorAll('th[data-key]').forEach(function(th){th.onclick=functi
   var k=th.dataset.key;if(sortKey===k){sortDir=-sortDir}else{sortKey=k;sortDir=(k==='name'||k==='country')?1:-1}
   document.querySelectorAll('th[data-key]').forEach(function(h){h.textContent=h.textContent.replace(/ [▲▼]$/,'')});
   th.textContent+=sortDir>0?' ▲':' ▼';render()}});
-function load(){fetch('/admin/api/stats').then(function(r){return r.json()})
+function load(){fetch('/admin/api/stats'+(SEG?'?seg='+SEG:'')).then(function(r){return r.json()})
   .then(function(d){rows=d.rows;render()}).catch(function(){})}
 $('#search').oninput=render;$('#refresh').onclick=load;
 document.addEventListener('visibilitychange',function(){if(!document.hidden)load()});

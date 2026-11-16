@@ -10,3 +10,11 @@ google-reviews-system/.hyperframes/
 google-reviews-system/renders/
 google-reviews-system/out/work-*/
 google-reviews-system/out/.*
+google-reviews-vet/.hyperframes/
+google-reviews-vet/renders/
+google-reviews-vet/out/work-*/
+google-reviews-vet/out/.*
+google-reviews-vet/out/*.log
+google-reviews-vet/out/draft.mp4
+google-reviews-vet/assets/img/cand/
+google-reviews-vet/assets/img/lock-src.jpg

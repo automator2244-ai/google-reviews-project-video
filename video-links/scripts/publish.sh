@@ -26,6 +26,7 @@ Usage: scripts/publish.sh --name "שם העסק" [--phone 050...] (--shared KEY 
   --speed N         playback speed of the whole video (default: 1.2, 1 = original)
   --thumb-at SEC    take the WhatsApp preview image at this second of the finished video
   --note TEXT       free-text note (shows up in the CSV export)
+  --segment KEY     which dashboard shows this recipient: vet = /admin/vet (default: dental clinics, /admin)
   --title TEXT      page title instead of "סרטון הסבר עבור {name}" (also the name shown in the dashboard)
   --id ID           replace the video of an existing recipient
   --local           register and upload to the local `wrangler dev` right away
@@ -33,13 +34,14 @@ EOF
   exit 1
 }
 
-NAME="" PHONE="" NOTE="" TITLE="" PERSONAL="" VIDEO="" SHARED="" ID="" THUMB_SET="" PERSONAL_LAST=1 NO_OUTRO=0 LOCAL=0 SYNC=0 BRIGHTEN=0
+NAME="" PHONE="" NOTE="" TITLE="" SEGMENT="" PERSONAL="" VIDEO="" SHARED="" ID="" THUMB_SET="" PERSONAL_LAST=1 NO_OUTRO=0 LOCAL=0 SYNC=0 BRIGHTEN=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --name) NAME="$2"; shift 2 ;;
     --phone) PHONE="$2"; shift 2 ;;
     --note) NOTE="$2"; shift 2 ;;
     --title) TITLE="$2"; shift 2 ;;
+    --segment) SEGMENT="$2"; shift 2 ;;
     --personal) PERSONAL="$2"; shift 2 ;;
     --video) VIDEO="$2"; shift 2 ;;
     --shared) SHARED="$2"; shift 2 ;;
@@ -58,6 +60,7 @@ while [ $# -gt 0 ]; do
   esac
 done
 [ -n "$NAME" ] || usage
+[ -z "$SEGMENT" ] || [[ "$SEGMENT" =~ ^[a-z0-9-]{1,32}$ ]] || { echo "Invalid --segment" >&2; exit 1; }
 
 # 050-123-4567 / +972 50... / 00972... -> 972501234567
 if [ -n "$PHONE" ]; then
@@ -79,8 +82,8 @@ if [ -n "$SHARED" ]; then
   OUT="out/$ID"; mkdir -p "$OUT"
   NOW=$(date -u +%Y-%m-%dT%H:%M:%S.000Z)
   cat > "$OUT/register.sql" <<SQL
-INSERT INTO recipients (id, name, phone, note, created_at, video_key, video_at, page_title)
-VALUES ($(q "$ID"), $(q "$NAME"), $(q "$PHONE"), $(q "$NOTE"), '$NOW', $(q "$SHARED"), '$NOW', $(q "$TITLE"))
+INSERT INTO recipients (id, name, phone, note, created_at, video_key, video_at, page_title, segment)
+VALUES ($(q "$ID"), $(q "$NAME"), $(q "$PHONE"), $(q "$NOTE"), '$NOW', $(q "$SHARED"), '$NOW', $(q "$TITLE"), $(q "$SEGMENT"))
 ON CONFLICT(id) DO UPDATE SET video_key = excluded.video_key, video_at = excluded.video_at, page_title = excluded.page_title;
 SQL
   printf '%s' "$NAME" > "$OUT/name"
@@ -174,8 +177,8 @@ printf '%s' "$TOKEN" > "$OUT/token"
 EXPIRES=$(( ($(date +%s) + 3600) * 1000 ))
 
 cat > "$OUT/register.sql" <<SQL
-INSERT INTO recipients (id, name, phone, note, created_at)
-VALUES ($(q "$ID"), $(q "$NAME"), $(q "$PHONE"), $(q "$NOTE"), '$(date -u +%Y-%m-%dT%H:%M:%S.000Z)')
+INSERT INTO recipients (id, name, phone, note, created_at, segment)
+VALUES ($(q "$ID"), $(q "$NAME"), $(q "$PHONE"), $(q "$NOTE"), '$(date -u +%Y-%m-%dT%H:%M:%S.000Z)', $(q "$SEGMENT"))
 ON CONFLICT(id) DO NOTHING;
 INSERT INTO upload_tokens (token_hash, recipient_id, expires_at)
 VALUES ('$(printf '%s' "$TOKEN" | sha256sum | cut -d' ' -f1)', $(q "$ID"), $EXPIRES);
