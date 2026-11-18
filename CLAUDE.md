@@ -30,8 +30,7 @@
   ```bash
   scripts/publish.sh --segment vet --template ../google-reviews-vet/out/google-reviews-vet-full.mp4 --name "..." --phone 05... --personal rec.mp4
   ```
-  ואז `register.sql` על D1 ו-`scripts/upload.sh <id>`. בלי הקלטה: `--shared vet-v1` (גרסה ישנה, בלי "כמה מילים ממני").
-  מריצים את `register.sql` על D1, `scripts/link.sh <id>`, ורושמים את הקישור בעמודה O בשורה של העסק.
+  ואז `register.sql` על D1 ו-`scripts/upload.sh <id>`, ורושמים את הקישור בעמודה O בשורה של העסק. בלי הקלטה: `--shared vet-v1` (גרסה ישנה, בלי "כמה מילים ממני") ו-`scripts/link.sh <id>`.
 
 ## ממתין: קישור "סרטון מלא עבור ד״ר רפאל חיימוב" (9.11)
 בניה ביקש קישור במערכת המעקב לסרטון המלא, עם הכותרת "סרטון מלא עבור ד״ר רפאל חיימוב". חיבור Cloudflare נפל באמצע, אז זה לא הושלם. הקוד מוכן בענף (עמודה `page_title` ו-`publish.sh --title`), אבל **לא ממזגים לפני שהמיגרציה רצה**, כי הקוד החדש שולף את `page_title` וכל הדפים ייפלו בלעדיה. הסדר:
