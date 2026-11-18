@@ -24,6 +24,8 @@ Usage: scripts/publish.sh --name "שם העסק" [--phone 050...] (--shared KEY 
   --sync SEC        fix voice/picture sync in the personal recording: 0.3 = voice was 0.3s late, -0.3 = early
   --brighten        brighten a dark personal recording a little
   --speed N         playback speed of the whole video (default: 1.2, 1 = original)
+  --template-speed N  playback speed of the template and the end card only (default: same as --speed);
+                    --speed then applies to the personal recording
   --thumb-at SEC    take the WhatsApp preview image at this second of the finished video
   --note TEXT       free-text note (shows up in the CSV export)
   --segment KEY     which dashboard shows this recipient: vet = /admin/vet (default: dental clinics, /admin)
@@ -34,7 +36,7 @@ EOF
   exit 1
 }
 
-NAME="" PHONE="" NOTE="" TITLE="" SEGMENT="" PERSONAL="" VIDEO="" SHARED="" ID="" THUMB_SET="" PERSONAL_LAST=1 NO_OUTRO=0 LOCAL=0 SYNC=0 BRIGHTEN=0
+TSPEED="" NAME="" PHONE="" NOTE="" TITLE="" SEGMENT="" PERSONAL="" VIDEO="" SHARED="" ID="" THUMB_SET="" PERSONAL_LAST=1 NO_OUTRO=0 LOCAL=0 SYNC=0 BRIGHTEN=0
 while [ $# -gt 0 ]; do
   case "$1" in
     --name) NAME="$2"; shift 2 ;;
@@ -52,6 +54,7 @@ while [ $# -gt 0 ]; do
     --personal-first) PERSONAL_LAST=0; shift ;;
     --personal-last) PERSONAL_LAST=1; shift ;; # the default; kept so old commands still work
     --speed) SPEED="$2"; shift 2 ;;
+    --template-speed) TSPEED="$2"; shift 2 ;;
     --thumb-at) THUMB_SET="$2"; shift 2 ;;
     --sync) SYNC="$2"; shift 2 ;;
     --brighten) BRIGHTEN=1; shift ;;
@@ -98,6 +101,8 @@ SQL
 fi
 
 awk "BEGIN{exit !($SPEED >= 0.5 && $SPEED <= 2)}" 2>/dev/null || { echo "--speed must be between 0.5 and 2" >&2; exit 1; }
+[ -n "$TSPEED" ] || TSPEED="$SPEED"
+awk "BEGIN{exit !($TSPEED >= 0.5 && $TSPEED <= 2)}" 2>/dev/null || { echo "--template-speed must be between 0.5 and 2" >&2; exit 1; }
 awk "BEGIN{exit !($SYNC >= -2 && $SYNC <= 2)}" 2>/dev/null || { echo "--sync must be between -2 and 2 seconds" >&2; exit 1; }
 [ -n "$PERSONAL" ] || [ -n "$VIDEO" ] || usage
 for f in "$PERSONAL" "$VIDEO"; do [ -z "$f" ] || [ -f "$f" ] || { echo "File not found: $f" >&2; exit 1; }; done
@@ -116,7 +121,8 @@ has_audio() { [ -n "$(ffprobe -v error -select_streams a -show_entries stream=in
 # plus the optional --sync and --brighten fixes.
 INPUTS=() NI=0 FILTER="" CONCAT="" N=0
 add_segment() { # file lufs [personal]
-  local i=$NI vpre="" apre="" dur
+  local i=$NI vpre="" apre="" dur sp=$TSPEED
+  [ "${3:-}" = personal ] && sp=$SPEED
   dur=$(duration "$1")
   if [ "${3:-}" = personal ]; then
     [ "$BRIGHTEN" = 1 ] && vpre="eq=brightness=0.06:contrast=1.06:saturation=1.05,"
@@ -128,16 +134,16 @@ add_segment() { # file lufs [personal]
     fi
   fi
   INPUTS+=(-i "$1"); NI=$((NI + 1))
-  FILTER+="[$i:v]${vpre}split[bg$N][fg$N];"
+  FILTER+="[$i:v]scale=trunc(iw*sar/2)*2:ih,setsar=1,${vpre}split[bg$N][fg$N];"
   FILTER+="[bg$N]scale=$W:$H:force_original_aspect_ratio=increase,crop=$W:$H,gblur=sigma=30,eq=brightness=-0.15[b$N];"
   FILTER+="[fg$N]scale=$W:$H:force_original_aspect_ratio=decrease[f$N];"
-  FILTER+="[b$N][f$N]overlay=(W-w)/2:(H-h)/2,setsar=1,fps=30,format=yuv420p[v$N];"
+  FILTER+="[b$N][f$N]overlay=(W-w)/2:(H-h)/2,setsar=1,fps=30,format=yuv420p,setpts=PTS/$sp,fps=30[v$N];"
   if has_audio "$1"; then
     # apad + atrim keep the audio exactly as long as the picture after a --sync shift
-    FILTER+="[$i:a]aformat=sample_fmts=fltp:channel_layouts=stereo,${apre}loudnorm=I=$2:TP=-1.5:LRA=11,aresample=48000,apad,atrim=0:$dur[a$N];"
+    FILTER+="[$i:a]aformat=sample_fmts=fltp:channel_layouts=stereo,${apre}loudnorm=I=$2:TP=-1.5:LRA=11,aresample=48000,apad,atrim=0:$dur,atempo=$sp[a$N];"
   else
     INPUTS+=(-f lavfi -t "$dur" -i anullsrc=r=48000:cl=stereo); NI=$((NI + 1))
-    FILTER+="[$((NI - 1)):a]anull[a$N];"
+    FILTER+="[$((NI - 1)):a]atempo=$sp[a$N];"
   fi
   CONCAT+="[v$N][a$N]"
   N=$((N + 1))
@@ -152,17 +158,17 @@ if [ -n "$VIDEO" ]; then
 elif [ "$PERSONAL_LAST" = 1 ]; then
   add_segment "$TEMPLATE" -20
   add_segment "$PERSONAL" -16 personal
-  THUMB_AT=$(awk "BEGIN{print $TEMPLATE_THUMB / $SPEED}")
+  THUMB_AT=$(awk "BEGIN{print $TEMPLATE_THUMB / $TSPEED}")
 else
   add_segment "$PERSONAL" -16 personal
   add_segment "$TEMPLATE" -20
-  THUMB_AT=$(awk "BEGIN{print ($(duration "$PERSONAL") + $TEMPLATE_THUMB) / $SPEED}")
+  THUMB_AT=$(awk "BEGIN{print $(duration "$PERSONAL") / $SPEED + $TEMPLATE_THUMB / $TSPEED}")
 fi
 [ -z "$THUMB_SET" ] || THUMB_AT="$THUMB_SET"
 if [ -z "$VIDEO" ] && [ "$NO_OUTRO" = 0 ]; then
   add_segment "$OUTRO" -20
 fi
-FILTER+="${CONCAT}concat=n=$N:v=1:a=1[cv][ca];[cv]setpts=PTS/$SPEED,fps=30[v];[ca]atempo=$SPEED[a]"
+FILTER+="${CONCAT}concat=n=$N:v=1:a=1[v][a]"
 
 echo "Encoding video..."
 ffmpeg -hide_banner -loglevel error -y "${INPUTS[@]}" -filter_complex "$FILTER" -map "[v]" -map "[a]" \

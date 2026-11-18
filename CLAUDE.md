@@ -28,9 +28,9 @@
 - דשבורד נפרד: https://go.ezpath-ai.com/admin/vet. מציג רק נמענים עם `segment = 'vet'`, ויש בו כפתור לגיליון הלידים. הדשבורד הרגיל (`/admin`) מציג רק את רופאי השיניים.
 - **קישורים יוצרים רק לעסקים שבניה מבקש, לא לכל הגיליון.** בדרך כלל בניה שולח הקלטה אישית לעסק. אז:
   ```bash
-  scripts/publish.sh --segment vet --template ../google-reviews-vet/out/google-reviews-vet-full.mp4 --name "..." --phone 05... --personal rec.mp4
+  scripts/publish.sh --segment vet --template ../google-reviews-vet/out/google-reviews-vet-full.mp4 --template-speed 1.08 --name "..." --phone 05... --personal rec.mp4
   ```
-  ואז `register.sql` על D1 ו-`scripts/upload.sh <id>`, ורושמים את הקישור בעמודה O בשורה של העסק. בלי הקלטה: `--shared vet-v1` (גרסה ישנה, בלי "כמה מילים ממני") ו-`scripts/link.sh <id>`.
+  האנימציה וכרטיס הסיום במהירות 1.08 (בקשת בניה 18.11: קצת יותר לאט מ-1.2), וההקלטה של בניה ב-1.2. ואז `register.sql` על D1 ו-`scripts/upload.sh <id>`, ורושמים את הקישור בעמודה O בשורה של העסק. בלי הקלטה: `--shared vet-v1` (גרסה ישנה, בלי "כמה מילים ממני") ו-`scripts/link.sh <id>`.
 
 ## ממתין: קישור "סרטון מלא עבור ד״ר רפאל חיימוב" (9.11)
 בניה ביקש קישור במערכת המעקב לסרטון המלא, עם הכותרת "סרטון מלא עבור ד״ר רפאל חיימוב". חיבור Cloudflare נפל באמצע, אז זה לא הושלם. הקוד מוכן בענף (עמודה `page_title` ו-`publish.sh --title`), אבל **לא ממזגים לפני שהמיגרציה רצה**, כי הקוד החדש שולף את `page_title` וכל הדפים ייפלו בלעדיה. הסדר:

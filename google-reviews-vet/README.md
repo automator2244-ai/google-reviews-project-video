@@ -31,7 +31,7 @@ npx hyperframes@0.8.140 render -c cards/outro.html -q delivery -o out/outro.mp4
 ```bash
 cd ../video-links
 scripts/publish.sh --name "אבי" --phone 054... --segment vet \
-  --template ../google-reviews-vet/out/google-reviews-vet-full.mp4 --personal /path/to/recording.mp4
+  --template ../google-reviews-vet/out/google-reviews-vet-full.mp4 --template-speed 1.08 --personal /path/to/recording.mp4
 #   מריצים את out/<id>/register.sql על D1, ואז:
 scripts/upload.sh <id>
 ```
