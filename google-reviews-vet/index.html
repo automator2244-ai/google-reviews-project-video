@@ -1772,7 +1772,7 @@
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="main" data-start="0" data-duration="47.25" data-width="1080" data-height="1920">
+    <div id="root" data-composition-id="main" data-start="0" data-duration="52.05" data-width="1080" data-height="1920">
       <!-- Persistent background -->
       <div id="bg" data-layout-allow-overflow>
         <div id="bg-dots"></div>
@@ -1915,14 +1915,13 @@
                       <div class="meta">17:42</div>
                     </div>
                     <div class="qr-list">
-                      <div class="qr" id="qr1"><i class="ic" data-icon="reply"></i><span>היה מעולה!</span></div>
-                      <div class="qr" id="qr2"><i class="ic" data-icon="reply"></i><span>היה בסדר</span></div>
-                      <div class="qr" id="qr3"><i class="ic" data-icon="reply"></i><span>היה פחות טוב</span></div>
+                      <div class="qr" id="qr1"><i class="ic" data-icon="reply"></i><span>היה מעולה, הייתה חוויה טובה</span></div>
+                      <div class="qr" id="qr3"><i class="ic" data-icon="reply"></i><span>היה פחות טוב..</span></div>
                     </div>
                   </div>
                   <div class="msg-out" id="reply1">
                     <div class="bubble">
-                      <p>היה מעולה!</p>
+                      <p>היה מעולה, הייתה חוויה טובה</p>
                       <div class="meta">17:43<i class="ic" data-icon="check-check"></i></div>
                     </div>
                   </div>
@@ -1999,14 +1998,13 @@
                       <div class="meta">18:05</div>
                     </div>
                     <div class="qr-list">
-                      <div class="qr" style="opacity: 1"><i class="ic" data-icon="reply"></i><span>היה מעולה!</span></div>
-                      <div class="qr" style="opacity: 1"><i class="ic" data-icon="reply"></i><span>היה בסדר</span></div>
-                      <div class="qr" id="d-qr3" style="opacity: 1"><i class="ic" data-icon="reply"></i><span>היה פחות טוב</span></div>
+                      <div class="qr" style="opacity: 1"><i class="ic" data-icon="reply"></i><span>היה מעולה, הייתה חוויה טובה</span></div>
+                      <div class="qr" id="d-qr3" style="opacity: 1"><i class="ic" data-icon="reply"></i><span>היה פחות טוב..</span></div>
                     </div>
                   </div>
                   <div class="msg-out" id="d-reply">
                     <div class="bubble">
-                      <p>היה פחות טוב</p>
+                      <p>היה פחות טוב..</p>
                       <div class="meta">18:06<i class="ic" data-icon="check-check"></i></div>
                     </div>
                   </div>
@@ -2128,6 +2126,20 @@
         </div>
       </section>
 
+      <!-- Scene 8: hand-off to Bnaya (50.2 to 55) -->
+      <section id="s8" class="scene clip" dir="rtl" lang="he" data-start="47.15" data-duration="4.9" data-track-index="1">
+        <div class="handoff">
+          <div class="portrait" id="portrait">
+            <img src="assets/img/bnaya.jpg" alt="" id="por-img" />
+            <svg viewBox="0 0 500 500"><circle id="por-ring" cx="250" cy="250" r="240" fill="none" stroke="#007329" stroke-width="8" stroke-linecap="round" transform="rotate(-90 250 250)" /></svg>
+            <div class="rec" id="rec"><i id="rec-dot"></i>REC</div>
+          </div>
+          <div class="ho-title" id="ho-title"><span class="w">רגע,</span> <span class="w">כמה</span> <span class="w">מילים</span> <span class="w hl">ממני</span></div>
+          <div class="ho-name" id="ho-name"><b>בניה</b> · מייסד EZ.Path.AI</div>
+          <div class="ho-rule" id="ho-rule"></div>
+        </div>
+      </section>
+
       <!-- Captions, one track -->
       <div class="cap clip" id="cap1" data-start="0.9" data-duration="4.3" data-track-index="5">
         <div class="cap-inner" dir="rtl" lang="he">לקוח חדש בוחר וטרינר <span class="hl">לפי מה שהוא רואה בגוגל.</span></div>
@@ -2172,7 +2184,7 @@
       <div class="ripple" id="rp8"></div>
 
       <!-- Audio. Track 10: music. Track 11: UI sounds. -->
-      <audio id="music" src="assets/audio/music.mp3" data-start="0" data-duration="47.25" data-track-index="10" data-volume="1"></audio>
+      <audio id="music" src="assets/audio/music.mp3" data-start="0" data-duration="52.05" data-track-index="10" data-volume="1"></audio>
       <audio id="sfx-tap-1" src="assets/audio/click-soft.mp3" data-start="4.05" data-duration="0.37" data-track-index="11" data-volume="0.4"></audio>
       <audio id="sfx-pop-1" src="assets/audio/pop.mp3" data-start="17.1" data-duration="0.72" data-track-index="11" data-volume="0.24"></audio>
       <audio id="sfx-tap-2" src="assets/audio/click-soft.mp3" data-start="18.65" data-duration="0.37" data-track-index="11" data-volume="0.4"></audio>
@@ -2249,11 +2261,12 @@
         const MONTHS = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "6 חודשים"];
         $("pc-month").innerHTML = MONTHS.map((m, i) => '<div class="pm" id="pm' + i + '">' + m + "</div>").join("");
 
-        // Patient dots: 23 x 10 grid, filled in a diagonal wave
+        // Customer dots: up to 23 per row, N_CUST in all, filled in a diagonal wave
+        const N_CUST = 105;
         function gridHTML(prefix, cls) {
           let h = "";
           for (let r = 0; r < 10; r++)
-            for (let c = 0; c < 23; c++) h += '<div class="pd ' + cls + '" id="' + prefix + (r * 23 + c) + '" style="right:' + c * 17 + "px;top:" + r * 17 + 'px"></div>';
+            for (let c = 0; c < 23; c++) if (r * 23 + c < N_CUST) h += '<div class="pd ' + cls + '" id="' + prefix + (r * 23 + c) + '" style="right:' + c * 17 + "px;top:" + r * 17 + 'px"></div>';
           return h;
         }
         $("pgrid-a").innerHTML = gridHTML("pa", "on");
@@ -2279,7 +2292,7 @@
           // The 84% panel was removed: everything authored after CUT_AT moves up by SHIFT seconds.
           const CUT_AT = 11.4,
             SHIFT = 2.95,
-            TOTAL = 50.2 - SHIFT;
+            TOTAL = 55 - SHIFT;
 
           // Measure before any tween touches transforms
           const chatBody = $("chat-body"),
@@ -2363,8 +2376,8 @@
           chapter("ch5", 31.55, 37.55);
           chapter("ch6", 37.9, 44.75);
           chapter("ch7", 45.1, 49.9);
-          tl.to("#topbar", { opacity: 0, duration: 0.35, ease: "power1.in" }, 49.8);
-          tl.to("#prog", { opacity: 0, duration: 0.35, ease: "power1.in" }, 49.8);
+          tl.to("#topbar", { opacity: 0, duration: 0.4, ease: "power1.in" }, 50.1);
+          tl.to("#prog", { opacity: 0, duration: 0.4, ease: "power1.in" }, 50.1);
 
           // ---------------- Scene 1: the search (0 to 5.4) ----------------
           tl.fromTo("#s1-search", { opacity: 0, y: -50, scale: 0.96 }, { opacity: 1, y: 0, scale: 1, duration: 0.6, ease: "power3.out" }, 0.15);
@@ -2409,8 +2422,8 @@
           tl.fromTo("#gap-a", { opacity: 0, x: 80 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, 14.4);
           tl.fromTo("#gap-b", { opacity: 0, x: -80 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, 14.55);
           tl.fromTo("#gap-rule", { scaleY: 0 }, { scaleY: 1, duration: 0.6, ease: "power2.inOut" }, 14.45);
-          counter("gap-a-n", 0, 230, 14.6, 1.7, "power2.out");
-          for (let i = 0; i < 230; i++) {
+          counter("gap-a-n", 0, 105, 14.6, 1.5, "power2.out");
+          for (let i = 0; i < N_CUST; i++) {
             const r = Math.floor(i / 23),
               c = i % 23;
             tl.fromTo("#pa" + i, { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(2.5)" }, 14.65 + (r + c) * 0.045);
@@ -2443,7 +2456,7 @@
           tl.fromTo("#scr-chat", { opacity: 0, scale: 0.9, y: -120 }, { opacity: 1, scale: 1, y: 0, duration: 0.5, ease: "power3.out" }, 21.8);
           tl.to("#scr-lock", { opacity: 0, duration: 0.35, ease: "power1.in" }, 21.85);
           pop("#msg1", 22.15, { from: 0.8, d: 0.42 });
-          ["#qr1", "#qr2", "#qr3"].forEach((s, i) => {
+          ["#qr1", "#qr3"].forEach((s, i) => {
             tl.fromTo(s, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, 22.45 + i * 0.1);
           });
           fingerIn(22.75, P.qr1, 380, 160, 0.75);
@@ -2568,6 +2581,20 @@
           capIn("cap10", 45.35, 49.75);
           tl.to(".chips", { y: -16, duration: 4, ease: "sine.inOut" }, 45.6);
           tl.to(".chip", { opacity: 0, y: -40, duration: 0.35, ease: "power2.in", stagger: 0.06 }, 49.75);
+
+          // ---------------- Scene 8: hand-off (50.2 to 55) ----------------
+          tl.fromTo("#portrait", { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.7, ease: "back.out(1.6)" }, 50.25);
+          const ring = $("por-ring");
+          const RL = 2 * Math.PI * 240;
+          ring.setAttribute("stroke-dasharray", RL);
+          tl.fromTo(ring, { attr: { "stroke-dashoffset": RL } }, { attr: { "stroke-dashoffset": 0 }, duration: 1.1, ease: "power2.inOut" }, 50.45);
+          tl.fromTo("#rec", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, 51.2);
+          for (let t = 51.6, on = false; t < 55; t += 0.5, on = !on) tl.set("#rec-dot", { opacity: on ? 1 : 0.2 }, t);
+          tl.fromTo("#ho-title .w", { opacity: 0, y: 80 }, { opacity: 1, y: 0, duration: 0.5, ease: "power4.out", stagger: 0.09 }, 50.75);
+          tl.fromTo("#ho-name", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 51.45);
+          tl.fromTo("#ho-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: "power2.inOut" }, 51.6);
+          tl.to("#portrait", { scale: 1.04, duration: 3.2, ease: "sine.inOut" }, 51.0);
+          tl.to("#por-img", { scale: 1.06, duration: 3.6, ease: "none" }, 51.0);
 
           tl.getChildren(false, true, true).forEach((c) => {
             if (c.startTime() >= CUT_AT) c.startTime(c.startTime() - SHIFT);
