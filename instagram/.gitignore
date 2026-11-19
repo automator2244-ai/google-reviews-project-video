@@ -8,3 +8,5 @@ prototypes/*/render.log
 prototypes/*/work-*/
 prototypes/*/.reel.hf-transaction-*/
 repost/*/build/
+footage/*.mp4
+tools/__pycache__/

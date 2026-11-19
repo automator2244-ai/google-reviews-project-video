@@ -1,0 +1,214 @@
+{
+ "mood": "calm",
+ "music_vol": 0.09,
+ "poster_at": 0.8,
+ "shots": [
+  {
+   "src": "footage/bnaya-personal.mp4",
+   "ss": 14.36,
+   "dur": 1.7,
+   "zoom": [
+    1.0,
+    1.0
+   ],
+   "focus_y": 0.0,
+   "voice": true
+  },
+  {
+   "src": "footage/bnaya-personal.mp4",
+   "ss": 18.44,
+   "dur": 3.58,
+   "zoom": [
+    1.12,
+    1.12
+   ],
+   "focus_y": 0.0,
+   "voice": true
+  },
+  {
+   "src": "footage/bnaya-personal.mp4",
+   "ss": 22.06,
+   "dur": 2.5,
+   "zoom": [
+    1.0,
+    1.0
+   ],
+   "focus_y": 0.0,
+   "voice": true
+  },
+  {
+   "src": "footage/bnaya-personal.mp4",
+   "ss": 25.54,
+   "dur": 1.82,
+   "zoom": [
+    1.12,
+    1.12
+   ],
+   "focus_y": 0.0,
+   "voice": true
+  },
+  {
+   "src": "footage/bnaya-personal.mp4",
+   "ss": 28.22,
+   "dur": 2.9,
+   "zoom": [
+    1.0,
+    1.0
+   ],
+   "focus_y": 0.0,
+   "voice": true
+  },
+  {
+   "src": "footage/bnaya-personal.mp4",
+   "ss": 31.16,
+   "dur": 1.6,
+   "zoom": [
+    1.12,
+    1.12
+   ],
+   "focus_y": 0.0,
+   "voice": true
+  },
+  {
+   "src": "footage/bnaya-personal.mp4",
+   "ss": 43.02,
+   "dur": 3.46,
+   "zoom": [
+    1.0,
+    1.0
+   ],
+   "focus_y": 0.0,
+   "voice": true
+  }
+ ],
+ "overlays": [
+  {
+   "t": 0,
+   "d": 1.7,
+   "kind": "hook",
+   "text": "למה למרפאה טובה\nיש *מעט ביקורות?*",
+   "y": 330,
+   "size": 96,
+   "fade_in": 0.01,
+   "rise": 0
+  },
+  {
+   "t": 14.1,
+   "d": 3.46,
+   "kind": "tag",
+   "text": "<b>EZ.Path.AI</b> · ביקורות בגוגל למרפאות וטרינריות",
+   "y": 292,
+   "rise": 0
+  },
+  {
+   "t": 1.7,
+   "d": 2.0,
+   "kind": "cap",
+   "text": "בגוגל יש להן רק\n*כמה עשרות ביקורות,*",
+   "y": 370,
+   "fade_in": 0.05,
+   "fade_out": 0.03,
+   "rise": 14
+  },
+  {
+   "t": 3.7,
+   "d": 1.58,
+   "kind": "cap",
+   "text": "חלקן מלפני חודשיים,\nואפילו חצי שנה.",
+   "y": 370,
+   "fade_in": 0.05,
+   "fade_out": 0.03,
+   "rise": 14
+  },
+  {
+   "t": 5.28,
+   "d": 0.95,
+   "kind": "cap",
+   "text": "אז בניתי *מערכת פשוטה.*",
+   "y": 370,
+   "fade_in": 0.05,
+   "fade_out": 0.03,
+   "rise": 14
+  },
+  {
+   "t": 6.23,
+   "d": 1.55,
+   "kind": "cap",
+   "text": "מעכשיו, אחרי כל ביקור,",
+   "y": 370,
+   "fade_in": 0.05,
+   "fade_out": 0.03,
+   "rise": 14
+  },
+  {
+   "t": 7.72,
+   "d": 1.88,
+   "kind": "cap",
+   "text": "הודעה קצרה *בוואטסאפ*\nמהמספר של המרפאה.",
+   "y": 370,
+   "fade_in": 0.05,
+   "fade_out": 0.03,
+   "rise": 14
+  },
+  {
+   "t": 9.6,
+   "d": 1.86,
+   "kind": "cap",
+   "text": "מי שיצא מרוצה\nמגיע *בלחיצה אחת*",
+   "y": 370,
+   "fade_in": 0.05,
+   "fade_out": 0.03,
+   "rise": 14
+  },
+  {
+   "t": 11.46,
+   "d": 1.04,
+   "kind": "cap",
+   "text": "לכתוב ביקורת בגוגל.",
+   "y": 370,
+   "fade_in": 0.05,
+   "fade_out": 0.03,
+   "rise": 14
+  },
+  {
+   "t": 12.5,
+   "d": 1.6,
+   "kind": "cap",
+   "text": "ככה כל חודש נכנסות\n*ביקורות חדשות.*",
+   "y": 370,
+   "fade_in": 0.05,
+   "fade_out": 0.03,
+   "rise": 14
+  },
+  {
+   "t": 14.1,
+   "d": 0.98,
+   "kind": "cap",
+   "text": "אתם לא צריכים\nלעשות כלום.",
+   "y": 400,
+   "fade_in": 0.05,
+   "fade_out": 0.03,
+   "rise": 14
+  },
+  {
+   "t": 15.08,
+   "d": 1.12,
+   "kind": "cap",
+   "text": "אני מחבר ומנהל את הכול,",
+   "y": 400,
+   "fade_in": 0.05,
+   "fade_out": 0.03,
+   "rise": 14
+  },
+  {
+   "t": 16.2,
+   "d": 1.36,
+   "kind": "cap",
+   "text": "והמערכת *עובדת לבד.*",
+   "y": 400,
+   "fade_in": 0.05,
+   "fade_out": 0.03,
+   "rise": 14
+  }
+ ]
+}

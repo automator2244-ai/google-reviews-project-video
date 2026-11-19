@@ -1,0 +1,100 @@
+{
+ "mood": "groove",
+ "music_vol": 0.5,
+ "poster_at": 1.2,
+ "shots": [
+  {
+   "src": "footage/1535.mp4",
+   "ss": 0.0,
+   "dur": 2.6,
+   "focus": 0.08,
+   "zoom": [
+    1.0,
+    1.1
+   ]
+  },
+  {
+   "src": "footage/1711.mp4",
+   "ss": 1.0,
+   "dur": 2.2,
+   "focus": 0.3,
+   "zoom": [
+    1.0,
+    1.05
+   ]
+  },
+  {
+   "src": "footage/4915.mp4",
+   "ss": 6.0,
+   "dur": 5.4,
+   "focus": 0.5,
+   "dim": 0.55,
+   "zoom": [
+    1.0,
+    1.05
+   ]
+  },
+  {
+   "src": "footage/1778.mp4",
+   "ss": 2.0,
+   "dur": 3.6,
+   "focus": 0.4,
+   "zoom": [
+    1.0,
+    1.06
+   ]
+  }
+ ],
+ "overlays": [
+  {
+   "t": 0.0,
+   "d": 2.6,
+   "kind": "hook",
+   "text": "ככה לקוח חדש\n*בוחר וטרינר:*",
+   "y": 360,
+   "size": 112,
+   "fade_in": 0.01,
+   "rise": 0
+  },
+  {
+   "t": 2.6,
+   "d": 2.2,
+   "kind": "html",
+   "css": ".sb{position:absolute;left:90px;top:420px;width:900px;background:#fff;border-radius:999px;padding:30px 44px;display:flex;align-items:center;gap:26px;box-shadow:0 16px 40px rgba(0,0,0,.4);font-size:58px;font-weight:500;color:#111;direction:rtl}\n.sb .g{font-weight:900;font-size:60px;color:#4285f4;direction:ltr}\n.rs{position:absolute;left:90px;top:560px;width:900px;direction:rtl}\n.rs .r{background:#fff;border-radius:30px;padding:30px 38px;margin-bottom:22px;box-shadow:0 16px 40px rgba(0,0,0,.4)}\n.rs .n{font-size:50px;font-weight:800;color:#111}.rs .s{font-size:46px;font-weight:700;color:#111;margin-top:6px;display:flex;gap:16px;align-items:center}\n.rs .st{color:#fbbc04;letter-spacing:2px}.rs .c{color:#666;font-weight:500}.rs .d{font-size:30px;color:#666;font-weight:500;margin-top:4px}\n.ex{position:absolute;left:90px;top:500px;font-size:28px;font-weight:700;color:#fff;background:rgba(0,0,0,.55);border-radius:999px;padding:4px 20px}",
+   "html": "<div class=\"sb\"><span class=\"g\">G</span><span>וטרינר קרוב אליי</span></div>",
+   "rise": 80
+  },
+  {
+   "t": 4.8,
+   "d": 5.4,
+   "kind": "html",
+   "css": ".sb{position:absolute;left:90px;top:330px;width:900px;background:#fff;border-radius:999px;padding:30px 44px;display:flex;align-items:center;gap:26px;box-shadow:0 16px 40px rgba(0,0,0,.4);font-size:58px;font-weight:500;color:#111;direction:rtl}\n.sb .g{font-weight:900;font-size:60px;color:#4285f4;direction:ltr}\n.rs{position:absolute;left:90px;top:560px;width:900px;direction:rtl}\n.rs .r{background:#fff;border-radius:30px;padding:30px 38px;margin-bottom:22px;box-shadow:0 16px 40px rgba(0,0,0,.4)}\n.rs .n{font-size:50px;font-weight:800;color:#111}.rs .s{font-size:46px;font-weight:700;color:#111;margin-top:6px;display:flex;gap:16px;align-items:center}\n.rs .st{color:#fbbc04;letter-spacing:2px}.rs .c{color:#666;font-weight:500}.rs .d{font-size:30px;color:#666;font-weight:500;margin-top:4px}\n.ex{position:absolute;left:90px;top:500px;font-size:28px;font-weight:700;color:#fff;background:rgba(0,0,0,.55);border-radius:999px;padding:4px 20px}",
+   "html": "<div class=\"sb\"><span class=\"g\">G</span><span>וטרינר קרוב אליי</span></div><div class=\"ex\">דוגמה</div><div class=\"rs\"><div class=\"r\"><div class=\"n\">מרפאה וטרינרית א׳</div><div class=\"s\"><span>4.9</span><span class=\"st\">★★★★★</span><span class=\"c\">(187)</span></div><div class=\"d\">ביקורת אחרונה: לפני יומיים</div></div>\n<div class=\"r\"><div class=\"n\">מרפאה וטרינרית ב׳</div><div class=\"s\"><span>5.0</span><span class=\"st\">★★★★★</span><span class=\"c\">(24)</span></div><div class=\"d\">ביקורת אחרונה: לפני 5 חודשים</div></div></div>",
+   "rise": 0,
+   "fade_in": 0.2
+  },
+  {
+   "t": 6.6,
+   "d": 3.6,
+   "kind": "hook",
+   "text": "למי הייתם\n*מתקשרים?*",
+   "y": 1130,
+   "size": 112
+  },
+  {
+   "t": 10.2,
+   "d": 3.6,
+   "kind": "hook",
+   "text": "הלקוחות שלכם מרוצים.\n*בגוגל לא רואים את זה.*",
+   "y": 360,
+   "size": 88
+  },
+  {
+   "t": 11.2,
+   "d": 2.6,
+   "kind": "tag",
+   "text": "<b>EZ.Path.AI</b> · ביקורות בגוגל למרפאות וטרינריות",
+   "y": 1320
+  }
+ ]
+}

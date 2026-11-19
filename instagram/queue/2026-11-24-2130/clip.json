@@ -1,0 +1,126 @@
+{
+ "mood": "light",
+ "music_vol": 0.5,
+ "poster_at": 1.4,
+ "shots": [
+  {
+   "src": "footage/1551.mp4",
+   "ss": 1.6,
+   "dur": 2.6,
+   "focus": 0.52,
+   "zoom": [
+    1.0,
+    1.1
+   ]
+  },
+  {
+   "src": "footage/1478.mp4",
+   "ss": 2.0,
+   "dur": 2.2,
+   "focus": 0.3,
+   "zoom": [
+    1.05,
+    1.0
+   ]
+  },
+  {
+   "src": "footage/4915.mp4",
+   "ss": 1.0,
+   "dur": 2.4,
+   "focus": 0.5,
+   "zoom": [
+    1.0,
+    1.06
+   ]
+  },
+  {
+   "src": "footage/1552.mp4",
+   "ss": 1.0,
+   "dur": 4.8,
+   "focus": 0.5,
+   "dim": 0.5,
+   "zoom": [
+    1.0,
+    1.05
+   ]
+  },
+  {
+   "src": "footage/1496.mp4",
+   "ss": 2.6,
+   "dur": 3.4,
+   "focus": 0.28,
+   "zoom": [
+    1.0,
+    1.06
+   ]
+  }
+ ],
+ "overlays": [
+  {
+   "t": 0.0,
+   "d": 2.6,
+   "kind": "hook",
+   "text": "הוא לא יכתוב לכם\n*ביקורת בגוגל.*",
+   "y": 360,
+   "size": 112,
+   "fade_in": 0.01,
+   "rise": 0
+  },
+  {
+   "t": 2.6,
+   "d": 2.2,
+   "kind": "hook",
+   "text": "הבעלים שלו?\n*דווקא כן.*",
+   "y": 360,
+   "size": 112
+  },
+  {
+   "t": 4.8,
+   "d": 2.4,
+   "kind": "hook",
+   "text": "הוא יצא מרוצה,\nהגיע הביתה *ושכח.*",
+   "y": 360,
+   "size": 100
+  },
+  {
+   "t": 7.2,
+   "d": 4.8,
+   "kind": "hook",
+   "text": "אז שואלים אותו.\n*בוואטסאפ.*",
+   "y": 350,
+   "size": 100
+  },
+  {
+   "t": 8.0,
+   "d": 1.9,
+   "kind": "html",
+   "css": ".wa{position:absolute;left:110px;top:760px;width:860px;background:#efe7dd;border-radius:36px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45);direction:rtl}\n.wa .hd{background:#075e54;color:#fff;padding:26px 34px;display:flex;align-items:center;gap:22px}\n.wa .av{width:76px;height:76px;border-radius:50%;background:#25d366;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:900;color:#fff}\n.wa .nm{font-size:42px;font-weight:800;line-height:1.1}.wa .st{font-size:28px;font-weight:500;opacity:.8}\n.wa .bd{padding:30px 30px 34px}\n.wa .msg{background:#fff;border-radius:6px 26px 26px 26px;padding:24px 30px 20px;font-size:44px;font-weight:500;line-height:1.3;color:#111;box-shadow:0 2px 3px rgba(0,0,0,.12)}\n.wa .tm{font-size:24px;color:#8a8a8a;text-align:left;margin-top:6px}\n.wa .bt{margin-top:12px;background:#fff;border-radius:22px;padding:22px;text-align:center;font-size:42px;font-weight:700;color:#0a7cff;box-shadow:0 2px 3px rgba(0,0,0,.12)}\n.wa .bt.on{background:#d9fdd3;color:#075e54;outline:5px solid #25d366}",
+   "html": "<div class=\"wa\"><div class=\"hd\"><div class=\"av\">ז</div><div><div class=\"nm\">מרפאת זנב שמח</div><div class=\"st\">חשבון עסקי</div></div></div>\n<div class=\"bd\"><div class=\"msg\">היי דנה, תודה שהגעתם היום עם לואי. איך היה הביקור?<div class=\"tm\" dir=\"ltr\">17:42</div></div>\n<div class=\"bt\">הייתה חוויה טובה</div><div class=\"bt\">האמת היה פחות טוב</div></div></div>",
+   "rise": 120
+  },
+  {
+   "t": 9.9,
+   "d": 2.1,
+   "kind": "html",
+   "css": ".wa{position:absolute;left:110px;top:760px;width:860px;background:#efe7dd;border-radius:36px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45);direction:rtl}\n.wa .hd{background:#075e54;color:#fff;padding:26px 34px;display:flex;align-items:center;gap:22px}\n.wa .av{width:76px;height:76px;border-radius:50%;background:#25d366;display:flex;align-items:center;justify-content:center;font-size:40px;font-weight:900;color:#fff}\n.wa .nm{font-size:42px;font-weight:800;line-height:1.1}.wa .st{font-size:28px;font-weight:500;opacity:.8}\n.wa .bd{padding:30px 30px 34px}\n.wa .msg{background:#fff;border-radius:6px 26px 26px 26px;padding:24px 30px 20px;font-size:44px;font-weight:500;line-height:1.3;color:#111;box-shadow:0 2px 3px rgba(0,0,0,.12)}\n.wa .tm{font-size:24px;color:#8a8a8a;text-align:left;margin-top:6px}\n.wa .bt{margin-top:12px;background:#fff;border-radius:22px;padding:22px;text-align:center;font-size:42px;font-weight:700;color:#0a7cff;box-shadow:0 2px 3px rgba(0,0,0,.12)}\n.wa .bt.on{background:#d9fdd3;color:#075e54;outline:5px solid #25d366}",
+   "html": "<div class=\"wa\"><div class=\"hd\"><div class=\"av\">ז</div><div><div class=\"nm\">מרפאת זנב שמח</div><div class=\"st\">חשבון עסקי</div></div></div>\n<div class=\"bd\"><div class=\"msg\">היי דנה, תודה שהגעתם היום עם לואי. איך היה הביקור?<div class=\"tm\" dir=\"ltr\">17:42</div></div>\n<div class=\"bt on\">הייתה חוויה טובה</div><div class=\"bt\">האמת היה פחות טוב</div></div></div>",
+   "rise": 0,
+   "fade_in": 0.01
+  },
+  {
+   "t": 12.0,
+   "d": 3.4,
+   "kind": "hook",
+   "text": "מרוצה? מקבל קישור\n*ישר לביקורת בגוגל.*",
+   "y": 360,
+   "size": 88
+  },
+  {
+   "t": 13.0,
+   "d": 2.4,
+   "kind": "tag",
+   "text": "<b>EZ.Path.AI</b> · ביקורות בגוגל למרפאות וטרינריות",
+   "y": 1320
+  }
+ ]
+}
